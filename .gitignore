@@ -2,6 +2,7 @@
 website/themes/hugo-book/exampleSite
 .DS_Store
 .hugo_build.lock
+website/public/
 
 # Prerequisites
 *.d
