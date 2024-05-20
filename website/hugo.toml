@@ -3,3 +3,21 @@ languageCode = 'en-us'
 title = 'Smart muskrat trap'
 theme = "hugo-book"
 enableGitInfo = true
+
+[menu]
+# [[menu.before]]
+
+[[menu.after]]
+  name = "Github"
+  url = "https://github.com/jjgroenendijk/muskrattrap"
+  weight = 10
+
+[[menu.after]]
+  name = "Node-RED"
+  url = "https://iot.jjgroenendijk.nl/"
+  weight = 20
+
+[[menu.after]]
+  name = "Documentation"
+  url = "https://muskrattrap.jjgroenendijk.nl/"
+  weight = 30
