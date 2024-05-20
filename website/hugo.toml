@@ -1,0 +1,5 @@
+baseURL = 'https://muskrattrap.jjgroenendijk.nl/'
+languageCode = 'en-us'
+title = 'Smart muskrat trap'
+theme = "hugo-book"
+enableGitInfo = true
