@@ -1,6 +1,7 @@
 ---
 weight: 1
 title: "Hardware Simulation"
+bookFlatSection: true
 ---
 # Hardware Simulation Overview
 The muskrat trap project leverages the The Things Uno hardware, based on the Arduino Leonardo, to develop a smart
@@ -27,24 +28,27 @@ The muskrat trap must communicate several critical events to ensure efficient mo
 Given that the actual sensors and actuators are not yet implemented, we will use stubs to simulate these events. The HAN IoT Node's buttons and LEDs will represent sensor inputs and outputs, respectively.
 
 #### Trap Status (Open/Closed)
-- **Simulation Method:** Use a button to toggle the trap status. Pressing the button changes the state from open to closed or vice versa.
-- **Implementation:** Configure an interrupt or polling mechanism to detect button presses and update the trap status variable.
+- **Simulation Method:** Use a button SWITCH 1 to toggle the trap status. Pressing the button changes the state from open to
+  closed or vice versa. Status trap closed sets LED 01 to ON.
+- **Implementation:** Configure an interrupt to detect button presses and update the trap status variable.
 
 #### Catch Detection
-- **Simulation Method:** Use a different button to simulate the capture of a muskrat. Each press of the button indicates a catch.
-- **Implementation:** Similar to the trap status, use an interrupt or polling mechanism to detect the button press and update the catch status.
+- **Simulation Method:** Use button SWITCH 2 to toggle the capture status of a muskrat. Catch detected status (animal inside) sets LED 02 to ON.
+- **Implementation:** Similar to the trap status, use an interrupt to detect the button press and update the catch status.
 
 #### Trap Movement
-- **Simulation Method:** Simulate movement using a tilt sensor or another button. A press indicates that the trap has been moved.
-- **Implementation:** Detect button presses or tilt sensor activation and set a flag indicating movement.
+- **Simulation Method:** Simulate movement using both buttons SWITCH 1 & SWITCH 2. Pressing both buttons at the same
+  time will toggle the trap movement status. Trap movement detected status sets LED 03 to ON.
+- **Implementation:** Detect both button presses and set a flag indicating movement.
 
 #### Health Status
-- **Simulation Method:** Periodically check and report the status of the onboard LEDs to simulate battery level and connectivity status.
+- **Simulation Method:** Periodically check and report the position of the potentiometer POTMETER 2 to simulate battery
+  level. Battery voltage ercentage status is indicated by the brightness of LED 04. High battery percentage means high brightness.
 - **Implementation:** Use a timer interrupt to periodically update and send the health status.
 
 ### Communication Protocol
 The trap uses LoRaWAN for communication. Each event's data is encoded and sent over the network using LoRaWAN's standard protocols to ensure reliable and low-power communication.
 
-## Conclusion
+## Source code
 For more detailed information about the hardware, please visit the [GitLab
 repository](https://gitlab.com/wlgrw/han-iot-node).

@@ -31,6 +31,11 @@ Our solution leverages the following technologies:
 - **Remote Monitoring:** Allow water managers to check traps' status remotely, reducing labor and increasing efficiency.
 - **Data-Driven Decisions:** Provide insights through data collection and visualization to improve muskrat control strategies.
 
+## To Do
+Things tho do to finish this project;
+- Write down which buttons are being used. Extend HW information
+
+
 ## Get Involved
 
 We welcome contributions from the community. Check out our [GitHub repository](https://github.com/jjgroenendijk/muskrattrap)!
