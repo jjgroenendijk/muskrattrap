@@ -4,6 +4,9 @@ website/themes/hugo-book/exampleSite
 .hugo_build.lock
 website/public/
 
+# secrets
+secrets.txt
+
 # Prerequisites
 *.d
 

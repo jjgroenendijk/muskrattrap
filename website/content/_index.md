@@ -19,7 +19,7 @@ Muskrats pose a significant threat to the integrity of water management systems 
 ## Technology Stack
 
 Our solution leverages the following technologies:
-- **Arduino** for sensor integration and control
+- **The Things Uno** Development board for sensor integration and control
 - **LoRaWAN** for long-range, low-power wireless communication
 - **Node-RED** for data processing and automation
 - **MySQL** for data storage
