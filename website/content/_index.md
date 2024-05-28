@@ -33,4 +33,4 @@ Our solution leverages the following technologies:
 
 ## Get Involved
 
-We welcome contributions from the community. Check out our [GitHub repository](https://github.com/jjgroenendijk/muskrattrap) for more details on how to get involved.
+We welcome contributions from the community. Check out our [GitHub repository](https://github.com/jjgroenendijk/muskrattrap)!
