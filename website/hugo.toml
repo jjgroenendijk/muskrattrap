@@ -7,7 +7,7 @@ enableGitInfo = true
 [params]
     BookRepo = 'https://github.com/jjgroenendijk/muskrattrap'
     BookCommitPath = 'commit'
-    BookEditPath = 'edit/main'
+    BookEditPath = 'edit/main/website'
     BookSection = '*'
 
 [menu]

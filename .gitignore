@@ -4,8 +4,8 @@ website/themes/hugo-book/exampleSite
 .hugo_build.lock
 website/public/
 
-# secrets
-secrets.txt
+# secrets file (API keys, etc)
+secrets.h
 
 # Prerequisites
 *.d
@@ -59,3 +59,4 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+.vscode/c_cpp_properties.json
