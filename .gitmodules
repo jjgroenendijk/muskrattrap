@@ -1,6 +1,9 @@
 [submodule "website/themes/hugo-book"]
 	path = website/themes/hugo-book
 	url = https://github.com/alex-shpak/hugo-book
-[submodule "HWDocumentation"]
-	path = HWDocumentation
-	url = https://gitlab.com/wlgrw/han-iot-node
+[submodule "examples/payload"]
+	path = examples/payload
+	url = https://gitlab.com/wlgrw/han-iot-portfolio-payload-encoder-decoder.git
+[submodule "examples/han-iot-node"]
+	path = examples/han-iot-node
+	url = https://gitlab.com/wlgrw/han-iot-node/
