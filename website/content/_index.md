@@ -1,18 +1,7 @@
 ---
+title: Muskrat Trap
 weight: 10
+type: docs
 ---
 
-# Smart Muskrat Trap
-
-## Overview
-
-{{ /columns >}}
-
-Hi!
-
-<--->
-
-Hi!
-
-
-{{< /columns >}}
+# Project Overview
