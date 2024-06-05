@@ -10,15 +10,16 @@ Welcome to the SMARTrap project! This initiative aims to develop a smart, humane
 
 ## Project Overview
 
-Muskrats pose a significant threat to the integrity of water management systems in the Netherlands. Traditional trapping methods are labor-intensive and often result in the death of the animal. SMARTrap seeks to address these issues by creating a smart trap that:
+Muskrats pose a significant threat to the integrity of water management systems in the Netherlands.
+Traditional trapping methods are labor-intensive and often result in the death of the animal.
+SMARTrap seeks to address these issues by creating a smart trap that:
 - **Detects** whether the trap is open or closed
 - **Identifies** if a muskrat has been captured
 - **Monitors** trap movements
 - **Reports** the health status of the trap
 
 ## Technology Stack
-
-Our solution leverages the following technologies:
+This solution leverages the following technologies:
 - **The Things Uno** Development board for sensor integration and control
 - **LoRaWAN** for long-range, low-power wireless communication
 - **Node-RED** for data processing and automation
@@ -34,6 +35,7 @@ Our solution leverages the following technologies:
 ## To Do
 Things tho do to finish this project;
 - Write down which buttons are being used. Extend HW information
+- Create a payload encoder and decoder including unit tests.
 
 
 ## Get Involved
