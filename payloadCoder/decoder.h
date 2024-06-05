@@ -6,7 +6,7 @@
 const uint8_t VALUE_1 = 0;
 const uint8_t VALUE_2 = 4;
 
-class myPayloadDecoder
+class payloadDecoder
 {
 private:
   uint8_t *_buffer;    ///< buffer containing payload with sensor data
@@ -22,8 +22,8 @@ private:
   uint8_t extract_uint8(const uint8_t *buf, const unsigned char idx = 0);
 
 public:
-  myPayloadDecoder();  ///< Constructor
-  ~myPayloadDecoder(); ///< Destuctor
+  payloadDecoder();  ///< Constructor
+  ~payloadDecoder(); ///< Destuctor
 
   void setPayload(uint8_t *payload) { _buffer = payload; }
 
