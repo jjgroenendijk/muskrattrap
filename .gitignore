@@ -60,3 +60,6 @@ Module.symvers
 Mkfile.old
 dkms.conf
 .vscode/c_cpp_properties.json
+.vscode/settings.json
+buildnumber.num
+depend

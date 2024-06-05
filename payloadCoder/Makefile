@@ -3,23 +3,33 @@
 # Note: The code should be cleaned to remove all warnings for production use.
 
 CXX = g++
-CXXFLAGS = -std=c++17 -g -Wall -Wextra -Weffc++ -Wpedantic \
+CXXFLAGS = -std=c++17 -Wall -Wextra -Weffc++ -Wpedantic \
            -Wold-style-cast -Winit-self -Wno-unused -Wshadow \
            -Wno-parentheses -Wlogical-op -Wredundant-decls \
            -Wcast-align -Wsign-promo -Wmissing-include-dirs \
            -Woverloaded-virtual -Wctor-dtor-privacy
+LDFLAGS = 
+
+DEBUG_FLAGS = -g
+RELEASE_FLAGS = -O3
 
 EXECUTABLE = payloadCoder
 SOURCES = $(wildcard *.cpp)
 HEADERS = $(wildcard *.h)
 OBJECTS = $(SOURCES:.cpp=.o)
 
-.PHONY: all clean clean-depend depend
+.PHONY: all clean clean-depend depend debug release
 
 all: $(EXECUTABLE)
 
+debug: CXXFLAGS += $(DEBUG_FLAGS)
+debug: all
+
+release: CXXFLAGS += $(RELEASE_FLAGS)
+release: all
+
 $(EXECUTABLE): $(OBJECTS) buildnumber.num
-	$(CXX) $(CXXFLAGS) $(OBJECTS) $(LDXXFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(OBJECTS) $(LDFLAGS) -o $@
 	@echo "-- Build: " $$(cat buildnumber.num)
 
 # Create dependency file
