@@ -38,4 +38,4 @@ Things tho do to finish this project;
 
 ## Get Involved
 
-We welcome contributions from the community. Check out our [GitHub repository](https://github.com/jjgroenendijk/muskrattrap)!
+Community contributions are welcome! Check out the [GitHub repository](https://github.com/jjgroenendijk/muskrattrap)!
