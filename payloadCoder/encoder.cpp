@@ -2,13 +2,13 @@
 #include <iostream> // only used for debug output
 #include <stdlib.h> // malloc()
 
-payloadEncoder::payloadEncoder() : id{0},
-                                   version{0},
-                                   doorStatus{1},
-                                   catchDetect{1},
-                                   trapDisplacement{1},
-                                   batteryStatus{0},
-                                   unixTime{0},
+payloadEncoder::payloadEncoder() : _id{0},
+                                   _version{0},
+                                   _doorStatus{0},
+                                   _catchDetect{0},
+                                   _trapDisplacement{0},
+                                   _batteryStatus{0},
+                                   _unixTime{0},
 
                                    _testVariable1{0},
                                    _testVariable2{0},
@@ -30,16 +30,17 @@ void payloadEncoder::composePayload()
     _bufferSize = add_uint32(_bufferSize, _testVariable1);
     _bufferSize = add_uint16(_bufferSize, _testVariable2);
 
-    _bufferSize = add_uint32(_bufferSize, id);
-    _bufferSize = add_uint8(_bufferSize, version);
+    _bufferSize = add_uint32(_bufferSize, _id);
+    _bufferSize = add_uint8(_bufferSize, _version);
 
-    _bufferSize = add_StatusBools(_bufferSize, doorStatus, catchDetect, trapDisplacement);
+    _bufferSize = add_bool(_bufferSize, _doorStatus, 2);
+    _bufferSize = add_bool(_bufferSize, _catchDetect, 1);
+    _bufferSize = add_bool(_bufferSize, _trapDisplacement, 0);
 
-    _bufferSize = add_uint8(_bufferSize, batteryStatus);
-    _bufferSize = add_uint32(_bufferSize, unixTime);
+    _bufferSize = add_uint8(_bufferSize, _batteryStatus);
+    _bufferSize = add_uint32(_bufferSize, _unixTime);
 
-    // debug
-    // show payload size
+    ///  show payload size in bytes for debugging purposes
     std::cout << "Payload size in bytes: " << static_cast<int>(_bufferSize) << std::endl;
 }
 
@@ -69,15 +70,21 @@ unsigned char payloadEncoder::add_uint32(unsigned char idx_in, uint32_t value)
     return (idx_in);
 }
 
-unsigned char payloadEncoder::add_StatusBools(unsigned char idx_in, bool doorStatus, bool catchDetect, bool trapDisplacement)
+// BOOLEAN
+unsigned char payloadEncoder::add_bool(unsigned char idx_in, bool value, unsigned int pos)
 {
-    uint8_t compressedStatusByte = 0;
-
-    compressedStatusByte |= (doorStatus << 2);
-    compressedStatusByte |= (catchDetect << 1);
-    compressedStatusByte |= trapDisplacement;
-
-    _buffer[idx_in++] = compressedStatusByte;
+    if (value)
+    {
+        _buffer[idx_in] |= (1 << pos);
+    }
+    else
+    {
+        _buffer[idx_in] &= ~(1 << pos);
+    }
+    if (pos == 0)
+    {
+        idx_in++;
+    }
     return (idx_in);
 }
 
@@ -90,4 +97,19 @@ void payloadEncoder::printPayloadBinary()
         std::cout << binary << " ";
     }
     std::cout << std::endl;
+}
+
+// print payload encoded
+void payloadEncoder::printPayloadEncoded()
+{
+    std::cout << "Payload encoded: " << std::endl;
+    std::cout << "Demo variable 1: " << _testVariable1 << std::endl;
+    std::cout << "Demo variable 2: " << _testVariable2 << std::endl;
+    std::cout << "ID: " << _id << std::endl;
+    std::cout << "Version: " << static_cast<int>(_version) << std::endl;
+    std::cout << "Door status: " << _doorStatus << std::endl;
+    std::cout << "Catch detect: " << _catchDetect << std::endl;
+    std::cout << "Trap displacement: " << _trapDisplacement << std::endl;
+    std::cout << "Battery status: " << static_cast<int>(_batteryStatus) << std::endl;
+    std::cout << "Unix time: " << _unixTime << std::endl;
 }
