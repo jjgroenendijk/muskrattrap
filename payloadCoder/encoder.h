@@ -1,5 +1,5 @@
-#ifndef payloadEncoder_H
-#define payloadEncoder_H
+#ifndef ENCODER_H
+#define ENCODER_H
 
 #include <stdint.h> // uint8_t, uint16_t, and uint32_t type
 
@@ -15,9 +15,6 @@ private:
   bool _trapDisplacement; // Trap displacement (1 bit)
   uint8_t _batteryStatus; // Battery status (1 byte)
   uint32_t _unixTime;     // Date and time (4 bytes)
-
-  uint32_t _testVariable1;
-  uint16_t _testVariable2;
 
   uint8_t *_buffer;    ///< buffer containing payload with sensor data
   uint8_t _bufferSize; ///< Size of payload for housekeeping.
@@ -36,9 +33,6 @@ public:
   uint8_t getPayloadSize() { return _bufferSize; };
   uint8_t *getPayload() { return _buffer; };
 
-  void setDemoVariable2(const int var) { _testVariable2 = static_cast<uint16_t>(var); }
-  void setDemoVariable1(const int var) { _testVariable1 = static_cast<uint32_t>(var); }
-
   void set_id(const uint32_t id) { _id = static_cast<uint32_t>(id); }
   void set_version(const uint8_t version) { _version = static_cast<uint8_t>(version); }
   void set_doorStatus(const bool doorStatus) { _doorStatus = doorStatus; }
@@ -50,4 +44,4 @@ public:
   void printPayloadEncoded();
 };
 
-#endif // payloadEncoder_H
+#endif // ENCODER_H

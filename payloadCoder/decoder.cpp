@@ -24,32 +24,27 @@ void payloadDecoder::decodePayload()
 
   std::cout << std::endl;
 
-  _demoVariable1 = static_cast<int>(extract_uint32(_buffer, 0));
-  _demoVariable2 = static_cast<int>(extract_uint16(_buffer, 4));
-
-  _id = static_cast<int>(extract_uint32(_buffer, 6));
-  _version = static_cast<int>(extract_uint8(_buffer, 10));
-  _doorStatus = extract_bool(_buffer, 11, 2);
-  _catchDetect = extract_bool(_buffer, 11, 1);
-  _trapDisplacement = extract_bool(_buffer, 11, 0);
-  _batteryStatus = static_cast<int>(extract_uint8(_buffer, 12));
-  _unixTime = static_cast<int>(extract_uint32(_buffer, 13));
-
-
+  _id = static_cast<int>(extract_uint32(_buffer, 0));
+  _version = static_cast<int>(extract_uint8(_buffer, 4));
+  _doorStatus = extract_bool(_buffer, 5, 2);
+  _catchDetect = extract_bool(_buffer, 5, 1);
+  _trapDisplacement = extract_bool(_buffer, 5, 0);
+  _batteryStatus = static_cast<int>(extract_uint8(_buffer, 6));
+  _unixTime = static_cast<int>(extract_uint32(_buffer, 7));
 }
 
 // UINT8
 uint8_t payloadDecoder::extract_uint8(const uint8_t *buf, const unsigned char idx)
 {
-  return (uint8_t)buf[idx];
+  return static_cast<uint8_t>(buf[idx]);
 }
 
 // UINT16
 uint16_t payloadDecoder::extract_uint16(const uint8_t *buf, const unsigned char idx)
 {
   uint16_t value{0};
-  value = ((uint16_t)buf[idx] << 8); // msb
-  value |= (uint16_t)buf[idx + 1];   // lsb
+  value = static_cast<uint16_t>(buf[idx] << 8); // msb
+  value |= static_cast<uint16_t>(buf[idx + 1]);   // lsb
   return value;
 }
 
@@ -59,7 +54,7 @@ uint32_t payloadDecoder::extract_uint32(const uint8_t *buf, const unsigned char 
   uint32_t value{0};
   for (uint8_t i = 0; i < 4; i++)
   {
-    value |= ((uint32_t)buf[idx + i] << (24 - (i * 8))); // msb
+    value |= static_cast<uint32_t>(buf[idx + i] << (24 - (i * 8))); // msb
   }
   return value;
 }
@@ -76,8 +71,6 @@ bool payloadDecoder::extract_bool(const uint8_t *buf, const unsigned char idx, u
 void payloadDecoder::printPayloadDecoded()
 {
   std::cout << "Payload decoded: " << std::endl;
-  std::cout << "Demo variable 1: " << _demoVariable1 << std::endl;
-  std::cout << "Demo variable 2: " << _demoVariable2 << std::endl;
   std::cout << "ID: " << _id << std::endl;
   std::cout << "Version: " << static_cast<int>(_version) << std::endl;
   std::cout << "Door status: " << _doorStatus << std::endl;

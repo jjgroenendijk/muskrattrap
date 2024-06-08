@@ -37,8 +37,7 @@ Things tho do to finish this project;
 - Write down which buttons are being used. Extend HW information
 - Create a payload encoder and decoder including unit tests.
 - Check website for consistent branding (e.g. change name Smarttrap to muskrattrap)
-
+- Write documentation for payload encoder and decoder
 
 ## Get Involved
-
 Community contributions are welcome! Check out the [GitHub repository](https://github.com/jjgroenendijk/muskrattrap)!

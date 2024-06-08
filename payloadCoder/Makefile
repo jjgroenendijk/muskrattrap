@@ -11,7 +11,7 @@ CXXFLAGS = -std=c++17 -Wall -Wextra -Weffc++ -Wpedantic \
 LDFLAGS = 
 
 DEBUG_FLAGS = -g
-RELEASE_FLAGS = -O3
+RELEASE_FLAGS = -O2
 
 EXECUTABLE = payloadCoder
 SOURCES = $(wildcard *.cpp)

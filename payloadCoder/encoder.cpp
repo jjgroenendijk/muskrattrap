@@ -10,9 +10,6 @@ payloadEncoder::payloadEncoder() : _id{0},
                                    _batteryStatus{0},
                                    _unixTime{0},
 
-                                   _testVariable1{0},
-                                   _testVariable2{0},
-
                                    _buffer{NULL},
                                    _bufferSize{0}
 {
@@ -27,8 +24,6 @@ payloadEncoder::~payloadEncoder()
 void payloadEncoder::composePayload()
 {
     _bufferSize = 0; // init
-    _bufferSize = add_uint32(_bufferSize, _testVariable1);
-    _bufferSize = add_uint16(_bufferSize, _testVariable2);
 
     _bufferSize = add_uint32(_bufferSize, _id);
     _bufferSize = add_uint8(_bufferSize, _version);
@@ -44,14 +39,26 @@ void payloadEncoder::composePayload()
     std::cout << "Payload size in bytes: " << static_cast<int>(_bufferSize) << std::endl;
 }
 
-// UINT8
+/**
+ * Adds a uint8_t value to the buffer at the specified index.
+ *
+ * @param idx_in The index in the buffer where the value should be added.
+ * @param value The uint8_t value to be added to the buffer.
+ * @return The updated index after adding the value.
+ */
 unsigned char payloadEncoder::add_uint8(unsigned char idx_in, const uint8_t value)
 {
     _buffer[idx_in++] = value;
     return (idx_in);
 }
 
-// UINT16
+/**
+ * Adds a 16-bit unsigned integer to the buffer at the specified index.
+ *
+ * @param idx_in The index in the buffer where the value should be added.
+ * @param value The 16-bit unsigned integer value to be added.
+ * @return The updated index after adding the value to the buffer.
+ */
 unsigned char payloadEncoder::add_uint16(unsigned char idx_in, const uint16_t value)
 {
     _buffer[idx_in++] = (value >> 8) & 0xFF; // msb
@@ -59,7 +66,13 @@ unsigned char payloadEncoder::add_uint16(unsigned char idx_in, const uint16_t va
     return (idx_in);
 }
 
-// UINT32
+/**
+ * Adds a 32-bit unsigned integer to the buffer.
+ *
+ * @param idx_in The starting index in the buffer.
+ * @param value The value to be added.
+ * @return The updated index after adding the value.
+ */
 unsigned char payloadEncoder::add_uint32(unsigned char idx_in, uint32_t value)
 {
     for (uint8_t i = 0; i < 4; i++)
@@ -70,7 +83,18 @@ unsigned char payloadEncoder::add_uint32(unsigned char idx_in, uint32_t value)
     return (idx_in);
 }
 
-// BOOLEAN
+/**
+ * @brief Adds a boolean value to the payload buffer at the specified position.
+ *
+ * This function sets or clears a specific bit in the buffer based on the given boolean value.
+ * If the value is true, the bit at the specified position is set to 1. If the value is false,
+ * the bit at the specified position is cleared to 0.
+ *
+ * @param idx_in The index of the buffer where the boolean value will be added.
+ * @param value The boolean value to be added to the buffer.
+ * @param pos The position of the bit in the buffer where the boolean value will be added.
+ * @return The updated index of the buffer.
+ */
 unsigned char payloadEncoder::add_bool(unsigned char idx_in, bool value, unsigned int pos)
 {
     if (value)
@@ -99,12 +123,12 @@ void payloadEncoder::printPayloadBinary()
     std::cout << std::endl;
 }
 
-// print payload encoded
+/**
+ * Prints the encoded payload information.
+ */
 void payloadEncoder::printPayloadEncoded()
 {
     std::cout << "Payload encoded: " << std::endl;
-    std::cout << "Demo variable 1: " << _testVariable1 << std::endl;
-    std::cout << "Demo variable 2: " << _testVariable2 << std::endl;
     std::cout << "ID: " << _id << std::endl;
     std::cout << "Version: " << static_cast<int>(_version) << std::endl;
     std::cout << "Door status: " << _doorStatus << std::endl;

@@ -16,9 +16,9 @@ The hardware setup consists of the following key components:
 
 ## Events to be Communicated
 The muskrat trap must communicate several critical events to ensure efficient monitoring and control. These events include:
-1. **Trap Status (Open/Closed):** Indicates whether the trap is currently set (open) or triggered (closed).
+1. **Trap Status (Door Open/Closed):** Indicates whether the trap is currently set (open) or triggered (closed).
 2. **Catch Detection:** Confirms if a muskrat has been captured.
-3. **Trap Movement:** Alerts if the trap has been moved from its original position.
+3. **Trap Displacement:** Alerts if the trap has been moved from its original position.
 4. **Health Status:** Reports the operational status of the trap, including battery level and connectivity.
 
 ## Simulating Events
