@@ -6,6 +6,8 @@
 
 void test01();
 
-void printFixedWidth(const std::string& type, int input, int result);
+void test02();
+
+void printTestResult(const std::string& type, int input, int result);
 
 #endif // unitTest_H

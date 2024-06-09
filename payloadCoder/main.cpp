@@ -1,16 +1,19 @@
-/*
+/**
+ * @file main.cpp
+ * @brief Main file for the payloadCoder project
+ * @author Jaap-Jan Groenendijk (github@jjgroenendijk.nl)
+ * @date 2024-09-06
+ * @version 1.0
+ * @copyright Copyright Remko Welling 2022. Creative Commons Attribution-NonCommercial 4.0 International
+ * @license CC BY-NC 4.0
+ * 
+ * \mainpage
+ * This project is a simple example of a payload encoder and decoder for a LoRaWAN application.
+ * The project consists of two classes: payloadEncoder and payloadDecoder. The payloadEncoder class
+ * encodes variables into a single payload, and the payloadDecoder class decodes the payload back into
+ * the original variables. The project also contains a unit test that tests the encoder and decoder classes.
+ */
 
-uint32_t id;           // Identification number (4 bytes)
-uint8_t version;       // Payload version number (1 byte)
-bool doorStatus;       // Door status (1 bit)
-bool catchDetect;      // Catch detection (1 bit)
-bool trapDisplacement; // Trap displacement (1 bit)
-uint8_t batteryStatus; // Battery status (1 byte)
-uint32_t unixTime;     // Date and time (4 bytes)
-
-*/
-
-#include <iostream> // cout, endl
 #include "decoder.h"
 #include "encoder.h"
 #include "unitTest.h"
@@ -21,6 +24,9 @@ int main()
 {
     // Test 1
     test01();
+
+    // Test 2
+    test02();
 
     return 0;
 }

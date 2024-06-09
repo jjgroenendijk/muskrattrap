@@ -12,7 +12,7 @@ payloadDecoder::~payloadDecoder()
 void payloadDecoder::decodePayload()
 {
   // print paylaod in binary format
-  std::cout << "Payload in binary format: ";
+  std::cout << "Decoder payload binary: ";
   for (int i = 0; i < _bufferSize; i++)
   {
     for (int j = 7; j >= 0; j--)

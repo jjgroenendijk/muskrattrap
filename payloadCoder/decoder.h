@@ -3,6 +3,10 @@
 
 #include <stdint.h> // uint8_t, uint16_t, and uint32_t type
 
+/// \brief payload decode class
+/// This class wil decode variables out of a payload for use in a LoRaWAN application.
+/// The class is setup using both .h and .cpp files where the setters and getters are
+/// placed in to the .h file.
 class payloadDecoder
 {
 private:

@@ -57,27 +57,102 @@ void test01()
     int result_batteryStatus = decoder.get_batteryStatus();
     int result_unixTime = decoder.get_unixTime();
 
-    const char separator = ' ';
-    const int width = 16;
-
     // evaluate test result of test 1
     cout << "Test 1 results " << endl;
-    cout << setw(width) << setfill(separator) << "Type" << setw(width) << setfill(separator) << "INPUT" << setw(width) << "RESULT" << endl;
-    cout << setw(width) << setfill(separator) << "id" << setw(width) << setfill(separator) << id << setw(width) << result_id << endl;
-    cout << setw(width) << setfill(separator) << "version" << setw(width) << setfill(separator) << version << setw(width) << result_version << endl;
-    cout << setw(width) << setfill(separator) << "doorStatus" << setw(width) << setfill(separator) << doorStatus << setw(width) << result_doorStatus << endl;
-    cout << setw(width) << setfill(separator) << "catchDetect" << setw(width) << setfill(separator) << catchDetect << setw(width) << result_catchDetect << endl;
-    cout << setw(width) << setfill(separator) << "trapDisplacement" << setw(width) << setfill(separator) << trapDisplacement << setw(width) << result_trapDisplacement << endl;
-    cout << setw(width) << setfill(separator) << "batteryStatus" << setw(width) << setfill(separator) << batteryStatus << setw(width) << result_batteryStatus << endl;
-    cout << setw(width) << setfill(separator) << "unixTime" << setw(width) << setfill(separator) << unixTime << setw(width) << result_unixTime << endl;
+
+    printTestResult("id", id, result_id);
+    printTestResult("version", version, result_version);
+    printTestResult("doorStatus", doorStatus, result_doorStatus);
+    printTestResult("catchDetect", catchDetect, result_catchDetect);
+    printTestResult("trapDisplacement", trapDisplacement, result_trapDisplacement);
+    printTestResult("batteryStatus", batteryStatus, result_batteryStatus);
+    printTestResult("unixTime", unixTime, result_unixTime);
 }
 
-void printFixedWidth(const std::string &type, int input, int result)
+/**
+ * @brief This function tests the payloadEncoder and payloadDecoder classes.
+ * 
+ * It sets various values for the payloadEncoder object, composes the payload,
+ * prints the binary representation of the payload, and then decodes the payload
+ * using the payloadDecoder object. Finally, it compares the decoded values with
+ * the original values and prints the test results.
+ */
+void test02()
+{
+
+    // Test 2
+
+    // Create encoder and decoder objects
+    payloadEncoder encoder;
+    payloadDecoder decoder;
+
+    // Initialize test variables
+    int id = 123456;
+    int version = 1237878;
+    bool doorStatus = 0;
+    bool catchDetect = 2;
+    bool trapDisplacement = false;
+    int batteryStatus = -1;
+    int unixTime = 1.0;
+
+    // Set test variables
+    encoder.set_id(id);                             // Give encoder object the id
+    encoder.set_version(version);                   // Give encoder object the version
+    encoder.set_doorStatus(doorStatus);             // Give encoder object the doorStatus
+    encoder.set_catchDetect(catchDetect);           // Give encoder object the catchDetect
+    encoder.set_trapDisplacement(trapDisplacement); // Give encoder object the trapDisplacement
+    encoder.set_batteryStatus(batteryStatus);       // Give encoder object the batteryStatus
+    encoder.set_unixTime(unixTime);                 // Give encoder object the unixTime
+
+    // Compose payload
+    encoder.composePayload();
+    encoder.printPayloadBinary(); // debug
+
+    // Get payload buffer and size
+    uint8_t *payloadBuffer = encoder.getPayload();
+    uint8_t payloadSize = encoder.getPayloadSize();
+
+    // Decode payload
+    decoder.setPayload(payloadBuffer);
+    decoder.setPayloadSize(payloadSize);
+    decoder.decodePayload();
+
+    // Get decoded variables
+    int result_id = decoder.get_id();
+    int result_version = decoder.get_version();
+    bool result_doorStatus = decoder.get_doorStatus();
+    bool result_catchDetect = decoder.get_catchDetect();
+    bool result_trapDisplacement = decoder.get_trapDisplacement();
+    int result_batteryStatus = decoder.get_batteryStatus();
+    int result_unixTime = decoder.get_unixTime();
+
+    // evaluate test result of test 2
+    cout << endl << "Test 2 results " << endl;
+
+    printTestResult("id", id, result_id);
+    printTestResult("version", version, result_version);
+    printTestResult("doorStatus", doorStatus, result_doorStatus);
+    printTestResult("catchDetect", catchDetect, result_catchDetect);
+    printTestResult("trapDisplacement", trapDisplacement, result_trapDisplacement);
+    printTestResult("batteryStatus", batteryStatus, result_batteryStatus);
+    printTestResult("unixTime", unixTime, result_unixTime);
+}
+
+void printTestResult(const std::string &type, int input, int result)
 {
     const char separator = ' ';
     const int width = 16;
     std::cout << std::setw(width) << std::setfill(separator) << type
               << std::setw(width) << std::setfill(separator) << input
-              << std::setw(width) << std::setfill(separator) << result
-              << std::endl;
+              << std::setw(width) << std::setfill(separator) << result;
+
+    // if input and result are the same, print "OK", otherwise print "ERROR"
+    if (input == result)
+    {
+        std::cout << std::setw(width) << std::setfill(separator) << "OK" << std::endl;
+    }
+    else
+    {
+        std::cout << std::setw(width) << std::setfill(separator) << "ERROR" << std::endl;
+    }
 }
