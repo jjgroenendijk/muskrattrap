@@ -1,0 +1,96 @@
+\doxysection{payload\+Decoder Class Reference}
+\hypertarget{classpayload_decoder}{}\label{classpayload_decoder}\index{payloadDecoder@{payloadDecoder}}
+
+
+payload decode class This class wil decode variables out of a payload for use in a Lo\+Ra\+WAN application. The class is setup using both .h and .cpp files where the setters and getters are placed in to the .h file.  
+
+
+
+
+{\ttfamily \#include $<$decoder.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classpayload_decoder_a51dcc83770e3fde9e97637a7859b4e56}{payload\+Decoder}} ()
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classpayload_decoder_ad711380e011043a3ffc5e3eccc167405}{\texorpdfstring{$\sim$}{\string~}payload\+Decoder}} ()
+\begin{DoxyCompactList}\small\item\em Destuctor. \end{DoxyCompactList}\item 
+\Hypertarget{classpayload_decoder_ab708c0268dff6e028ba92e453902a33a}\label{classpayload_decoder_ab708c0268dff6e028ba92e453902a33a} 
+void {\bfseries set\+Payload} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}payload)
+\item 
+\Hypertarget{classpayload_decoder_a2d45cd75e5656b385512f37320a468c8}\label{classpayload_decoder_a2d45cd75e5656b385512f37320a468c8} 
+void {\bfseries set\+Payload\+Size} (uint8\+\_\+t size)
+\item 
+void \mbox{\hyperlink{classpayload_decoder_ac67e6bac8906392d90b5752b63c96874}{decode\+Payload}} ()
+\item 
+\Hypertarget{classpayload_decoder_acb4aef7e3489f0a031737f80342eff40}\label{classpayload_decoder_acb4aef7e3489f0a031737f80342eff40} 
+int {\bfseries get\+\_\+id} () const
+\item 
+\Hypertarget{classpayload_decoder_a9ed1fd31aadd5949c87a903e08ea8d51}\label{classpayload_decoder_a9ed1fd31aadd5949c87a903e08ea8d51} 
+int {\bfseries get\+\_\+version} () const
+\item 
+\Hypertarget{classpayload_decoder_aa0473fa5e8142513f7f002e03e27d993}\label{classpayload_decoder_aa0473fa5e8142513f7f002e03e27d993} 
+bool {\bfseries get\+\_\+door\+Status} () const
+\item 
+\Hypertarget{classpayload_decoder_af135cc560e1c3967dedb8116a7166fda}\label{classpayload_decoder_af135cc560e1c3967dedb8116a7166fda} 
+bool {\bfseries get\+\_\+catch\+Detect} () const
+\item 
+\Hypertarget{classpayload_decoder_ac41f745bfb6c40102c14af12189d4aac}\label{classpayload_decoder_ac41f745bfb6c40102c14af12189d4aac} 
+bool {\bfseries get\+\_\+trap\+Displacement} () const
+\item 
+\Hypertarget{classpayload_decoder_a6d203fd649c7d043007e9f9beb215a78}\label{classpayload_decoder_a6d203fd649c7d043007e9f9beb215a78} 
+int {\bfseries get\+\_\+battery\+Status} () const
+\item 
+\Hypertarget{classpayload_decoder_a36eef957e7d2bba6240d772bbe1c9e77}\label{classpayload_decoder_a36eef957e7d2bba6240d772bbe1c9e77} 
+int {\bfseries get\+\_\+unix\+Time} () const
+\item 
+void \mbox{\hyperlink{classpayload_decoder_a4dbebddbe405be47240987db4ba722a2}{print\+Payload\+Decoded}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+payload decode class This class wil decode variables out of a payload for use in a Lo\+Ra\+WAN application. The class is setup using both .h and .cpp files where the setters and getters are placed in to the .h file. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpayload_decoder_a51dcc83770e3fde9e97637a7859b4e56}\index{payloadDecoder@{payloadDecoder}!payloadDecoder@{payloadDecoder}}
+\index{payloadDecoder@{payloadDecoder}!payloadDecoder@{payloadDecoder}}
+\doxysubsubsection{\texorpdfstring{payloadDecoder()}{payloadDecoder()}}
+{\footnotesize\ttfamily \label{classpayload_decoder_a51dcc83770e3fde9e97637a7859b4e56} 
+payload\+Decoder\+::payload\+Decoder (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Constructor. 
+
+Constructs a new \doxylink{classpayload_decoder}{payload\+Decoder} object. \Hypertarget{classpayload_decoder_ad711380e011043a3ffc5e3eccc167405}\index{payloadDecoder@{payloadDecoder}!````~payloadDecoder@{\texorpdfstring{$\sim$}{\string~}payloadDecoder}}
+\index{````~payloadDecoder@{\texorpdfstring{$\sim$}{\string~}payloadDecoder}!payloadDecoder@{payloadDecoder}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}payloadDecoder()}{\string~payloadDecoder()}}
+{\footnotesize\ttfamily \label{classpayload_decoder_ad711380e011043a3ffc5e3eccc167405} 
+payload\+Decoder\+::\texorpdfstring{$\sim$}{\string~}payload\+Decoder (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Destuctor. 
+
+Destructor for the \doxylink{classpayload_decoder}{payload\+Decoder} class. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpayload_decoder_ac67e6bac8906392d90b5752b63c96874}\index{payloadDecoder@{payloadDecoder}!decodePayload@{decodePayload}}
+\index{decodePayload@{decodePayload}!payloadDecoder@{payloadDecoder}}
+\doxysubsubsection{\texorpdfstring{decodePayload()}{decodePayload()}}
+{\footnotesize\ttfamily \label{classpayload_decoder_ac67e6bac8906392d90b5752b63c96874} 
+void payload\+Decoder\+::decode\+Payload (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Decodes the payload data. This function prints the payload in binary format and extracts various data fields from the payload buffer.\Hypertarget{classpayload_decoder_a4dbebddbe405be47240987db4ba722a2}\index{payloadDecoder@{payloadDecoder}!printPayloadDecoded@{printPayloadDecoded}}
+\index{printPayloadDecoded@{printPayloadDecoded}!payloadDecoder@{payloadDecoder}}
+\doxysubsubsection{\texorpdfstring{printPayloadDecoded()}{printPayloadDecoded()}}
+{\footnotesize\ttfamily \label{classpayload_decoder_a4dbebddbe405be47240987db4ba722a2} 
+void payload\+Decoder\+::print\+Payload\+Decoded (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Prints the decoded payload information.
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+decoder.\+h\item 
+decoder.\+cpp\end{DoxyCompactItemize}

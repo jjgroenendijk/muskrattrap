@@ -1,0 +1,49 @@
+\doxysection{decoder.\+h}
+\hypertarget{decoder_8h_source}{}\label{decoder_8h_source}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ DECODER\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ DECODER\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <stdint.h>}\ \textcolor{comment}{//\ uint8\_t,\ uint16\_t,\ and\ uint32\_t\ type}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classpayload_decoder}{payloadDecoder}}}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00013\ \ \ uint32\_t\ \_id;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Identification\ number\ (4\ bytes)}}
+\DoxyCodeLine{00014\ \ \ uint8\_t\ \_version;\ \ \ \ \ \ \ \textcolor{comment}{//\ Payload\ version\ number\ (1\ byte)}}
+\DoxyCodeLine{00015\ \ \ \textcolor{keywordtype}{bool}\ \_doorStatus;\ \ \ \ \ \ \ \textcolor{comment}{//\ Door\ status\ (1\ bit)}}
+\DoxyCodeLine{00016\ \ \ \textcolor{keywordtype}{bool}\ \_catchDetect;\ \ \ \ \ \ \textcolor{comment}{//\ Catch\ detection\ (1\ bit)}}
+\DoxyCodeLine{00017\ \ \ \textcolor{keywordtype}{bool}\ \_trapDisplacement;\ \textcolor{comment}{//\ Trap\ displacement\ (1\ bit)}}
+\DoxyCodeLine{00018\ \ \ uint8\_t\ \_batteryStatus;\ \textcolor{comment}{//\ Battery\ status\ (1\ byte)}}
+\DoxyCodeLine{00019\ \ \ uint32\_t\ \_unixTime;\ \ \ \ \ \textcolor{comment}{//\ Date\ and\ time\ (4\ bytes)}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ uint8\_t\ *\_buffer;\ \ \ \ }
+\DoxyCodeLine{00022\ \ \ uint8\_t\ \_bufferSize;\ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ uint8\_t\ extract\_uint8(\textcolor{keyword}{const}\ uint8\_t\ *buf,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\ =\ 0);}
+\DoxyCodeLine{00025\ \ \ uint16\_t\ extract\_uint16(\textcolor{keyword}{const}\ uint8\_t\ *buf,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\ =\ 0);}
+\DoxyCodeLine{00026\ \ \ uint32\_t\ extract\_uint32(\textcolor{keyword}{const}\ uint8\_t\ *buf,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\ =\ 0);}
+\DoxyCodeLine{00027\ \ \ \textcolor{keywordtype}{bool}\ extract\_bool(\textcolor{keyword}{const}\ uint8\_t\ *buf,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\ =\ 0,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ pos\ =\ 0);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00030\ \ \ \mbox{\hyperlink{classpayload_decoder_a51dcc83770e3fde9e97637a7859b4e56}{payloadDecoder}}();\ \ }
+\DoxyCodeLine{00031\ \ \ \mbox{\hyperlink{classpayload_decoder_ad711380e011043a3ffc5e3eccc167405}{\string~payloadDecoder}}();\ }
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{void}\ setPayload(uint8\_t\ *payload)\ \{\ \_buffer\ =\ payload;\ \}}
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{void}\ setPayloadSize(uint8\_t\ size)\ \{\ \_bufferSize\ =\ size;\ \}}
+\DoxyCodeLine{00035\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_decoder_ac67e6bac8906392d90b5752b63c96874}{decodePayload}}();}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \textcolor{keywordtype}{int}\ get\_id()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_id;\ \}}
+\DoxyCodeLine{00038\ \ \ \textcolor{keywordtype}{int}\ get\_version()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_version;\ \}}
+\DoxyCodeLine{00039\ \ \ \textcolor{keywordtype}{bool}\ get\_doorStatus()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_doorStatus;\ \}}
+\DoxyCodeLine{00040\ \ \ \textcolor{keywordtype}{bool}\ get\_catchDetect()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_catchDetect;\ \}}
+\DoxyCodeLine{00041\ \ \ \textcolor{keywordtype}{bool}\ get\_trapDisplacement()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_trapDisplacement;\ \}}
+\DoxyCodeLine{00042\ \ \ \textcolor{keywordtype}{int}\ get\_batteryStatus()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_batteryStatus;\ \}}
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{int}\ get\_unixTime()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_unixTime;\ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_decoder_a4dbebddbe405be47240987db4ba722a2}{printPayloadDecoded}}();}
+\DoxyCodeLine{00046\ \};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ DECODER\_H}}
+
+\end{DoxyCode}

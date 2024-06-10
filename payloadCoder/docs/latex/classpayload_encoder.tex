@@ -1,0 +1,255 @@
+\doxysection{payload\+Encoder Class Reference}
+\hypertarget{classpayload_encoder}{}\label{classpayload_encoder}\index{payloadEncoder@{payloadEncoder}}
+
+
+payload endoder class  
+
+
+
+
+{\ttfamily \#include $<$encoder.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classpayload_encoder_a5f7ada57492a9e402b6baac38a1acd22}{payload\+Encoder}} ()
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classpayload_encoder_aa31d5c1b4bd9ff3992620e29a8f3c62f}{\texorpdfstring{$\sim$}{\string~}payload\+Encoder}} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d}{print\+Payload\+Binary}} ()
+\begin{DoxyCompactList}\small\item\em print the payload in binary format This function prints the payload in binary format to the console. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpayload_encoder_acafa58e77b70241ebd475f6d02df7957}{compose\+Payload}} ()
+\begin{DoxyCompactList}\small\item\em compose payload This function composes the payload by adding all the sensor data and status information to the buffer. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{classpayload_encoder_a279316cc9471f69d677ae96663f5db4a}{get\+Payload\+Size}} ()
+\begin{DoxyCompactList}\small\item\em get payload size This function returns the size of the payload in bytes. \end{DoxyCompactList}\item 
+uint8\+\_\+t \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classpayload_encoder_a5eb6a363dc1e5c8bdae8e8d2848246fa}{get\+Payload}} ()
+\begin{DoxyCompactList}\small\item\em get payload This function returns a pointer to the buffer containing the encoded payload. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpayload_encoder_ae3f4bee8b60f9a06a03440f1364b99af}{set\+\_\+id}} (const uint32\+\_\+t id)
+\begin{DoxyCompactList}\small\item\em set the identification number This function sets the identification number in the payload. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpayload_encoder_ad0fa7fef2f32c300d107605f37fa6cdc}{set\+\_\+version}} (const uint8\+\_\+t version)
+\begin{DoxyCompactList}\small\item\em set the payload version number This function sets the payload version number in the payload. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpayload_encoder_a0032646e28444c47d7e54a2cdaf8224d}{set\+\_\+door\+Status}} (const bool door\+Status)
+\begin{DoxyCompactList}\small\item\em set the door status This function sets the door status in the payload. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpayload_encoder_a2ccedff56dc89536090b0470fa15f7ed}{set\+\_\+catch\+Detect}} (const bool catch\+Detect)
+\begin{DoxyCompactList}\small\item\em set the catch detection status This function sets the catch detection status in the payload. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpayload_encoder_a7c651a75d9d478c5b6fb59e5ba57f92f}{set\+\_\+trap\+Displacement}} (const bool trap\+Displacement)
+\begin{DoxyCompactList}\small\item\em set the trap displacement status This function sets the trap displacement status in the payload. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpayload_encoder_af24887bf549d4cf5f69e72ef939832c3}{set\+\_\+battery\+Status}} (const uint8\+\_\+t battery\+Status)
+\begin{DoxyCompactList}\small\item\em set the battery status This function sets the battery status in the payload. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpayload_encoder_a514be59ab37d40191c474323c18739f8}{set\+\_\+unix\+Time}} (const uint32\+\_\+t unix\+Time)
+\begin{DoxyCompactList}\small\item\em set the date and time This function sets the date and time in the payload. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classpayload_encoder_a2d177e35b0f8e1cf510a41a29e3016b8}{print\+Payload\+Encoded}} ()
+\begin{DoxyCompactList}\small\item\em print the encoded payload This function prints the encoded payload in a human-\/readable format to the console. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+payload endoder class 
+
+This class wil encode variables for the Lo\+Ra\+WAN application in to a single payload The class is setup using both .h and .cpp files where the setters and getters are placed in to the .cpp file. The {\ttfamily \doxylink{classpayload_encoder}{payload\+Encoder}} class is responsible for encoding payload data that includes various sensor readings and status information. It provides methods to set individual data fields and compose the payload. The encoded payload can be retrieved using the {\ttfamily \doxylink{classpayload_encoder_a5eb6a363dc1e5c8bdae8e8d2848246fa}{get\+Payload()}} method. The size of the payload can be obtained using the {\ttfamily \doxylink{classpayload_encoder_a279316cc9471f69d677ae96663f5db4a}{get\+Payload\+Size()}} method. The encoded payload can be printed in binary format using the {\ttfamily \doxylink{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d}{print\+Payload\+Binary()}} method. The encoded payload can be printed in a human-\/readable format using the {\ttfamily \doxylink{classpayload_encoder_a2d177e35b0f8e1cf510a41a29e3016b8}{print\+Payload\+Encoded()}} method. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classpayload_encoder_a5f7ada57492a9e402b6baac38a1acd22}\index{payloadEncoder@{payloadEncoder}!payloadEncoder@{payloadEncoder}}
+\index{payloadEncoder@{payloadEncoder}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{payloadEncoder()}{payloadEncoder()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_a5f7ada57492a9e402b6baac38a1acd22} 
+payload\+Encoder\+::payload\+Encoder (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Constructor. 
+
+Constructs a new \doxylink{classpayload_encoder}{payload\+Encoder} object.
+
+This constructor initializes the member variables of the \doxylink{classpayload_encoder}{payload\+Encoder} class, including \+\_\+id, \+\_\+version, \+\_\+door\+Status, \+\_\+catch\+Detect, \+\_\+trap\+Displacement, \+\_\+battery\+Status, and \+\_\+unix\+Time. It also allocates memory for the \+\_\+buffer using malloc() and sets \+\_\+buffer\+Size to 0. \Hypertarget{classpayload_encoder_aa31d5c1b4bd9ff3992620e29a8f3c62f}\index{payloadEncoder@{payloadEncoder}!````~payloadEncoder@{\texorpdfstring{$\sim$}{\string~}payloadEncoder}}
+\index{````~payloadEncoder@{\texorpdfstring{$\sim$}{\string~}payloadEncoder}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}payloadEncoder()}{\string~payloadEncoder()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_aa31d5c1b4bd9ff3992620e29a8f3c62f} 
+payload\+Encoder\+::\texorpdfstring{$\sim$}{\string~}payload\+Encoder (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Destructor. 
+
+Destructor for the \doxylink{classpayload_encoder}{payload\+Encoder} class.
+
+This destructor frees the memory allocated for the buffer.
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classpayload_encoder_acafa58e77b70241ebd475f6d02df7957}\index{payloadEncoder@{payloadEncoder}!composePayload@{composePayload}}
+\index{composePayload@{composePayload}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{composePayload()}{composePayload()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_acafa58e77b70241ebd475f6d02df7957} 
+void payload\+Encoder\+::compose\+Payload (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+compose payload This function composes the payload by adding all the sensor data and status information to the buffer. 
+
+Composes the payload by adding various data elements to the buffer.
+
+This function initializes the buffer size and adds data elements such as ID, version, door status, catch detection, trap displacement, battery status, and UNIX time to the buffer. It also prints the payload size in bytes for debugging purposes.
+
+show payload size in bytes for debugging purposes\Hypertarget{classpayload_encoder_a5eb6a363dc1e5c8bdae8e8d2848246fa}\index{payloadEncoder@{payloadEncoder}!getPayload@{getPayload}}
+\index{getPayload@{getPayload}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{getPayload()}{getPayload()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_a5eb6a363dc1e5c8bdae8e8d2848246fa} 
+uint8\+\_\+t \texorpdfstring{$\ast$}{*} payload\+Encoder\+::get\+Payload (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+get payload This function returns a pointer to the buffer containing the encoded payload. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to the buffer containing the encoded payload. 
+\end{DoxyReturn}
+\Hypertarget{classpayload_encoder_a279316cc9471f69d677ae96663f5db4a}\index{payloadEncoder@{payloadEncoder}!getPayloadSize@{getPayloadSize}}
+\index{getPayloadSize@{getPayloadSize}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{getPayloadSize()}{getPayloadSize()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_a279316cc9471f69d677ae96663f5db4a} 
+uint8\+\_\+t payload\+Encoder\+::get\+Payload\+Size (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+get payload size This function returns the size of the payload in bytes. 
+
+\begin{DoxyReturn}{Returns}
+The size of the payload in bytes. 
+\end{DoxyReturn}
+\Hypertarget{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d}\index{payloadEncoder@{payloadEncoder}!printPayloadBinary@{printPayloadBinary}}
+\index{printPayloadBinary@{printPayloadBinary}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{printPayloadBinary()}{printPayloadBinary()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d} 
+void payload\+Encoder\+::print\+Payload\+Binary (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+print the payload in binary format This function prints the payload in binary format to the console. 
+
+Prints the payload in binary format for debugging purposes.
+
+This function converts each byte in the payload buffer to its binary representation and prints it to the standard output. The binary representation is displayed as a sequence of 8 bits, separated by spaces.
+
+\begin{DoxyNote}{Note}
+This function assumes that the payload buffer has been properly initialized and contains valid data.
+\end{DoxyNote}
+convert to binary\Hypertarget{classpayload_encoder_a2d177e35b0f8e1cf510a41a29e3016b8}\index{payloadEncoder@{payloadEncoder}!printPayloadEncoded@{printPayloadEncoded}}
+\index{printPayloadEncoded@{printPayloadEncoded}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{printPayloadEncoded()}{printPayloadEncoded()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_a2d177e35b0f8e1cf510a41a29e3016b8} 
+void payload\+Encoder\+::print\+Payload\+Encoded (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+print the encoded payload This function prints the encoded payload in a human-\/readable format to the console. 
+
+Prints the encoded payload information. This function prints the ID, version, door status, catch detect, trap displacement, battery status, and Unix time of the encoded payload.\Hypertarget{classpayload_encoder_af24887bf549d4cf5f69e72ef939832c3}\index{payloadEncoder@{payloadEncoder}!set\_batteryStatus@{set\_batteryStatus}}
+\index{set\_batteryStatus@{set\_batteryStatus}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{set\_batteryStatus()}{set\_batteryStatus()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_af24887bf549d4cf5f69e72ef939832c3} 
+void payload\+Encoder\+::set\+\_\+battery\+Status (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t}]{battery\+Status}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+set the battery status This function sets the battery status in the payload. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em battery\+Status} & The battery status to be set in the payload. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classpayload_encoder_a2ccedff56dc89536090b0470fa15f7ed}\index{payloadEncoder@{payloadEncoder}!set\_catchDetect@{set\_catchDetect}}
+\index{set\_catchDetect@{set\_catchDetect}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{set\_catchDetect()}{set\_catchDetect()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_a2ccedff56dc89536090b0470fa15f7ed} 
+void payload\+Encoder\+::set\+\_\+catch\+Detect (\begin{DoxyParamCaption}\item[{const bool}]{catch\+Detect}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+set the catch detection status This function sets the catch detection status in the payload. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em catch\+Detect} & The catch detection status to be set in the payload. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classpayload_encoder_a0032646e28444c47d7e54a2cdaf8224d}\index{payloadEncoder@{payloadEncoder}!set\_doorStatus@{set\_doorStatus}}
+\index{set\_doorStatus@{set\_doorStatus}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{set\_doorStatus()}{set\_doorStatus()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_a0032646e28444c47d7e54a2cdaf8224d} 
+void payload\+Encoder\+::set\+\_\+door\+Status (\begin{DoxyParamCaption}\item[{const bool}]{door\+Status}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+set the door status This function sets the door status in the payload. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em door\+Status} & The door status to be set in the payload. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classpayload_encoder_ae3f4bee8b60f9a06a03440f1364b99af}\index{payloadEncoder@{payloadEncoder}!set\_id@{set\_id}}
+\index{set\_id@{set\_id}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{set\_id()}{set\_id()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_ae3f4bee8b60f9a06a03440f1364b99af} 
+void payload\+Encoder\+::set\+\_\+id (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t}]{id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+set the identification number This function sets the identification number in the payload. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & The identification number to be set in the payload. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classpayload_encoder_a7c651a75d9d478c5b6fb59e5ba57f92f}\index{payloadEncoder@{payloadEncoder}!set\_trapDisplacement@{set\_trapDisplacement}}
+\index{set\_trapDisplacement@{set\_trapDisplacement}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{set\_trapDisplacement()}{set\_trapDisplacement()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_a7c651a75d9d478c5b6fb59e5ba57f92f} 
+void payload\+Encoder\+::set\+\_\+trap\+Displacement (\begin{DoxyParamCaption}\item[{const bool}]{trap\+Displacement}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+set the trap displacement status This function sets the trap displacement status in the payload. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em trap\+Displacement} & The trap displacement status to be set in the payload. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classpayload_encoder_a514be59ab37d40191c474323c18739f8}\index{payloadEncoder@{payloadEncoder}!set\_unixTime@{set\_unixTime}}
+\index{set\_unixTime@{set\_unixTime}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{set\_unixTime()}{set\_unixTime()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_a514be59ab37d40191c474323c18739f8} 
+void payload\+Encoder\+::set\+\_\+unix\+Time (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t}]{unix\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+set the date and time This function sets the date and time in the payload. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em unix\+Time} & The date and time to be set in the payload. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classpayload_encoder_ad0fa7fef2f32c300d107605f37fa6cdc}\index{payloadEncoder@{payloadEncoder}!set\_version@{set\_version}}
+\index{set\_version@{set\_version}!payloadEncoder@{payloadEncoder}}
+\doxysubsubsection{\texorpdfstring{set\_version()}{set\_version()}}
+{\footnotesize\ttfamily \label{classpayload_encoder_ad0fa7fef2f32c300d107605f37fa6cdc} 
+void payload\+Encoder\+::set\+\_\+version (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t}]{version}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+set the payload version number This function sets the payload version number in the payload. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em version} & The payload version number to be set in the payload. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{encoder_8h}{encoder.\+h}}\item 
+encoder.\+cpp\end{DoxyCompactItemize}
