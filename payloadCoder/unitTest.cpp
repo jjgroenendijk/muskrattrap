@@ -7,6 +7,13 @@
 
 using namespace std;
 
+/**
+ * @brief Test case for the payloadEncoder and payloadDecoder classes.
+ * 
+ * This test case verifies the functionality of the payloadEncoder and payloadDecoder classes
+ * by setting test variables, composing a payload, encoding and decoding the payload, and
+ * comparing the decoded variables with the original test variables.
+ */
 void test01()
 {
 

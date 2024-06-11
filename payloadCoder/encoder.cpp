@@ -1,6 +1,7 @@
 #include "encoder.h"
 #include <iostream> // only used for debug output
 #include <stdlib.h> // malloc()
+#include <bitset>   // std::bitset
 
 /**
  * @brief Constructs a new payloadEncoder object.

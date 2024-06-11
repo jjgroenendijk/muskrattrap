@@ -71,6 +71,12 @@ public:
     payloadEncoder();  ///< Constructor
     ~payloadEncoder(); ///< Destructor
 
+    /// Need to find out out what this does exactly. It removes compiling warnings.
+    /// @brief  copy constructor
+    /// @param payloadEncoder object
+    payloadEncoder(const payloadEncoder &) = delete;
+    payloadEncoder &operator=(const payloadEncoder &) = delete;
+
     /// @brief print the payload in binary format
     /// This function prints the payload in binary format to the console.
     void printPayloadBinary();
