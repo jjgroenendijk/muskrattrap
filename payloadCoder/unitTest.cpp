@@ -41,7 +41,7 @@ void test01()
 
     // Test 1: compose payload
     encoder.composePayload();
-    encoder.printPayloadBinary(); // debug
+    // encoder.printPayloadBinary(); // debug
 
     // Test 1: get payload buffer and size
     uint8_t *payloadBuffer = encoder.getPayload();
@@ -113,7 +113,7 @@ void test02()
 
     // Compose payload
     encoder.composePayload();
-    encoder.printPayloadBinary(); // debug
+    // encoder.printPayloadBinary(); // debug
 
     // Get payload buffer and size
     uint8_t *payloadBuffer = encoder.getPayload();

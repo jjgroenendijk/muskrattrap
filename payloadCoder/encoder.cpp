@@ -130,9 +130,10 @@ unsigned char payloadEncoder::add_bool(unsigned char idx_in, bool value, unsigne
     return (idx_in);
 }
 
+/**
 void payloadEncoder::printPayloadBinary()
 {
-    /**
+    
      * Prints the payload in binary format for debugging purposes.
      *
      * This function converts each byte in the payload buffer to its binary representation
@@ -141,7 +142,6 @@ void payloadEncoder::printPayloadBinary()
      *
      * @note This function assumes that the payload buffer has been properly initialized
      *       and contains valid data.
-     */
 
     std::cout << "Encoder payload binary: ";
     for (unsigned int i = 0; i < _bufferSize; ++i)
@@ -151,6 +151,7 @@ void payloadEncoder::printPayloadBinary()
     }
     std::cout << std::endl;
 }
+*/
 
 void payloadEncoder::printPayloadEncoded()
 {
