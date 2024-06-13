@@ -1,5 +1,6 @@
 {
     "sketch": "nodeCode/nodeCode.ino",
     "board": "arduino:avr:leonardo",
-    "port": "/dev/tty.usbmodem11301"
+    "port": "/dev/tty.usbmodem1301",
+    "programmer": "avrisp"
 }
