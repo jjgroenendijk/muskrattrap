@@ -14,9 +14,17 @@ payload endoder class
 \item 
 \mbox{\hyperlink{classpayload_encoder_a5f7ada57492a9e402b6baac38a1acd22}{payload\+Encoder}} ()
 \begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{classpayload_encoder_aa31d5c1b4bd9ff3992620e29a8f3c62f}{\texorpdfstring{$\sim$}{\string~}payload\+Encoder}} ()
+\Hypertarget{classpayload_encoder_aa31d5c1b4bd9ff3992620e29a8f3c62f}\label{classpayload_encoder_aa31d5c1b4bd9ff3992620e29a8f3c62f} 
+{\bfseries \texorpdfstring{$\sim$}{\string~}payload\+Encoder} ()
 \begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d}{print\+Payload\+Binary}} ()
+\Hypertarget{classpayload_encoder_ab22775478383d7abc3efb6c8bf5fe1ef}\label{classpayload_encoder_ab22775478383d7abc3efb6c8bf5fe1ef} 
+{\bfseries payload\+Encoder} (const \mbox{\hyperlink{classpayload_encoder}{payload\+Encoder}} \&)=delete
+\begin{DoxyCompactList}\small\item\em Copy constructor disabled. \end{DoxyCompactList}\item 
+\Hypertarget{classpayload_encoder_a30ebd684f6ba29696e124f2f78374386}\label{classpayload_encoder_a30ebd684f6ba29696e124f2f78374386} 
+\mbox{\hyperlink{classpayload_encoder}{payload\+Encoder}} \& {\bfseries operator=} (const \mbox{\hyperlink{classpayload_encoder}{payload\+Encoder}} \&)=delete
+\begin{DoxyCompactList}\small\item\em Assignment operator disabled. \end{DoxyCompactList}\item 
+\Hypertarget{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d}\label{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d} 
+void {\bfseries print\+Payload\+Binary} ()
 \begin{DoxyCompactList}\small\item\em print the payload in binary format This function prints the payload in binary format to the console. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classpayload_encoder_acafa58e77b70241ebd475f6d02df7957}{compose\+Payload}} ()
 \begin{DoxyCompactList}\small\item\em compose payload This function composes the payload by adding all the sensor data and status information to the buffer. \end{DoxyCompactList}\item 
@@ -60,19 +68,7 @@ Constructor.
 
 Constructs a new \doxylink{classpayload_encoder}{payload\+Encoder} object.
 
-This constructor initializes the member variables of the \doxylink{classpayload_encoder}{payload\+Encoder} class, including \+\_\+id, \+\_\+version, \+\_\+door\+Status, \+\_\+catch\+Detect, \+\_\+trap\+Displacement, \+\_\+battery\+Status, and \+\_\+unix\+Time. It also allocates memory for the \+\_\+buffer using malloc() and sets \+\_\+buffer\+Size to 0. \Hypertarget{classpayload_encoder_aa31d5c1b4bd9ff3992620e29a8f3c62f}\index{payloadEncoder@{payloadEncoder}!````~payloadEncoder@{\texorpdfstring{$\sim$}{\string~}payloadEncoder}}
-\index{````~payloadEncoder@{\texorpdfstring{$\sim$}{\string~}payloadEncoder}!payloadEncoder@{payloadEncoder}}
-\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}payloadEncoder()}{\string~payloadEncoder()}}
-{\footnotesize\ttfamily \label{classpayload_encoder_aa31d5c1b4bd9ff3992620e29a8f3c62f} 
-payload\+Encoder\+::\texorpdfstring{$\sim$}{\string~}payload\+Encoder (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
-
-
-
-Destructor. 
-
-Destructor for the \doxylink{classpayload_encoder}{payload\+Encoder} class.
-
-This destructor frees the memory allocated for the buffer.
+This constructor initializes the member variables of the \doxylink{classpayload_encoder}{payload\+Encoder} class, including \+\_\+id, \+\_\+version, \+\_\+door\+Status, \+\_\+catch\+Detect, \+\_\+trap\+Displacement, \+\_\+battery\+Status, and \+\_\+unix\+Time. It also allocates memory for the \+\_\+buffer using malloc() and sets \+\_\+buffer\+Size to 0. 
 
 \doxysubsection{Member Function Documentation}
 \Hypertarget{classpayload_encoder_acafa58e77b70241ebd475f6d02df7957}\index{payloadEncoder@{payloadEncoder}!composePayload@{composePayload}}
@@ -115,24 +111,7 @@ get payload size This function returns the size of the payload in bytes.
 \begin{DoxyReturn}{Returns}
 The size of the payload in bytes. 
 \end{DoxyReturn}
-\Hypertarget{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d}\index{payloadEncoder@{payloadEncoder}!printPayloadBinary@{printPayloadBinary}}
-\index{printPayloadBinary@{printPayloadBinary}!payloadEncoder@{payloadEncoder}}
-\doxysubsubsection{\texorpdfstring{printPayloadBinary()}{printPayloadBinary()}}
-{\footnotesize\ttfamily \label{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d} 
-void payload\+Encoder\+::print\+Payload\+Binary (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
-
-
-
-print the payload in binary format This function prints the payload in binary format to the console. 
-
-Prints the payload in binary format for debugging purposes.
-
-This function converts each byte in the payload buffer to its binary representation and prints it to the standard output. The binary representation is displayed as a sequence of 8 bits, separated by spaces.
-
-\begin{DoxyNote}{Note}
-This function assumes that the payload buffer has been properly initialized and contains valid data.
-\end{DoxyNote}
-convert to binary\Hypertarget{classpayload_encoder_a2d177e35b0f8e1cf510a41a29e3016b8}\index{payloadEncoder@{payloadEncoder}!printPayloadEncoded@{printPayloadEncoded}}
+\Hypertarget{classpayload_encoder_a2d177e35b0f8e1cf510a41a29e3016b8}\index{payloadEncoder@{payloadEncoder}!printPayloadEncoded@{printPayloadEncoded}}
 \index{printPayloadEncoded@{printPayloadEncoded}!payloadEncoder@{payloadEncoder}}
 \doxysubsubsection{\texorpdfstring{printPayloadEncoded()}{printPayloadEncoded()}}
 {\footnotesize\ttfamily \label{classpayload_encoder_a2d177e35b0f8e1cf510a41a29e3016b8} 
@@ -142,7 +121,24 @@ void payload\+Encoder\+::print\+Payload\+Encoded (\begin{DoxyParamCaption}{}{}\e
 
 print the encoded payload This function prints the encoded payload in a human-\/readable format to the console. 
 
-Prints the encoded payload information. This function prints the ID, version, door status, catch detect, trap displacement, battery status, and Unix time of the encoded payload.\Hypertarget{classpayload_encoder_af24887bf549d4cf5f69e72ef939832c3}\index{payloadEncoder@{payloadEncoder}!set\_batteryStatus@{set\_batteryStatus}}
+void \doxylink{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d}{payload\+Encoder\+::print\+Payload\+Binary()} \{ \begin{DoxyVerb}   Prints the payload in binary format for debugging purposes.
+
+   This function converts each byte in the payload buffer to its binary representation
+   and prints it to the standard output. The binary representation is displayed as a
+   sequence of 8 bits, separated by spaces.
+
+   @note This function assumes that the payload buffer has been properly initialized
+         and contains valid data.
+
+std::cout << "Encoder payload binary: ";
+for (unsigned int i = 0; i < _bufferSize; ++i)
+{
+    std::bitset<8> binary(_buffer[i]); /// convert to binary
+    std::cout << binary << " ";
+}
+std::cout << std::endl;
+\end{DoxyVerb}
+ \} Prints the encoded payload information. This function prints the ID, version, door status, catch detect, trap displacement, battery status, and Unix time of the encoded payload.\Hypertarget{classpayload_encoder_af24887bf549d4cf5f69e72ef939832c3}\index{payloadEncoder@{payloadEncoder}!set\_batteryStatus@{set\_batteryStatus}}
 \index{set\_batteryStatus@{set\_batteryStatus}!payloadEncoder@{payloadEncoder}}
 \doxysubsubsection{\texorpdfstring{set\_batteryStatus()}{set\_batteryStatus()}}
 {\footnotesize\ttfamily \label{classpayload_encoder_af24887bf549d4cf5f69e72ef939832c3} 

@@ -19,47 +19,48 @@
 \DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_trapDisplacement;\ }
 \DoxyCodeLine{00039\ \ \ \ \ uint8\_t\ \_batteryStatus;\ }
 \DoxyCodeLine{00040\ \ \ \ \ uint32\_t\ \_unixTime;\ \ \ \ \ }
-\DoxyCodeLine{00041\ }
-\DoxyCodeLine{00042\ \ \ \ \ uint8\_t\ *\_buffer;\ \ \ \ }
-\DoxyCodeLine{00043\ \ \ \ \ uint8\_t\ \_bufferSize;\ }
-\DoxyCodeLine{00044\ }
-\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ add\_uint8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\_in,\ \textcolor{keyword}{const}\ uint8\_t\ value);}
-\DoxyCodeLine{00050\ }
-\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ add\_uint16(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\_in,\ \textcolor{keyword}{const}\ uint16\_t\ value);}
-\DoxyCodeLine{00056\ }
-\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ add\_uint32(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\_in,\ uint32\_t\ value);}
-\DoxyCodeLine{00062\ }
-\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ add\_bool(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\_in,\ \textcolor{keywordtype}{bool}\ value,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ pos);}
-\DoxyCodeLine{00069\ }
-\DoxyCodeLine{00070\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00071\ \ \ \ \ \mbox{\hyperlink{classpayload_encoder_a5f7ada57492a9e402b6baac38a1acd22}{payloadEncoder}}();\ \ }
-\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{classpayload_encoder_aa31d5c1b4bd9ff3992620e29a8f3c62f}{\string~payloadEncoder}}();\ }
-\DoxyCodeLine{00073\ }
-\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d}{printPayloadBinary}}();}
-\DoxyCodeLine{00077\ }
-\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_acafa58e77b70241ebd475f6d02df7957}{composePayload}}();}
-\DoxyCodeLine{00081\ }
-\DoxyCodeLine{00085\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{classpayload_encoder_a279316cc9471f69d677ae96663f5db4a}{getPayloadSize}}()\ \{\ \textcolor{keywordflow}{return}\ \_bufferSize;\ \};}
-\DoxyCodeLine{00086\ }
-\DoxyCodeLine{00090\ \ \ \ \ uint8\_t\ *\mbox{\hyperlink{classpayload_encoder_a5eb6a363dc1e5c8bdae8e8d2848246fa}{getPayload}}()\ \{\ \textcolor{keywordflow}{return}\ \_buffer;\ \};}
-\DoxyCodeLine{00091\ }
-\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_ae3f4bee8b60f9a06a03440f1364b99af}{set\_id}}(\textcolor{keyword}{const}\ uint32\_t\ \textcolor{keywordtype}{id})\ \{\ \_id\ =\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(id);\ \}}
-\DoxyCodeLine{00096\ }
-\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_ad0fa7fef2f32c300d107605f37fa6cdc}{set\_version}}(\textcolor{keyword}{const}\ uint8\_t\ version)\ \{\ \_version\ =\ \textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(version);\ \}}
-\DoxyCodeLine{00101\ }
-\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a0032646e28444c47d7e54a2cdaf8224d}{set\_doorStatus}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ doorStatus)\ \{\ \_doorStatus\ =\ doorStatus;\ \}}
-\DoxyCodeLine{00106\ }
-\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a2ccedff56dc89536090b0470fa15f7ed}{set\_catchDetect}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ catchDetect)\ \{\ \_catchDetect\ =\ catchDetect;\ \}}
-\DoxyCodeLine{00111\ }
-\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a7c651a75d9d478c5b6fb59e5ba57f92f}{set\_trapDisplacement}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ trapDisplacement)\ \{\ \_trapDisplacement\ =\ trapDisplacement;\ \}}
-\DoxyCodeLine{00116\ }
-\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_af24887bf549d4cf5f69e72ef939832c3}{set\_batteryStatus}}(\textcolor{keyword}{const}\ uint8\_t\ batteryStatus)\ \{\ \_batteryStatus\ =\ \textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(batteryStatus);\ \}}
-\DoxyCodeLine{00121\ }
-\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a514be59ab37d40191c474323c18739f8}{set\_unixTime}}(\textcolor{keyword}{const}\ uint32\_t\ unixTime)\ \{\ \_unixTime\ =\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(unixTime);\ \}}
-\DoxyCodeLine{00126\ }
-\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a2d177e35b0f8e1cf510a41a29e3016b8}{printPayloadEncoded}}();}
-\DoxyCodeLine{00130\ \};}
-\DoxyCodeLine{00131\ }
-\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ENCODER\_H}}
+\DoxyCodeLine{00041\ \ \ \ \ uint8\_t\ *\_buffer;\ \ \ \ }
+\DoxyCodeLine{00042\ \ \ \ \ uint8\_t\ \_bufferSize;\ }
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ add\_uint8(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\_in,\ \textcolor{keyword}{const}\ uint8\_t\ value);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ add\_uint16(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\_in,\ \textcolor{keyword}{const}\ uint16\_t\ value);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ add\_uint32(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\_in,\ uint32\_t\ value);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ add\_bool(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ idx\_in,\ \textcolor{keywordtype}{bool}\ value,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ pos);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00070\ \ \ \ \ \mbox{\hyperlink{classpayload_encoder_a5f7ada57492a9e402b6baac38a1acd22}{payloadEncoder}}();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00071\ \ \ \ \ \mbox{\hyperlink{classpayload_encoder_aa31d5c1b4bd9ff3992620e29a8f3c62f}{\string~payloadEncoder}}();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{classpayload_encoder_ab22775478383d7abc3efb6c8bf5fe1ef}{payloadEncoder}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classpayload_encoder}{payloadEncoder}}\ \&)\ =\ \textcolor{keyword}{delete};\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{classpayload_encoder}{payloadEncoder}}\ \&\mbox{\hyperlink{classpayload_encoder_a30ebd684f6ba29696e124f2f78374386}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classpayload_encoder}{payloadEncoder}}\ \&)\ =\ \textcolor{keyword}{delete};\ }
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a7f571901d7ab6265341e2025fb521c6d}{printPayloadBinary}}();}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_acafa58e77b70241ebd475f6d02df7957}{composePayload}}();}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00086\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{classpayload_encoder_a279316cc9471f69d677ae96663f5db4a}{getPayloadSize}}()\ \{\ \textcolor{keywordflow}{return}\ \_bufferSize;\ \};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00091\ \ \ \ \ uint8\_t\ *\mbox{\hyperlink{classpayload_encoder_a5eb6a363dc1e5c8bdae8e8d2848246fa}{getPayload}}()\ \{\ \textcolor{keywordflow}{return}\ \_buffer;\ \};}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_ae3f4bee8b60f9a06a03440f1364b99af}{set\_id}}(\textcolor{keyword}{const}\ uint32\_t\ \textcolor{keywordtype}{id})\ \{\ \_id\ =\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(id);\ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_ad0fa7fef2f32c300d107605f37fa6cdc}{set\_version}}(\textcolor{keyword}{const}\ uint8\_t\ version)\ \{\ \_version\ =\ \textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(version);\ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a0032646e28444c47d7e54a2cdaf8224d}{set\_doorStatus}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ doorStatus)\ \{\ \_doorStatus\ =\ doorStatus;\ \}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a2ccedff56dc89536090b0470fa15f7ed}{set\_catchDetect}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ catchDetect)\ \{\ \_catchDetect\ =\ catchDetect;\ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a7c651a75d9d478c5b6fb59e5ba57f92f}{set\_trapDisplacement}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ trapDisplacement)\ \{\ \_trapDisplacement\ =\ trapDisplacement;\ \}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_af24887bf549d4cf5f69e72ef939832c3}{set\_batteryStatus}}(\textcolor{keyword}{const}\ uint8\_t\ batteryStatus)\ \{\ \_batteryStatus\ =\ \textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(batteryStatus);\ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a514be59ab37d40191c474323c18739f8}{set\_unixTime}}(\textcolor{keyword}{const}\ uint32\_t\ unixTime)\ \{\ \_unixTime\ =\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(unixTime);\ \}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classpayload_encoder_a2d177e35b0f8e1cf510a41a29e3016b8}{printPayloadEncoded}}();}
+\DoxyCodeLine{00131\ \};}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ENCODER\_H}}
 
 \end{DoxyCode}
