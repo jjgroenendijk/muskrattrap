@@ -38,7 +38,6 @@ private:
     bool _trapDisplacement; ///< Trap displacement (1 bit)
     uint8_t _batteryStatus; ///< Battery status (1 byte)
     uint32_t _unixTime;     ///< Date and time (4 bytes)
-
     uint8_t *_buffer;    ///< buffer containing payload with sensor data
     uint8_t _bufferSize; ///< Size of payload for housekeeping.
 
@@ -68,14 +67,10 @@ private:
     unsigned char add_bool(unsigned char idx_in, bool value, unsigned int pos);
 
 public:
-    payloadEncoder();  ///< Constructor
-    ~payloadEncoder(); ///< Destructor
-
-    /// Need to find out out what this does exactly. It removes compiling warnings.
-    /// @brief  copy constructor
-    /// @param payloadEncoder object
-    payloadEncoder(const payloadEncoder &) = delete;
-    payloadEncoder &operator=(const payloadEncoder &) = delete;
+    payloadEncoder();                                           ///< Constructor
+    ~payloadEncoder();                                          ///< Destructor
+    payloadEncoder(const payloadEncoder &) = delete;            ///< Copy constructor disabled
+    payloadEncoder &operator=(const payloadEncoder &) = delete; ///< Assignment operator disabled
 
     /// @brief print the payload in binary format
     /// This function prints the payload in binary format to the console.

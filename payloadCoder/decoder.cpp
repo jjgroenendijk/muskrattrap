@@ -2,13 +2,23 @@
 #include <iostream> // cout, endl // debugging only
 
 /// @brief Constructs a new payloadDecoder object.
-payloadDecoder::payloadDecoder() : _buffer{nullptr}
+payloadDecoder::payloadDecoder() : _id{0},
+                                   _version{0},
+                                   _doorStatus{0},
+                                   _catchDetect{0},
+                                   _trapDisplacement{0},
+                                   _batteryStatus{0},
+                                   _unixTime{0},
+                                   _buffer{nullptr},
+                                   _bufferSize{0}
 {
+    // Constructor body
 }
 
 /// @brief Destructor for the payloadDecoder class.
 payloadDecoder::~payloadDecoder()
 {
+    delete[] _buffer;
 }
 
 void payloadDecoder::decodePayload()

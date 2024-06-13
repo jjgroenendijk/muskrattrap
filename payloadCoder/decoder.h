@@ -17,9 +17,8 @@ private:
     bool _trapDisplacement; ///< Trap displacement (1 bit)
     uint8_t _batteryStatus; ///< Battery status (1 byte)
     uint32_t _unixTime;     ///< Date and time (4 bytes)
-
-    uint8_t *_buffer;    ///< buffer containing payload with sensor data
-    uint8_t _bufferSize; ///< Size of payload for housekeeping.
+    uint8_t *_buffer;       ///< buffer containing payload with sensor data
+    uint8_t _bufferSize;    ///< Size of payload for housekeeping.
 
     /// \brief extract uint8 from payload
     /// \param buf pointer to buffer
@@ -47,8 +46,10 @@ private:
     bool extract_bool(const uint8_t *buf, const unsigned char idx = 0, unsigned int pos = 0);
 
 public:
-    payloadDecoder();  ///< Constructor
-    ~payloadDecoder(); ///< Destuctor
+    payloadDecoder();                                           ///< Constructor
+    ~payloadDecoder();                                          ///< Destuctor
+    payloadDecoder(const payloadDecoder &) = delete;            ///< Copy constructor disabled
+    payloadDecoder &operator=(const payloadDecoder &) = delete; ///< Assignment operator disabled
 
     /// \brief set payload
     /// Copy the payload to the buffer
