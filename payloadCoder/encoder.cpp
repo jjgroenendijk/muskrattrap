@@ -1,11 +1,10 @@
 #include "encoder.h"
 #include <iostream> // only used for debug output
 #include <stdlib.h> // malloc()
-#include <bitset>   // std::bitset
 
 /**
  * @brief Constructs a new payloadEncoder object.
- * 
+ *
  * This constructor initializes the member variables of the payloadEncoder class,
  * including _id, _version, _doorStatus, _catchDetect, _trapDisplacement,
  * _batteryStatus, and _unixTime. It also allocates memory for the _buffer using
@@ -26,7 +25,7 @@ payloadEncoder::payloadEncoder() : _id{0},
 
 payloadEncoder::~payloadEncoder()
 {
-    // Destructor
+    free(_buffer);
 }
 
 void payloadEncoder::composePayload()

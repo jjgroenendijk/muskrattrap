@@ -26,7 +26,7 @@ void payloadDecoder::decodePayload()
     /**
      * Decodes the payload data.
      * This function prints the payload in binary format and extracts various data fields from the payload buffer.
-     */
+
     std::cout << "Decoder payload binary: ";
     for (int i = 0; i < _bufferSize; i++)
     {
@@ -36,8 +36,8 @@ void payloadDecoder::decodePayload()
         }
         std::cout << " ";
     }
-
     std::cout << std::endl;
+    */
 
     _id = static_cast<int>(extract_uint32(_buffer, 0));
     _version = static_cast<int>(extract_uint8(_buffer, 4));
