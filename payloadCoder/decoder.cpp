@@ -18,7 +18,7 @@ payloadDecoder::payloadDecoder() : _id{0},
 /// @brief Destructor for the payloadDecoder class.
 payloadDecoder::~payloadDecoder()
 {
-    delete[] _buffer;
+    // Destructor
 }
 
 void payloadDecoder::decodePayload()

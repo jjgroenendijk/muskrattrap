@@ -18,7 +18,6 @@ payloadEncoder::payloadEncoder() : _id{0},
                                    _trapDisplacement{0},
                                    _batteryStatus{0},
                                    _unixTime{0},
-
                                    _buffer{NULL},
                                    _bufferSize{0}
 {
@@ -27,12 +26,7 @@ payloadEncoder::payloadEncoder() : _id{0},
 
 payloadEncoder::~payloadEncoder()
 {
-    /**
-     * @brief Destructor for the payloadEncoder class.
-     *
-     * This destructor frees the memory allocated for the buffer.
-     */
-    free(_buffer);
+    // Destructor
 }
 
 void payloadEncoder::composePayload()
