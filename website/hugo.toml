@@ -10,6 +10,9 @@ enableGitInfo = true
     BookEditPath = 'edit/main/website'
     BookSection = '*'
 
+[markup.goldmark.renderer]
+  unsafe = true
+
 [menu]
 # [[menu.before]]
 
