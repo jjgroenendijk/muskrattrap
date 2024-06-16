@@ -1,0 +1,51 @@
+services:
+    nodered:
+        image: nodered/node-red:latest
+        hostname: nodered
+        container_name: nodered
+        restart: unless-stopped
+        environment:
+        - TZ=Europe/Amsterdam
+        network_mode: host
+        volumes:
+        - ./node-red-data:/data
+
+    mariadb:
+        image: lscr.io/linuxserver/mariadb:latest
+        container_name: mariadb
+        hostname: mariadb
+        restart: unless-stopped
+        environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Europe/Amsterdam
+        - MYSQL_ROOT_PASSWORD=rootroot
+        volumes:
+        - ./mariadb/config:/config
+        ports:
+        - 3306:3306
+
+    phpmyadmin:
+        image: lscr.io/linuxserver/phpmyadmin:latest
+        container_name: phpmyadmin
+        hostname: phpmyadmin
+        restart: unless-stopped
+        environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Europe/Amsterdam
+        - PMA_ARBITRARY=1 #optional
+        volumes:
+        - ./phpmyadmin/config:/config
+        ports:
+        - 8086:80
+
+    grafana:
+        image: grafana/grafana-enterprise
+        container_name: grafana
+        hostname: grafana
+        restart: unless-stopped
+        ports:
+        - 3000:3000
+        volumes:
+        - ./grafana/data:/var/lib/grafana
