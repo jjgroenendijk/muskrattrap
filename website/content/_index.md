@@ -4,7 +4,7 @@ weight: 10
 type: docs
 ---
 
-# SMARTrap: The Intelligent Muskrat Trap
+# Muskrat trap: The Intelligent Muskrat Trap
 
 Welcome to the SMARTrap project! This initiative aims to develop a smart, humane, and efficient solution for controlling muskrat populations using IoT technology.
 
@@ -32,11 +32,6 @@ This solution leverages the following technologies:
 - **Remote Monitoring:** Allow water managers to check traps' status remotely, reducing labor and increasing efficiency.
 - **Data-Driven Decisions:** Provide insights through data collection and visualization to improve muskrat control strategies.
 
-## To Do
-Things tho do to finish this project;
-- Write down which buttons are being used. Extend HW information
-- Check website for consistent branding (e.g. change name Smarttrap to muskrattrap)
-- Write code for input validation for the payload encoder and decoder.
 
 ## Get Involved
 Community contributions are welcome! Check out the [GitHub repository](https://github.com/jjgroenendijk/muskrattrap)!
