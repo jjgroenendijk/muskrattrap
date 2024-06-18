@@ -2,10 +2,23 @@
 weight: 5
 title: "Current progress"
 ---
+# Current progress
 
 ## To Do
-Things tho do to finish this project;
-- Set message transmission interval for nodes + create documentation.
-- Write down which buttons are being used. Extend HW information.
-- Check website for consistent branding (e.g. change name Smarttrap to muskrattrap).
-- Write code for input validation for the payload encoder and decoder.
+This project isn't finished. Main points for finishing this project are as follows:
+
+### payloadCoder
+- Input validation of payload data (clip data to outer ranges when out of range).
+- Add warning flag for when data is clipping to maximum values
+
+### Grafana
+- Add additional visualizations
+- Publish dashboard on public internet
+- Add alerts for when a muskrat has been trapped.
+
+### Node programming
+- Event triggered communication
+- Button based sensor simulation
+- Sleep implementation for maximum battery life.
+- General power usage optimization
+- Data transmission optimization. Change interval of data transmission to once every 24 hours.
