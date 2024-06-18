@@ -30,6 +30,7 @@ Clone the github repository:
 
     git clone git@github.com:jjgroenendijk/muskrattrap.git
 
+### Server side development
 To recreate the hosting environment, use docker and docker-compose.
 
     cd serverSide/docker-compose.yml
@@ -37,6 +38,9 @@ To recreate the hosting environment, use docker and docker-compose.
 
 Use the website pages on this website to recreate the setup.
 
+Use file `serverSide/javascriptDecoder/decoder.js` and add it to the application decoder in The Things Network console to decode the incoming data.
+
+### Node development
 To continue development on The Things Uno, install the Arduino IDE and open file: `nodeCode/nodeCode.ino`.
 Make sure to edit file `nodeCode/secrets.example.h` and add your own keys from TTN to this file.
 Rename `secrets.example.h` to `secrets.h`.
