@@ -25,7 +25,7 @@ The muskrat trap must communicate several critical events to ensure efficient mo
 Given that the actual sensors and actuators are not yet implemented, we will use stubs to simulate these events. The HAN IoT Node's buttons and LEDs will represent sensor inputs and outputs, respectively.
 
 ### Door Status (Open/Closed)
-- **Simulation Method:** Use a button `SWITCH 1` to toggle the trap status. When the red button is pressed, the door is considered closed.
+- **Simulation Method:** Use a button `SWITCH 1` to set the trap door status. When the red button is pressed, the door is considered closed.
   A pressed red button, a closed trap door, sets LED1 to on.
 - **Implementation:** Configure an interrupt to detect button presses and update the trap status variable.
 
