@@ -38,8 +38,8 @@ private:
     bool _trapDisplacement; ///< Trap displacement (1 bit)
     uint8_t _batteryStatus; ///< Battery status (1 byte)
     uint32_t _unixTime;     ///< Date and time (4 bytes)
-    uint8_t *_buffer;    ///< buffer containing payload with sensor data
-    uint8_t _bufferSize; ///< Size of payload for housekeeping.
+    uint8_t *_buffer;       ///< buffer containing payload with sensor data
+    uint8_t _bufferSize;    ///< Size of payload for housekeeping.
 
     /// @brief add uint8_t value to the buffer at the specified index.
     /// @param idx_in The index in the buffer where the value should be added.
@@ -128,6 +128,11 @@ public:
     /// @brief print the encoded payload
     /// This function prints the encoded payload in a human-readable format to the console.
     void printPayloadEncoded();
+
+    /// @brief set test values
+    /// This function sets test values for the payload encoder.
+    /// The test values are used to verify the correct encoding of the payload.
+    void setTestValues();
 };
 
 #endif // ENCODER_H

@@ -125,3 +125,15 @@ unsigned char payloadEncoder::add_bool(unsigned char idx_in, bool value, unsigne
     }
     return (idx_in);
 }
+
+
+void payloadEncoder::setTestValues()
+{
+    set_id(2);
+    set_version(3);
+    set_doorStatus(false);
+    set_catchDetect(true);
+    set_trapDisplacement(false);
+    set_batteryStatus(4);
+    set_unixTime(5);
+}

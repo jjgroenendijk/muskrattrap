@@ -1,6 +1,7 @@
 #ifndef IOTShieldConfig_h
 #define IOTShieldConfig_h
 
+#include <Arduino.h>
 #include "HAN_IoT_Shield.h"
 
 // Declare the potmeter objects
