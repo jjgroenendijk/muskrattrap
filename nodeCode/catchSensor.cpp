@@ -16,12 +16,12 @@ void catchSensor::setCatchStatus(bool catchStatus)
 
     if (catchStatus)
     {
-        ///< Turn on LED1 to indicate that the catch is detected
-        leftRedLED.setState(LED_ON);
+        ///< Turn on LED2 to indicate that the catch is detected
+        leftGreenLED.setState(LED_ON);
     }
     else
     {
-        ///< Turn off LED1 to indicate that the catch is not detected
-        leftRedLED.setState(LED_OFF);
+        ///< Turn off LED2 to indicate that the catch is not detected
+        leftGreenLED.setState(LED_OFF);
     }
 }

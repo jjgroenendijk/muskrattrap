@@ -18,6 +18,7 @@ extern iotShieldLED rightRedLED;
 extern iotShieldLED leftGreenLED;
 extern iotShieldLED rightGreenLED;
 
+
 // Function to configure the HAN IoT Shield
 void configureIoTShield();
 
