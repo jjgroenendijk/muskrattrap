@@ -31,7 +31,7 @@ doorSensor doorSensor;
 catchSensor catchSensor;
 displacementSensor displacementSensor;
 batterySensor batterySensor;
-iotShieldPotmeter potmeter2_test(potmeter2);
+/// iotShieldPotmeter potmeter2_test(potmeter2);
 
 void setup()
 {
@@ -95,9 +95,9 @@ void loop()
         displacementSensor.setDisplacementStatus(false);
     }
 
-    
-
     ///< Check the battery level
+    debugSerial.println("-- BATTERY LEVEL: ");
+    debugSerial.println(batterySensor.getBatteryLevel());
 
 
     if (loraCommunication)
