@@ -139,10 +139,10 @@ These tasks help streamline the compilation and testing processes directly withi
 - [x] ~~Set up Doxygen configuration for `nodeCode`, `payloadCoder`, and `serverSide` directories.~~ (Done - 2025-06-07)
 - [x] ~~Ensure Doxygen output is in `docs/doxygen`.~~ (Done - 2025-06-07)
 - [x] ~~Create a VS Code task to build all Doxygen documentation.~~ (Done - 2025-06-07)
-- [X] Create a GitHub workflow action to: (Done - 2025-06-07)
-  * [X] Execute Doxygen documentation generation.
-  * [X] Publish the resulting HTML to GitHub Pages.
-- [X] Integrate `buildnumber.num` into the Doxygen documentation. (Done - 2025-06-07, handled by GitHub workflow and Doxyfile `PROJECT_NUMBER = $(BUILD_NUMBER)`)
+- [x] Create a GitHub workflow action to: (Done - 2025-06-07)
+  * [x] Execute Doxygen documentation generation.
+  * [x] Publish the resulting HTML to GitHub Pages.
+- [x] Integrate `buildnumber.num` into the Doxygen documentation. (Done - 2025-06-07, handled by GitHub workflow and Doxyfile `PROJECT_NUMBER = $(BUILD_NUMBER)`)
 
 *(This section will be updated as tasks are started, completed, or blocked. For a detailed Work Breakdown Structure (WBS) and academic deliverables, please refer to `progress.md`.)*
 
@@ -150,7 +150,10 @@ These tasks help streamline the compilation and testing processes directly withi
 * **2025-06-07 19:45 - In Progress:** Started Doxygen documentation for `nodeCode/`.
 * **2025-06-07 - Done:** Create a VS Code task to build all Doxygen documentation. This involved:
   * `[X]` Creating/configuring a Doxyfile in the project root (`Doxyfile`). Key settings updated: `PROJECT_NAME`, `OUTPUT_DIRECTORY` (to `docs/doxygen`), `INPUT` (to include `nodeCode`, `payloadCoder`, `serverSide`), `RECURSIVE` (to `YES`), `EXTRACT_ALL` (to `YES`), `EXTRACT_PRIVATE` (to `YES`), and `HAVE_DOT` (to `NO` as dot is not currently used).\n  * `[X]` Defining a `tasks.json` entry to execute Doxygen using the root `Doxyfile`.
-* **2025-06-07 (Current Time) - Done:** Created GitHub workflow for Doxygen documentation generation and deployment to GitHub Pages. This workflow also integrates `payloadCoder/buildnumber.num` as the `PROJECT_NUMBER` in the Doxygen output.
+* **2025-06-07 (Current Time) - Done:** Verified Doxygen GitHub Action functionality, including build number integration. Updated `README.md` to reflect completion of related tasks.
+* **2025-06-07 (Current Time) - Starting:** Convert Mini-Research Summary (`docs/mini-research-summary.md`) to PDF.
+* **2025-06-07 (Current Time) - Done:** Convert Mini-Research Summary (`docs/mini-research-summary.md`) to PDF.
+* **2025-06-07 (Current Time) - Starting:** Locate and submit peer review document for Mini-Research Summary (I.A.5).
 
 ### Key Outstanding Technical Tasks (derived from `docs-old/projectDescription/04-toDo.md` and `progress.md`)
 
@@ -209,7 +212,7 @@ These tasks help streamline the compilation and testing processes directly withi
 * `[~]` (I.A) Mini-Research Summary:
   * `[X]` Converted to Markdown (`docs/mini-research-summary.md`), PII removed, and translated to English.
   * `[X]` Original DOCX (`docs-old/Jaap-Jan Groenendijk LoRaWAN verwerkte feedback.docx`) added to `.gitignore`.
-  * `[ ]` Convert to PDF as per deliverable requirements (I.A.5).
+  * `[X]` Convert to PDF as per deliverable requirements (I.A.5). (Done - 2025-06-07)
   * `[ ]` Locate and submit peer review document (I.A.5).
 * `[ ]` (I.D) Ensure all Doxygen documentation is complete and integrated across the project.
 

@@ -4,9 +4,15 @@ on:
   push:
     branches:
       - main  # Or your default branch
+  workflow_dispatch: # Allows manual triggering
+
+permissions:
+  contents: read   # To checkout the repository
+  pages: write     # To deploy to GitHub Pages
+  id-token: write  # To authenticate with GitHub Pages for OIDC
 
 jobs:
-  build-and-deploy:
+  build-docs: # Renamed from build-and-deploy, focuses on building and uploading artifact
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -28,13 +34,19 @@ jobs:
         env:
           BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/doxygen/html
-          # Optional: if your Doxygen output is in a subdirectory of publish_dir
-          # publish_branch: gh-pages # Default is gh-pages
-          # user_name: 'github-actions[bot]'
-          # user_email: 'github-actions[bot]@users.noreply.github.com'
-          # commit_message: 'Deploy Doxygen documentation to Pages'
+          # Upload entire directory that Doxygen generates HTML into
+          path: './docs/doxygen/html'
+
+  deploy-pages:
+    needs: build-docs # Depends on the build-docs job completing successfully
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # Sets the deployment URL in the GitHub environment
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 # Standard action for deploying to GitHub Pages
