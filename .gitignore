@@ -64,3 +64,7 @@ settings.json
 buildnumber.num
 depend
 *arduino.json
+
+# Original course documents
+docs-old
+courseLessons
