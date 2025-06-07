@@ -10,7 +10,7 @@
         "reveal": "always",
         "panel": "new"
       },
-      "problemMatcher": ["$arduinoCli"]
+      "problemMatcher": []
     },
     {
       "label": "Build PayloadCoder Executable",
@@ -55,6 +55,23 @@
       },
       "problemMatcher": [],
       "detail": "Attempts to auto-detect the serial port for an Arduino Leonardo. Works best on macOS/Linux if only one Leonardo is connected."
+    },
+    {
+      "label": "Generate Doxygen Documentation",
+      "type": "shell",
+      "command": "doxygen Doxyfile",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
     }
   ]
 }

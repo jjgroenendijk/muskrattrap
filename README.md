@@ -49,7 +49,7 @@ Available tasks:
 * **Build PayloadCoder Executable:** Builds the C++ `payloadCoder` test executable using `make` in the `payloadCoder/` directory.
 * **Run PayloadCoder Unit Tests:** Runs the unit tests for the C++ `payloadCoder` by executing the compiled test program. This task depends on the successful build of the executable.
 * **Monitor Arduino (nodeCode.ino) - Auto-detect Port:** Opens a serial monitor for the LoRaWAN node using `arduino-cli monitor`. This task attempts to automatically find the serial port for an Arduino Leonardo-compatible board (works best on macOS/Linux if only one such board is connected). If it fails, or if you have multiple boards, you might need to use the manual command line method described in the "Node (The Things Uno) Development" section.
-* **(Planned) Generate Doxygen Documentation:** A task will be added to generate Doxygen documentation for the entire project.
+* **Generate Doxygen Documentation:** Generates Doxygen documentation for the entire project using the `Doxyfile` in the project root. The output will be in `docs/doxygen`.
 
 These tasks help streamline the compilation and testing processes directly within VSCode.
 
@@ -136,13 +136,21 @@ These tasks help streamline the compilation and testing processes directly withi
 
 ## Progress Tracker
 
+- [x] ~~Set up Doxygen configuration for `nodeCode`, `payloadCoder`, and `serverSide` directories.~~ (Done - 2025-06-07)
+- [x] ~~Ensure Doxygen output is in `docs/doxygen`.~~ (Done - 2025-06-07)
+- [x] ~~Create a VS Code task to build all Doxygen documentation.~~ (Done - 2025-06-07)
+- [X] Create a GitHub workflow action to: (Done - 2025-06-07)
+  * [X] Execute Doxygen documentation generation.
+  * [X] Publish the resulting HTML to GitHub Pages.
+- [X] Integrate `buildnumber.num` into the Doxygen documentation. (Done - 2025-06-07, handled by GitHub workflow and Doxyfile `PROJECT_NUMBER = $(BUILD_NUMBER)`)
+
 *(This section will be updated as tasks are started, completed, or blocked. For a detailed Work Breakdown Structure (WBS) and academic deliverables, please refer to `progress.md`.)*
 
 * **2025-06-07 19:34 - Initial Setup:** `README.md` structured based on project documentation. Context gathered from `docs-old` directory and `progress.md`. OS: macOS, Shell: bash.
 * **2025-06-07 19:45 - In Progress:** Started Doxygen documentation for `nodeCode/`.
-* **2025-06-07 (Current Time) - In Progress:** Create a VS Code task to build all Doxygen documentation. This will involve:
-  * `[~]` Creating/configuring a Doxyfile in the project root or relevant subdirectories (e.g., `nodeCode/`, `payloadCoder/`). (Started: Generating initial Doxyfile)
-  * `[ ]` Defining a `tasks.json` entry to execute Doxygen using the Doxyfile(s).
+* **2025-06-07 - Done:** Create a VS Code task to build all Doxygen documentation. This involved:
+  * `[X]` Creating/configuring a Doxyfile in the project root (`Doxyfile`). Key settings updated: `PROJECT_NAME`, `OUTPUT_DIRECTORY` (to `docs/doxygen`), `INPUT` (to include `nodeCode`, `payloadCoder`, `serverSide`), `RECURSIVE` (to `YES`), `EXTRACT_ALL` (to `YES`), `EXTRACT_PRIVATE` (to `YES`), and `HAVE_DOT` (to `NO` as dot is not currently used).\n  * `[X]` Defining a `tasks.json` entry to execute Doxygen using the root `Doxyfile`.
+* **2025-06-07 (Current Time) - Done:** Created GitHub workflow for Doxygen documentation generation and deployment to GitHub Pages. This workflow also integrates `payloadCoder/buildnumber.num` as the `PROJECT_NUMBER` in the Doxygen output.
 
 ### Key Outstanding Technical Tasks (derived from `docs-old/projectDescription/04-toDo.md` and `progress.md`)
 
@@ -205,7 +213,7 @@ These tasks help streamline the compilation and testing processes directly withi
   * `[ ]` Locate and submit peer review document (I.A.5).
 * `[ ]` (I.D) Ensure all Doxygen documentation is complete and integrated across the project.
 
-#### Documentation Review & Enhancement
+## Documentation Review & Enhancement
 
 * `[~]` Review content in `docs-old/` and migrate relevant information to a new `docs/` directory. (Mini-Research Summary migrated to `docs/mini-research-summary.md`).
 * `[ ]` Ensure `README.md` appropriately refers to the `docs-old/` directory for current detailed context, and eventually to the new `docs/` directory as content is migrated.
@@ -221,3 +229,14 @@ These tasks help streamline the compilation and testing processes directly withi
 * **Trap Design:** The trap utilizes magnetic sensors (door), weight sensors (catch detection), and wire-based sensors (movement), along with battery monitoring. (Details: `docs-old/projectDescription/03-trapDesign.md`)
 * **Payload Structure:** The LoRaWAN payload is optimized for size (10 bytes + 3 bits) and includes: ID, version, door status, catch detection, trap displacement, battery status, and Unix timestamp. (Details: `docs-old/IoTNode/payload.md`)
 * **Hardware Simulation:** Onboard buttons and LEDs of the HAN IoT Node (The Things Uno) are used to simulate sensor inputs and status indicators. (Details: `docs-old/IoTNode/hardwareSimulation.md`)
+
+## Github Workflow for Doxygen
+
+A GitHub workflow has been set up to automatically generate and publish the Doxygen HTML documentation to GitHub Pages. This workflow is defined in `.github/workflows/doxygen-pages.yml`.
+
+The workflow performs the following steps:
+
+1. **Checkout Code**: Checks out the repository code.
+2. **Install Doxygen**: Installs Doxygen on the runner.
+3. **Read Build Number**: Reads the build number from `payloadCoder/buildnumber.num`.
+4. **Generate Documentation**: Runs Doxygen using the `Doxyfile` in the project

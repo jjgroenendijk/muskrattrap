@@ -68,3 +68,5 @@ depend
 # Original course documents
 docs-old
 courseLessons
+docs/doxygen
+docs/*.docx

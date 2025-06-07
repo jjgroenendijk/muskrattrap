@@ -1,0 +1,40 @@
+name: Doxygen GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Or your default branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Doxygen
+        run: sudo apt-get update && sudo apt-get install -y doxygen
+
+      # Optional: Install dot (Graphviz) if you set HAVE_DOT = YES in Doxyfile
+      # - name: Install Graphviz (for dot diagrams)
+      #   run: sudo apt-get install -y graphviz
+
+      - name: Read Build Number
+        id: build_number
+        run: echo "BUILD_NUMBER=$(cat payloadCoder/buildnumber.num)" >> $GITHUB_ENV
+
+      - name: Generate Doxygen Documentation
+        run: doxygen Doxyfile
+        env:
+          BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/doxygen/html
+          # Optional: if your Doxygen output is in a subdirectory of publish_dir
+          # publish_branch: gh-pages # Default is gh-pages
+          # user_name: 'github-actions[bot]'
+          # user_email: 'github-actions[bot]@users.noreply.github.com'
+          # commit_message: 'Deploy Doxygen documentation to Pages'
