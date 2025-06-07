@@ -1,23 +1,33 @@
+/**
+ * @file unitTest.cpp
+ * @brief Implements unit tests for payloadEncoder and payloadDecoder.
+ * \details This file contains the definitions for various test functions
+ * aimed at verifying the correct operation of the payload encoding and
+ * decoding logic. It includes tests for basic functionality, edge cases,
+ * and boolean combinations.
+ * @author Project Contributors
+ * @date 2024-03-15
+ */
 #include "unitTest.h"
 #include "encoder.h"
 #include "decoder.h"
 
-#include <iostream> // cout, endl // debugging only
-#include <iomanip>  // setw for table formatting
+#include <iostream> // For std::cout, std::endl
+#include <iomanip>  // For std::setw, std::setfill
 
 using namespace std;
 
 /**
- * @brief Test case for the payloadEncoder and payloadDecoder classes.
- * 
- * This test case verifies the functionality of the payloadEncoder and payloadDecoder classes
- * by setting test variables, composing a payload, encoding and decoding the payload, and
- * comparing the decoded variables with the original test variables.
+ * \brief Test case 01: Basic functionality with typical values.
+ * \details This test verifies the core functionality of `payloadEncoder` and
+ * `payloadDecoder` by encoding a set of typical, non-edge-case values for all
+ * payload fields, then decoding the payload and comparing the results against
+ * the original inputs. This serves as a fundamental check
+ * of the encode/decode pipeline.
  */
 void test01()
 {
-
-    // Test 1: known input 1
+    // Test 1: known input values
     payloadEncoder encoder; /// Encoder object
     payloadDecoder decoder; /// Decoder object
 
@@ -77,19 +87,14 @@ void test01()
 }
 
 /**
- * @brief This function tests the payloadEncoder and payloadDecoder classes.
- * 
- * It sets various values for the payloadEncoder object, composes the payload,
- * prints the binary representation of the payload, and then decodes the payload
- * using the payloadDecoder object. Finally, it compares the decoded values with
- * the original values and prints the test results.
+ * \brief Test case 02: Edge values (max/min).
+ * \details This test uses maximum and minimum possible values for numerical fields
+ * (e.g., 0xFFFFFFFF for ID, 0x00 for battery) and varied boolean flags to check
+ * how the encoder and decoder handle these edge cases.
  */
 void test02()
 {
-
-    // Test 2
-
-    // Create encoder and decoder objects
+    // Test 2: Edge case values
     payloadEncoder encoder;
     payloadDecoder decoder;
 
@@ -145,10 +150,21 @@ void test02()
     printTestResult("unixTime", unixTime, result_unixTime);
 }
 
+/**
+ * \brief Prints the formatted result of a single field comparison for a test case.
+ * \details This utility function, defined in `unitTest.cpp`, takes the name of the
+ * field being tested (type), the original input value, and the decoded result value.
+ * It prints these in a tabular format using `std::setw` and `std::setfill` for alignment,
+ * followed by "OK" if the input and result match, or "ERROR" otherwise.
+ * Its primary Doxygen documentation is in `unitTest.h`.
+ * @param type A string describing the value being tested (e.g., "id", "version").
+ * @param input The original input value to the encoder.
+ * @param result The decoded result value from the decoder.
+ */
 void printTestResult(const std::string &type, int input, int result)
 {
     const char separator = ' ';
-    const int width = 16;
+    const int width = 16; // Column width for formatted output
     std::cout << std::setw(width) << std::setfill(separator) << type
               << std::setw(width) << std::setfill(separator) << input
               << std::setw(width) << std::setfill(separator) << result;
@@ -165,10 +181,11 @@ void printTestResult(const std::string &type, int input, int result)
 }
 
 /**
- * @brief Test case for boolean combinations in payloadEncoder and payloadDecoder.
- * 
- * This test iterates through all 8 combinations of doorStatus, catchDetect, 
- * and trapDisplacement to ensure correct encoding and decoding of the packed booleans.
+ * \brief Test case 03: All boolean combinations.
+ * \details This test iterates through all 8 possible combinations of the three boolean
+ * status flags (`doorStatus`, `catchDetect`, `trapDisplacement`) to ensure they are
+ * encoded and decoded correctly, particularly their packing into a single byte.
+ * Other numerical fields are kept constant for this test.
  */
 void test03()
 {

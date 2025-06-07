@@ -1,6 +1,16 @@
+/**
+ * @file test.cpp
+ * @brief Implementation file for test-related functionalities.
+ * This file is intended for defining test routines or utility functions
+ * used in testing the project's components. Currently, it contains
+ * placeholder or commented-out example test code.
+ * @author Project Contributors
+ * @date 2024-03-15
+ */
 #include "test.h"
 #include "encoder.h"
 
+/// @todo Example function for setting test values on an encoder object. Currently commented out.
 /* void setTestValues(encoder &encoder)
 {
     // Test 1: initialize test variables

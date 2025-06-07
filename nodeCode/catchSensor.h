@@ -1,3 +1,12 @@
+/**
+ * @file catchSensor.h
+ * @brief Defines the catchSensor class for managing a simulated catch detection.
+ * This file contains the declaration of the catchSensor class, which simulates
+ * a catch event and uses an LED on the HAN IoT Shield to indicate the status.
+ * @author Project Contributors
+ * @date 2024-03-15
+ * @version 1.1
+ */
 #ifndef CATCHESENSOR_H
 #define CATCHESENSOR_H
 

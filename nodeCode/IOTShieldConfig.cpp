@@ -1,3 +1,13 @@
+/**
+ * @file IOTShieldConfig.cpp
+ * @brief Instantiation of HAN IoT Shield components.
+ * This file provides the actual definitions for the global objects
+ * representing various components on the HAN IoT Shield (LEDs, buttons,
+ * potentiometers). These objects are declared as `extern` in
+ * `IOTShieldConfig.h`.
+ * @author Project Contributors
+ * @date 2024-03-15
+ */
 #include "IOTShieldConfig.h"
 
 // Define the potmeter objects

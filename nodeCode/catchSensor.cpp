@@ -1,3 +1,12 @@
+/**
+ * @file catchSensor.cpp
+ * @brief Implements the catchSensor class for simulating catch detection.
+ * This file contains the method definitions for the catchSensor class,
+ * which simulates a catch event and uses the leftGreenLED on the HAN IoT
+ * Shield to indicate the status.
+ * @author Project Contributors
+ * @date 2024-03-15
+ */
 #include "catchSensor.h"
 
 /**

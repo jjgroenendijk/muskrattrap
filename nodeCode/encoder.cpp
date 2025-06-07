@@ -1,5 +1,15 @@
+/**
+ * @file encoder.cpp
+ * @brief Implements the payloadEncoder class for creating LoRaWAN message payloads.
+ * This file contains the definitions for the methods of the payloadEncoder class.
+ * It handles the serialization of various data types (integers, booleans) into a
+ * compact byte buffer, managing byte order (MSB first/Big-Endian for multi-byte types)
+ * and bit-level packing for booleans. Memory for the buffer is dynamically allocated.
+ * @author Project Contributors (Original by Jaap-Jan Groenendijk as per encoder.h)
+ * @date 2024-03-15
+ */
 #include "encoder.h"
-#include <stdlib.h> // malloc()
+#include <stdlib.h> // malloc(), free()
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
 #else
@@ -10,19 +20,19 @@
 // Define debugSerial if not already defined (e.g. for non-Arduino testing)
 #ifndef debugSerial
 #ifdef ARDUINO
-#define debugSerial Serial ///< @brief Defines Serial as the debug output stream on Arduino.
+#define debugSerial Serial ///< \brief Defines Serial as the debug output stream on Arduino.
 #else
-#define debugSerial std::cout ///< @brief Defines std::cout as the debug output stream for non-Arduino environments.
+#define debugSerial std::cout ///< \brief Defines std::cout as the debug output stream for non-Arduino environments.
 #endif
 #endif
 
 /**
  * @brief Constructs a new payloadEncoder object.
- *
- * Initializes member variables to default values (0 or false).
+ * \details Initializes member variables to default values (0 or false).
  * Allocates memory for the internal payload buffer `_buffer` using `malloc()`
  * with the size defined by `SENSOR_PAYLOAD_SIZE`.
  * Sets `_bufferSize` to 0, indicating an empty payload initially.
+ * @warning The constructor uses `malloc`. The `_buffer` must be freed in the destructor.
  */
 payloadEncoder::payloadEncoder() : _id{0},
                                    _version{0},
@@ -31,45 +41,60 @@ payloadEncoder::payloadEncoder() : _id{0},
                                    _trapDisplacement{0},
                                    _batteryStatus{0},
                                    _unixTime{0},
-                                   _buffer{NULL},
+                                   _buffer{nullptr}, // Initialize to nullptr before malloc
                                    _bufferSize{0}
 {
     _buffer = reinterpret_cast<uint8_t *>(malloc(SENSOR_PAYLOAD_SIZE));
+    if (_buffer == nullptr) {
+        // Handle malloc failure, e.g., by setting an error state or logging
+        #if defined(ARDUINO)
+        if(debugSerial) debugSerial.println("Error: Payload buffer malloc failed.");
+        #else
+        std::cerr << "Error: Payload buffer malloc failed." << std::endl;
+        #endif
+        // Potentially set _bufferSize to a state indicating error, or throw exception
+    }
 }
 
 /**
  * @brief Destroys the payloadEncoder object.
- *
- * Frees the memory allocated for the `_buffer` using `free()` to prevent memory leaks.
+ * \details Frees the memory allocated for the `_buffer` using `free()` to prevent memory leaks.
+ * It's safe to call `free()` on a `nullptr`.
  */
 payloadEncoder::~payloadEncoder()
 {
     free(_buffer);
+    _buffer = nullptr; // Good practice to nullify pointer after free
 }
 
 /**
  * @brief Composes the payload by encoding all set member variables into the buffer.
- *
- * This function populates the `_buffer` with the sensor data and metadata.
+ * \details This function populates the `_buffer` with the sensor data and metadata.
  * It calls the internal `add_uint32`, `add_uint8`, and `add_bool` methods
- * to serialize the `_id`, `_version`, `_doorStatus`, `_catchDetect`,
- * `_trapDisplacement`, `_batteryStatus`, and `_unixTime` into the buffer
- * in a predefined order and format.
+ * to serialize the data fields into the buffer according to the following structure:
+ * - Bytes 0-3: ID (`_id`, uint32_t, Big-Endian)
+ * - Byte 4: Version (`_version`, uint8_t)
+ * - Byte 5: Status Bits
+ *   - Bit 2: Door Status (`_doorStatus`, bool)
+ *   - Bit 1: Catch Detect (`_catchDetect`, bool)
+ *   - Bit 0: Trap Displacement (`_trapDisplacement`, bool)
+ * - Byte 6: Battery Status (`_batteryStatus`, uint8_t)
+ * - Bytes 7-10: Unix Time (`_unixTime`, uint32_t, Big-Endian)
  * The `_bufferSize` is updated to reflect the final size of the encoded payload.
- * For debugging, it can print the payload size to the `debugSerial` if on Arduino.
+ * If `_buffer` is null (e.g., due to malloc failure), this function does nothing.
+ * @note The boolean values are packed into a single byte, with bit 2 for doorStatus,
+ * bit 1 for catchDetect, and bit 0 for trapDisplacement. This order is critical
+ * for the `add_bool` calls.
  */
 void payloadEncoder::composePayload()
 {
-    /**
-     * @brief Composes the payload by adding various data elements to the buffer.
-     *
-     * This function initializes the buffer size and adds data elements such as ID, version, door status, catch detection,
-     * trap displacement, battery status, and UNIX time to the buffer. It also prints the payload size in bytes for debugging purposes.
-     */
+    if (!_buffer) return; // Do nothing if buffer allocation failed
 
-    _bufferSize = 0; // init
+    _bufferSize = 0; // Initialize buffer size for new composition
 
+    // Encode ID (uint32_t, Big-Endian)
     _bufferSize = add_uint32(_bufferSize, _id);
+    // Encode Version (uint8_t)
     _bufferSize = add_uint8(_bufferSize, _version);
 
     _bufferSize = add_bool(_bufferSize, _doorStatus, 2);

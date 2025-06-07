@@ -27,7 +27,15 @@
       debugStream->print(__VA_ARGS__); \
   }
 
+/**
+ * @brief Converts an ASCII hexadecimal character ('0'-'9', 'A'-'F', or 'a'-'f') to its 4-bit integer value.
+ */
 #define TTN_HEX_CHAR_TO_NIBBLE(c) ((c >= 'A') ? (c - 'A' + 0x0A) : (c - '0'))
+/**
+ * @brief Converts a pair of ASCII hexadecimal characters (representing a byte) to their 8-bit integer value.
+ * @param h The high nibble character (e.g., 'A' in "A5").
+ * @param l The low nibble character (e.g., '5' in "A5").
+ */
 #define TTN_HEX_PAIR_TO_BYTE(h, l) ((TTN_HEX_CHAR_TO_NIBBLE(h) << 4) + TTN_HEX_CHAR_TO_NIBBLE(l))
 
 const char ok[] PROGMEM = "ok";
@@ -267,13 +275,35 @@ const char *const mac_tx_table[] PROGMEM = {mac_tx_type_cnf, mac_tx_type_ucnf};
 //#define ERR_MESSAGE 7
 //#define SUCCESS_MESSAGE 8
 
+/**
+ * @brief Compares a RAM-based string with a PROGMEM-based string via an index.
+ * This function is a specialized string comparison utility used to compare
+ * a null-terminated string in RAM (`str1`) with a string stored in PROGMEM.
+ * The PROGMEM string is accessed indirectly by its index (`str2Index`) in
+ * the `compare_table`. This is useful for matching modem responses against
+ * predefined expected strings efficiently.
+ * @param str1 Pointer to the null-terminated string in RAM.
+ * @param str2Index Index of the target string in the `compare_table` (PROGMEM).
+ * @return An integer less than, equal to, or greater than zero if `str1` is found,
+ *         respectively, to be less than, to match, or be greater than the first
+ *         `min(strlen(str1), strlen(str2))` bytes of `str2`.
+ *         Essentially, 0 indicates a match for the overlapping part.
+ */
 int __pgmstrcmp(const char *str1, uint8_t str2Index)
 {
-  char str2[128];
+  char str2[128]; // Assuming response parts are not excessively long
   strcpy_P(str2, (char *)pgm_read_word(&(compare_table[str2Index])));
+  // Compare only up to the length of the shorter string to check for prefix match
   return memcmp(str1, str2, min(strlen(str1), strlen(str2)));
 }
 
+/**
+ * @brief Calculates the number of decimal digits in a port number.
+ * This helper is used to determine the length of the port number string
+ * when parsing `mac_rx` responses.
+ * @param port The port number (0-255).
+ * @return The number of digits (1, 2, or 3).
+ */
 uint8_t __digits(uint8_t port)
 {
   if (port >= 100)
@@ -287,14 +317,22 @@ uint8_t __digits(uint8_t port)
   return 1;
 }
 
+/**
+ * @brief Parses a port number from the beginning of a character string.
+ * Extracts an unsigned 8-bit integer from the input string `s`.
+ * The parsing stops at the first non-digit character (e.g., a space) or null terminator.
+ * This is used to extract the port number from `mac_rx` command responses.
+ * @param s Pointer to the character string containing the port number at the beginning.
+ * @return The parsed port number as a uint8_t.
+ */
 uint8_t __receivedPort(const char *s)
 {
   uint8_t port = 0;
   uint8_t i = 0;
-  while (s[i] != ' ' && s[i] != '\0')
+  while (s[i] != ' ' && s[i] != '\0') // Stop at space or end of string
   {
     port *= 10;
-    port += s[i] - 48;
+    port += s[i] - '0'; // Convert char to int
     i++;
   }
   return port;
@@ -373,17 +411,28 @@ void TheThingsNetwork_HANIoT::clearReadBuffer()
 size_t TheThingsNetwork_HANIoT::readLine(char *buffer, size_t size, uint8_t attempts)
 {
   size_t read = 0;
+  // Loop for a given number of attempts to read a line from the modem.
+  // This is crucial because the modem might not respond immediately or might be busy.
   while (!read && attempts--)
   {
     read = modemStream->readBytesUntil('\n', buffer, size);
   }
-  if (attempts<=0)
-  { // If attempts is activated return 0 and set RN state marker
-    this->needsHardReset = true; // Inform the application about the radio module is not responsive.
-    debugPrintLn("No response from RN module.");
-    return 0;
+  if (attempts<=0 && read == 0) // Check if attempts are exhausted AND no data was read
+  {
+    // If multiple attempts to read a line fail (timeout),
+    // it suggests a non-responsive modem. Flag this for potential
+    // higher-level recovery actions (e.g., hardware reset).
+    this->needsHardReset = true;
+    debugPrintLn("No response from RN module after multiple attempts.");
+    return 0; // Return 0 to indicate failure.
   }
-  buffer[read - 1] = '\0'; // set \r to \0
+  if (read > 0 && buffer[read - 1] == '\r') { // Check if the last char is \r
+    buffer[read - 1] = '\0'; // Replace \r with \0 to make it a C-string
+  } else if (read < size) {
+    buffer[read] = '\0'; // Ensure null termination if \r wasn't the last char (or if buffer wasn't full)
+  } else {
+    buffer[size - 1] = '\0'; // Ensure null termination if buffer is full
+  }
   return read;
 }
 
@@ -408,17 +457,25 @@ size_t TheThingsNetwork_HANIoT::readResponse(uint8_t prefixTable, uint8_t indexT
 
 void TheThingsNetwork_HANIoT::autoBaud()
 {
-  // Courtesy of @jpmeijers
-  modemStream->setTimeout(2000);
+  // Courtesy of @jpmeijers for the initial auto-baud sequence.
+  // The auto-baud detection sequence typically involves sending a known character (0x55)
+  // after a break condition (which can be simulated by a low pulse, though here just sending 0x00
+  // at a different baud rate might work if the RN module is expecting it, or just relying on 0x55).
+  // The RN2483/RN2903 module should respond with "RN2xxx..." if it detects the baud rate.
+  modemStream->setTimeout(2000); // Use a shorter timeout for initial detection attempts.
   uint8_t attempts = 10;
   size_t length = 0;
-  while (attempts-- && length == 0)
+  while (attempts-- && length == 0) // Try up to 10 times
   {
-    delay(100);
-    modemStream->write((byte)0x00);
-    modemStream->write(0x55);
-    modemStream->write(SEND_MSG);
-    sendCommand(SYS_TABLE, 0, true, false);
+    delay(100); // Short delay between attempts
+    // Send a break condition or character that helps modem sync (0x00 often used, then 0x55)
+    // Some systems require specific baud rate changes here, but this simplified version sends fixed bytes.
+    modemStream->write((byte)0x00); // May help reset modem's UART state or act as part of break.
+    modemStream->write(0x55);       // Standard character for auto-baud detection.
+    modemStream->write(SEND_MSG);   // Send newline to complete the command.
+
+    // After sending 0x55, try to get the version, which is a reliable way to check communication.
+    sendCommand(SYS_TABLE, 0, true, false); // "sys"
     sendCommand(SYS_TABLE, SYS_GET, true, false);
     sendCommand(SYS_TABLE, SYS_GET_VER, false, false);
     modemStream->write(SEND_MSG);
@@ -605,38 +662,47 @@ ttn_response_t TheThingsNetwork_HANIoT::sendBytes(const uint8_t *payload, size_t
     return TTN_SUCCESSFUL_TRANSMISSION;
   }
 
-  if (__pgmstrcmp(buffer, CMP_MAC_RX) == 0)
+  // If modem responds with "mac_rx <port> <data>", a downlink message was received.
+  if (__pgmstrcmp(buffer, CMP_MAC_RX) == 0) // Compare with "mac_rx"
   {
+    // The response format is "mac_rx <port> <data_hex_string>"
+    // Example: "mac_rx 1 AABBCCDD"
+    // Skip "mac_rx " (7 characters) to get to the port.
     port_t downlinkPort = __receivedPort(buffer + 7);
+
+    // Calculate start of data: after "mac_rx ", port number, and one space.
     char *data = buffer + 7 + __digits(downlinkPort) + 1;
-    size_t downlinkLength = strlen(data) / 2;
+    size_t downlinkLength = strlen(data) / 2; // Each byte is 2 hex chars.
+
     if (downlinkLength > 0)
     {
       uint8_t downlink[downlinkLength];
+      // Convert hex string data to byte array
       for (size_t i = 0, d = 0; i < downlinkLength; i++, d += 2)
       {
         downlink[i] = TTN_HEX_PAIR_TO_BYTE(data[d], data[d + 1]);
       }
       debugPrintMessage(SUCCESS_MESSAGE, SCS_SUCCESSFUL_TRANSMISSION_RECEIVED, data);
-      if (messageCallback)
+      if (messageCallback) // If a callback is registered, invoke it.
       {
         messageCallback(downlink, downlinkLength, downlinkPort);
       }
     }
-    else
+    else // Successfully transmitted, but no actual data in the downlink (e.g. just an ACK)
     {
       debugPrintMessage(SUCCESS_MESSAGE, SCS_SUCCESSFUL_TRANSMISSION);
     }
-    return TTN_SUCCESSFUL_RECEIVE;
+    return TTN_SUCCESSFUL_RECEIVE; // Indicate successful transmission and reception.
   }
 
+  // If the response is not "mac_tx_ok" or "mac_rx", it's an unexpected response.
   debugPrintMessage(ERR_MESSAGE, ERR_UNEXPECTED_RESPONSE, buffer);
   return TTN_ERROR_UNEXPECTED_RESPONSE;
 }
 
 ttn_response_t TheThingsNetwork_HANIoT::poll(port_t port, bool confirm)
 {
-  uint8_t payload[] = {0x00};
+  uint8_t payload[] = {0x00}; // A minimal payload, e.g. a single null byte, is often used for polling.
   return sendBytes(payload, 1, port, confirm);
 }
 
@@ -1039,27 +1105,30 @@ bool TheThingsNetwork_HANIoT::sendPayload(uint8_t mode, uint8_t port, uint8_t *p
     sport[1] = '\0';
   }
   modemStream->write(sport);
-  modemStream->print(" ");
+  modemStream->print(" "); // Space after port number
   debugPrint(sport);
   debugPrint(F(" "));
+
+  // Iterate through the payload bytes and print them as a hex string.
+  // Each byte is converted to two hexadecimal characters.
   uint8_t i = 0;
   for (i = 0; i < length; i++)
   {
-    if (payload[i] < 16)
+    if (payload[i] < 16) // If the byte value is less than 16 (e.g., 0x0F), pad with a leading '0'.
     {
       modemStream->print("0");
       modemStream->print(payload[i], HEX);
-      debugPrint(F("0"));
+      debugPrint(F("0")); // Also print padding to debug stream.
       debugPrint(payload[i], HEX);
     }
-    else
+    else // For values >= 16 (e.g., 0x10 to 0xFF), no padding needed.
     {
       modemStream->print(payload[i], HEX);
       debugPrint(payload[i], HEX);
     }
   }
-  modemStream->write(SEND_MSG);
-  debugPrintLn();
+  modemStream->write(SEND_MSG); // Send newline to execute the command.
+  debugPrintLn(); // Newline for debug stream.
   return waitForOk();
 }
 

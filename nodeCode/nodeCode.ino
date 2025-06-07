@@ -1,9 +1,14 @@
 /**
  * @file nodeCode.ino
  * @brief Main Arduino sketch for the LoRaWAN muskrat trap node.
- * @author Jaap-Jan Groenendijk (github@jjgroenendijk.nl)
- * @date 2024-09-06 (Assumed, based on encoder.h, needs verification)
- * @version 1.0 (Assumed, needs verification)
+ * @author Project Contributors (Original structure by Jaap-Jan Groenendijk)
+ * @date 2024-03-15
+ * @version 1.1
+ *
+ * @version log
+ * Version   Date        Note
+ * 1.1       2024-03-15  Doxygen review, updated file header, standardized commands. (Project Contributors)
+ * 1.0       2024-09-06  Initial version. (Jaap-Jan Groenendijk, assumed)
  *
  * @mainpage IoT Muskrat Trap Node
  *
@@ -83,12 +88,12 @@ const char *appKey = APPKEY;  ///< @brief Application Key for LoRaWAN, from TTN 
 
 /**
  * @brief Flag to enable or disable LoRaWAN communication.
- * Set to true to attempt to join and send messages, false for offline testing/debugging.
+ * \details Set to true to attempt to join and send messages, false for offline testing/debugging.
  */
 bool loraCommunication = false;
 
 // Replace REPLACE_ME with TTN_FP_EU868 or TTN_FP_US915
-#define freqPlan TTN_FP_EU868 ///< @brief LoRaWAN frequency plan (e.g., TTN_FP_EU868 for Europe).
+#define freqPlan TTN_FP_EU868 ///< \brief LoRaWAN frequency plan (e.g., TTN_FP_EU868 for Europe).
 
 /**
  * @brief Global instance of TheThingsNetwork_HANIoT library for LoRaWAN communication.
@@ -98,38 +103,45 @@ TheThingsNetwork_HANIoT ttn(loraSerial, debugSerial, freqPlan);
 // iotShieldTempSensor temperatureSensor; // Example, if used
 
 // Declare sensor objects
-/** @brief Object representing the door sensor. */
+/** \brief Object representing the door sensor. */
 doorSensor doorSensor;
-/** @brief Object representing the catch sensor. */
+/** \brief Object representing the catch sensor. */
 catchSensor catchSensor;
-/** @brief Object representing the displacement sensor. */
+/** \brief Object representing the displacement sensor. */
 displacementSensor displacementSensor;
-/** @brief Object representing the battery sensor. */
+/** \brief Object representing the battery sensor. */
 batterySensor batterySensor;
 
 // Variables to store previous sensor states for event detection
-bool prevDoorStatus = false; ///< @brief Previous state of the door sensor.
-bool prevCatchStatus = false; ///< @brief Previous state of the catch sensor.
-bool prevDisplacementStatus = false; ///< @brief Previous state of the displacement sensor.
+bool prevDoorStatus = false; ///< \brief Previous state of the door sensor.
+bool prevCatchStatus = false; ///< \brief Previous state of the catch sensor.
+bool prevDisplacementStatus = false; ///< \brief Previous state of the displacement sensor.
 
 // Heartbeat interval configuration
 // const unsigned long HEARTBEAT_INTERVAL_MS = 24UL * 60UL * 60UL * 1000UL; // 24 hours
 /**
  * @brief Interval for sending heartbeat messages, in milliseconds.
- * Currently set to 5 minutes for testing purposes.
+ * \details This value determines how often a "heartbeat" message is sent to the
+ * LoRaWAN network, even if no sensor state changes have occurred. This helps
+ * confirm the device is still operational and connected.
+ * The production value is 24 hours. A shorter value might be used for testing.
  */
 // const unsigned long HEARTBEAT_INTERVAL_MS = 5UL * 60UL * 1000UL; // 5 minutes for testing
 const unsigned long HEARTBEAT_INTERVAL_MS = 24UL * 60UL * 60UL * 1000UL; // 24 hours for production
 /**
- * @brief Timestamp of the last heartbeat message sent.
+ * @brief Timestamp (in milliseconds since startup) of the last heartbeat message sent.
+ * \details Used with `HEARTBEAT_INTERVAL_MS` to determine when the next heartbeat is due.
  */
 unsigned long lastHeartbeatTime = 0;
 
 /**
  * @brief Setup function, runs once at startup or reset.
- *
- * Initializes serial communication, LoRaWAN module (if enabled),
- * and sensor states. Attempts to join the LoRaWAN network.
+ * \details Initializes serial communication for debugging and LoRaWAN module interaction.
+ * If `loraCommunication` is enabled, it attempts to join the LoRaWAN network using
+ * credentials from `secrets.h`. Upon a successful join, it initializes timestamps
+ * and previous sensor states to prepare for the main loop.
+ * The Watchdog Timer (WDT) is disabled at the beginning of setup to prevent
+ * reset loops if the WDT was not properly handled before a reset.
  */
 void setup()
 {

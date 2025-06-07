@@ -2,8 +2,13 @@
 * @file encoder.h
 * @brief Encoder class for payloadCoder project
 * @author Jaap-Jan Groenendijk (github@jjgroenendijk.nl)
-* @date 2024-09-06
-* @version 1.0
+* @date 2024-03-15
+* @version 1.1
+*
+* @version log
+* Version   Date        Note
+* 1.1       2024-03-15  Reviewed and confirmed Doxygen documentation completeness. (Project Contributors)
+* 1.0       2024-09-06  Initial version. (Jaap-Jan Groenendijk)
 *
 * @mainpage Payload Encoder
 *

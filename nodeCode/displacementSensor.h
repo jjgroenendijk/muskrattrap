@@ -1,3 +1,13 @@
+/**
+ * @file displacementSensor.h
+ * @brief Defines the displacementSensor class for managing simulated trap displacement.
+ * This file contains the declaration of the displacementSensor class, which
+ * simulates a displacement event and uses an LED on the HAN IoT Shield to
+ * indicate the status.
+ * @author Project Contributors
+ * @date 2024-03-15
+ * @version 1.1
+ */
 #ifndef DISPLACEMENTSENSOR_H
 #define DISPLACEMENTSENSOR_H
 

@@ -1,3 +1,11 @@
+/**
+ * @file batterySensor.cpp
+ * @brief Implements the batterySensor class for simulating battery level readings.
+ * This file contains the method definitions for the batterySensor class,
+ * which uses potentiometer 2 on the HAN IoT Shield to simulate battery voltage.
+ * @author Project Contributors
+ * @date 2024-03-15
+ */
 #include "batterySensor.h"
 
 /**

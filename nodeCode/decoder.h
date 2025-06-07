@@ -1,3 +1,13 @@
+/**
+ * @file decoder.h
+ * @brief Defines the payloadDecoder class for LoRaWAN payload processing.
+ * This file contains the declaration of the payloadDecoder class, which is
+ * designed to parse byte arrays received from LoRaWAN devices, extracting
+ * sensor data and status information.
+ * @author Project Contributors
+ * @date 2024-03-15
+ * @version 1.1
+ */
 #ifndef DECODER_H
 #define DECODER_H
 

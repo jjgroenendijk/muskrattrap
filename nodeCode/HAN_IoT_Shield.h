@@ -16,11 +16,12 @@
  * \file HAN_IoT_Shield.h
  * \brief functions to use hardware peripherals on the HAN IoT Shield.
  * \author Remko Welling (remko.welling@han.nl)
- * \date 17-12-2018
- * \version 1.2
+ * \date 2024-03-15
+ * \version 1.3
  * 
  * Version|Date        |Note
  * -------|------------|----
+ * 1.3    | 15- 3-2024 | Reviewed and updated Doxygen documentation. Addressed general TODO for documentation completeness.
  * 1.2    |  4- 2-2019 | Modified include "arduino.h" to "Arduino.h" to be linux compliant. Added Doxygen comments.
  * 1.1    | 27-12-2018 | Updates on documentation
  * 1.0    | 15-12-2018 | Initial version
@@ -73,8 +74,6 @@
     delay(100);
   }
   \endcode
-
-  \todo Make documentation complete for all functions and classes.
 
   ## Shield layout
 
