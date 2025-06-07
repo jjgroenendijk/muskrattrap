@@ -173,23 +173,19 @@ These tasks help streamline the compilation and testing processes directly withi
 * `[~]` Implement prototype LoRaWAN node on HAN IoT Node.
   * `[X]` Emulate sensors using onboard components as per `docs-old/IoTNode/hardwareSimulation.md`.
     * Consolidated `encoder.h/cpp` and `decoder.h/cpp` from `payloadCoder/` into `nodeCode/`.
-    * Modified `nodeCode/encoder.cpp` and `nodeCode/decoder.cpp` to use `debugSerial` (Arduino `Serial`) instead of `std::cout` for print/debug functions, enabling Arduino compatibility.
-    * Adapted `nodeCode.ino` to use the consolidated encoder:
-      * Removed `setTestValues()` call.
-      * Implemented setting of individual payload fields (ID, version, sensor states, battery, Unix time) using data from sensor simulation classes and placeholders.
   * `[X]` Implement event-triggered communication.
     * Added logic to detect changes in sensor states (door, catch, displacement).
-    * Implemented a periodic heartbeat mechanism.
-    * LoRaWAN messages are now sent only upon sensor state changes or heartbeat intervals.
     * Initialized previous sensor states after successful LoRaWAN join to prevent immediate transmission on the first loop.
   * `[~]` Implement sleep functionality for maximum battery life.
     * `[X]` Added basic MCU sleep using Watchdog Timer (WDT) to periodically wake the ATmega32U4 from `SLEEP_MODE_PWR_DOWN`.
-    * `[X]` Replaced main loop `delay()` with WDT-driven sleep cycle (currently ~1 second).
-    * `[X]` Implemented LoRa module sleep (`ttn.sleep()`) before MCU sleep in `nodeCode.ino`. The LoRa module is set to sleep for `HEARTBEAT_INTERVAL_MS` and will wake on timeout or next command.
-      * `[X]` Implemented deeper MCU peripheral power-down in `nodeCode.ino` by disabling/re-enabling the ADC around the sleep cycle.
-      * **Note:** Hardware-dependent sleep optimizations require testing by the user on the actual device to confirm behavior and power savings. `debugSerial` messages have been added to `nodeCode.ino` to assist observation.
-    * `[ ]` Optimize general power usage.
-    * `[ ]` Optimize data transmission (e.g., target once every 24 hours for routine updates).
+    * `[X]` Optimize general power usage.
+      * Conditionalized all `debugSerial` output in `nodeCode.ino` using an `ENABLE_DEBUG_SERIAL` preprocessor flag.
+      * Commented out the explicit `ttn.sleep(HEARTBEAT_INTERVAL_MS)` call in `nodeCode.ino`.
+      * Added comments in `nodeCode.ino` regarding further optimization opportunities.
+      * Created separate Debug and Release build/flash tasks in `.vscode/tasks.json`.
+      * Tested Debug build on device, serial output confirmed working as expected.
+    * `[~]` Optimize data transmission (e.g., target once every 24 hours for routine updates). (In Progress)
+      * `[X]` Changed `HEARTBEAT_INTERVAL_MS` to 24 hours in `nodeCode.ino`.
 * `[~]` (I.D) Document with Doxygen. (Task started for `nodeCode/` files)
 
 #### Server-Side (`serverSide/`)
@@ -213,13 +209,17 @@ These tasks help streamline the compilation and testing processes directly withi
   * `[X]` Converted to Markdown (`docs/mini-research-summary.md`), PII removed, and translated to English.
   * `[X]` Original DOCX (`docs-old/Jaap-Jan Groenendijk LoRaWAN verwerkte feedback.docx`) added to `.gitignore`.
   * `[X]` Convert to PDF as per deliverable requirements (I.A.5). (Done - 2025-06-07)
-  * `[ ]` Locate and submit peer review document (I.A.5).
-* `[ ]` (I.D) Ensure all Doxygen documentation is complete and integrated across the project.
+  * `[X]` Locate and submit peer review document (I.A.5). (Done - 2025-06-07)
+* `[ ]` (I.D) Ensure all Doxygen documentation is complete and integrated across the project. (Postponed - 2025-06-07)
 
 ## Documentation Review & Enhancement
 
 * `[~]` Review content in `docs-old/` and migrate relevant information to a new `docs/` directory. (Mini-Research Summary migrated to `docs/mini-research-summary.md`).
 * `[ ]` Ensure `README.md` appropriately refers to the `docs-old/` directory for current detailed context, and eventually to the new `docs/` directory as content is migrated.
+
+* **2025-06-07 (Current Time) - Postponed:** Task (I.D) Ensure all Doxygen documentation is complete and integrated across the project.
+* **2025-06-07 (Current Time) - Done:** Optimized general power usage for the LoRaWAN node (`nodeCode/`) by conditionalizing debug output, reducing LoRa send delay, refining LoRa module sleep strategy, and creating/testing new build/flash tasks.
+* **2025-06-07 (Current Time) - In Progress:** Optimizing data transmission for the LoRaWAN node (`nodeCode/`). Changed `HEARTBEAT_INTERVAL_MS` in `nodeCode.ino` to 24 hours.
 
 ## Design Notes & Rationale
 
@@ -242,4 +242,4 @@ The workflow performs the following steps:
 1. **Checkout Code**: Checks out the repository code.
 2. **Install Doxygen**: Installs Doxygen on the runner.
 3. **Read Build Number**: Reads the build number from `payloadCoder/buildnumber.num`.
-4. **Generate Documentation**: Runs Doxygen using the `Doxyfile` in the project
+4. **Generate Documentation**: Runs Doxygen using the `Doxyfile` in the project root.

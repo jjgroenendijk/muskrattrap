@@ -27,7 +27,7 @@ If the user's only input is a greeting (e.g., "hi", "hello"), your immediate and
     * **Continuous Updates:** The file **must** be updated **immediately** upon the start, completion, or blocking of any task.
     * **Content Mandates:** The `readme.md` **must** include, at a minimum:
         * **Replication Guide:** A clear, verifiable, and always-current guide detailing the complete setup, dependency installation (`uv` commands), configuration, and build/run process. Any change to these steps must trigger an immediate update.
-        * **Project Status:** A dedicated section (e.g., "## Progress Tracker") that reflects the real-time state of the project. Entries **must be timestamped** and clearly differentiate between 'To-Do,' 'In-Progress,' and 'Done' tasks, noting any blockers, errors, or significant deviations.
+        * **Project Status:** A dedicated section (e.g., "## Progress Tracker") that reflects the real-time state of the project. Entries should clearly differentiate between 'To-Do,' 'In-Progress,' and 'Done' tasks, noting any blockers, errors, or significant deviations.
         * **Architectural Decisions & Learnings:** A section (e.g., "## Design Notes & Rationale") to document the "why" behind the code. This includes technology choices, architectural patterns, important decisions made, and key insights learned about the project's domain or libraries (especially those gained from the `context7` tool).
 
 3.  **Python Environment and Tooling Mandate:**

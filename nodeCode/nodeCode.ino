@@ -56,6 +56,8 @@
  *       - Both buttons pressed: Trap displaced.
  */
 
+#define ENABLE_DEBUG_SERIAL true // Set to true for debugging, false for production/power testing
+
 #include "TheThingsNetwork_HANIoT.h"
 #include "HAN_IoT_Shield.h"
 #include "secrets.h"
@@ -116,7 +118,8 @@ bool prevDisplacementStatus = false; ///< @brief Previous state of the displacem
  * @brief Interval for sending heartbeat messages, in milliseconds.
  * Currently set to 5 minutes for testing purposes.
  */
-const unsigned long HEARTBEAT_INTERVAL_MS = 5UL * 60UL * 1000UL; // 5 minutes
+// const unsigned long HEARTBEAT_INTERVAL_MS = 5UL * 60UL * 1000UL; // 5 minutes for testing
+const unsigned long HEARTBEAT_INTERVAL_MS = 24UL * 60UL * 60UL * 1000UL; // 24 hours for production
 /**
  * @brief Timestamp of the last heartbeat message sent.
  */
@@ -138,35 +141,42 @@ void setup()
         loraSerial.begin(57600);
     }
 
+    // debugSerial.begin(9600); // Original line
+#if ENABLE_DEBUG_SERIAL
     debugSerial.begin(9600);
+#endif
 
     // Wait a maximum of 10s for Serial Monitor
+    // while (!debugSerial && millis() < 10000) // Original line
+    //     ; // Original line
+#if ENABLE_DEBUG_SERIAL
     while (!debugSerial && millis() < 10000)
         ;
     debugSerial.println(F("DEBUG: Setup function started. Serial communication is working.")); // Diagnostic print
+#endif
 
     if (loraCommunication)
     {
+#if ENABLE_DEBUG_SERIAL
         debugSerial.println(F("-- STATUS"));
+#endif
         ttn.showStatus();
 
+#if ENABLE_DEBUG_SERIAL
         debugSerial.println(F("-- JOIN"));
+#endif
         if (ttn.join(devEui, appEui, appKey)) {
+#if ENABLE_DEBUG_SERIAL
             debugSerial.println(F("Join successful. Initializing heartbeat timer and previous states."));
+#endif
             lastHeartbeatTime = millis(); // Initialize heartbeat timer after successful join
-             // Initialize previous states to current states after join to avoid immediate send on first loop
-            // Ensure sensors are read once before setting previous states if their initial state matters
-            // For now, assuming button checks in loop() will establish initial state before first event check.
-            // Or, read them here:
-            // if (redButton.isPressed() && !blackButton.isPressed()) doorSensor.setDoorStatus(true); else doorSensor.setDoorStatus(false);
-            // if (blackButton.isPressed() && !redButton.isPressed()) catchSensor.setCatchStatus(true); else catchSensor.setCatchStatus(false);
-            // if (redButton.isPressed() && blackButton.isPressed()) displacementSensor.setDisplacementStatus(true); else displacementSensor.setDisplacementStatus(false);
-            
             prevDoorStatus = doorSensor.getDoorStatus();
             prevCatchStatus = catchSensor.getCatchStatus();
             prevDisplacementStatus = displacementSensor.getDisplacementStatus();
         } else {
+#if ENABLE_DEBUG_SERIAL
             debugSerial.println(F("Join failed. Check keys and coverage."));
+#endif
             // Consider how to handle failed join, e.g. retry or halt.
         }
     }
@@ -181,7 +191,9 @@ void setup()
 void loop()
 {
     ///< Loop indication for debugging
+#if ENABLE_DEBUG_SERIAL
     debugSerial.println("-- LOOP");
+#endif
     // knightRider();
 
     ///< Check the red button (door sensor)
@@ -218,9 +230,12 @@ void loop()
     }
 
     ///< Check the battery level
+    // Consider reading battery level less frequently if it changes slowly, e.g., only before sending a message.
     uint8_t currentBatteryLevel = batterySensor.getBatteryLevel();
+#if ENABLE_DEBUG_SERIAL
     debugSerial.print(F("-- BATTERY LEVEL: "));
     debugSerial.println(currentBatteryLevel);
+#endif
 
     // --- Event Detection Logic ---
     bool sendLoraMessage = false;
@@ -233,20 +248,26 @@ void loop()
 
     // Check for state changes
     if (currentDoorStatus != prevDoorStatus) {
+#if ENABLE_DEBUG_SERIAL
         debugSerial.print(F("Door status changed from ")); debugSerial.print(prevDoorStatus);
         debugSerial.print(F(" to ")); debugSerial.print(currentDoorStatus); debugSerial.println(F(". Triggering send."));
+#endif
         sendLoraMessage = true;
         prevDoorStatus = currentDoorStatus;
     }
     if (currentCatchStatus != prevCatchStatus) {
+#if ENABLE_DEBUG_SERIAL
         debugSerial.print(F("Catch status changed from ")); debugSerial.print(prevCatchStatus);
         debugSerial.print(F(" to ")); debugSerial.print(currentCatchStatus); debugSerial.println(F(". Triggering send."));
+#endif
         sendLoraMessage = true;
         prevCatchStatus = currentCatchStatus;
     }
     if (currentDisplacementStatus != prevDisplacementStatus) {
+#if ENABLE_DEBUG_SERIAL
         debugSerial.print(F("Displacement status changed from ")); debugSerial.print(prevDisplacementStatus);
         debugSerial.print(F(" to ")); debugSerial.print(currentDisplacementStatus); debugSerial.println(F(". Triggering send."));
+#endif
         sendLoraMessage = true;
         prevDisplacementStatus = currentDisplacementStatus;
     }
@@ -254,14 +275,18 @@ void loop()
     // Check for heartbeat
     // Ensure loraCommunication is true before checking heartbeat, to avoid sending if not joined.
     if (loraCommunication && (currentTime - lastHeartbeatTime >= HEARTBEAT_INTERVAL_MS)) {
+#if ENABLE_DEBUG_SERIAL
         debugSerial.println(F("Heartbeat interval. Triggering send."));
+#endif
         sendLoraMessage = true;
         lastHeartbeatTime = currentTime;
     }
     
     if (loraCommunication && sendLoraMessage)
     {
+#if ENABLE_DEBUG_SERIAL
         debugSerial.println(F("Preparing to send LoRaWAN message due to event/heartbeat."));
+#endif
         payloadEncoder encoder;
 
         // Set actual sensor values and other payload data
@@ -290,12 +315,14 @@ void loop()
         ttn.sendBytes(payloadBuffer, payloadSize);
 
         // Wait for the message to be sent
-        delay(10000); // This delay might impact responsiveness to subsequent quick events.
-                      // Consider if this long delay is always needed or if ttn.sendBytes is blocking enough.
+        // delay(10000); // Original delay. This delay might impact responsiveness and power consumption.
+                      // Consider if this long delay is always needed or if ttn.sendBytes is blocking enough,
+                      // or if the library provides a callback/status for TX completion.
+        delay(1000); // Reduced delay. Verify necessity and actual time needed for TX completion or downlink window.
     }
 
     // After all operations, or if no message was sent, prepare for sleep.
-    // If a message was sent, the 10s delay has passed.
+    // If a message was sent, the delay has passed.
     // If no message was sent, we proceed to sleep directly.
 
     // Put LoRa module to sleep if loraCommunication is active.
@@ -309,10 +336,21 @@ void loop()
     // This part needs more refinement based on RN2483 power behavior and library.
 
     if (loraCommunication) {
-        debugSerial.println(F("Putting LoRa module to sleep for heartbeat interval."));
-        ttn.sleep(HEARTBEAT_INTERVAL_MS); 
+#if ENABLE_DEBUG_SERIAL
+        debugSerial.println(F("Putting LoRa module to sleep for heartbeat interval.")); // This message might be misleading now
+#endif
+        // ttn.sleep(HEARTBEAT_INTERVAL_MS); 
+        // Commented out: Explicitly sleeping the LoRa module for the full HEARTBEAT_INTERVAL_MS here
+        // might be inefficient if the MCU wakes up much sooner (e.g., every 1s via WDT).
+        // The LoRa module (e.g., RN2483) often has its own auto-sleep mechanisms,
+        // or the library might manage its power state more effectively after a command.
+        // Leaving this commented relies on those implicit behaviors or requires further
+        // investigation into optimal LoRa module sleep strategy for this specific hardware/library.
     }
 
+    // Consider longer WDT intervals (e.g., WDTO_2S, WDTO_4S, WDTO_8S) for further power savings,
+    // balancing responsiveness to sensor changes with power consumption.
+    // Current: WDTO_1S wakes MCU approx. every 1 second.
     setupWatchdog(WDTO_1S); // Setup WDT for ~1 second interrupt
     system_sleep();         // Put MCU to sleep
 }
@@ -339,7 +377,9 @@ void system_sleep() {
   set_sleep_mode(SLEEP_MODE_PWR_DOWN); // Choose the deepest sleep mode
   sleep_enable();
   
+#if ENABLE_DEBUG_SERIAL
   debugSerial.println(F("Disabling ADC."));
+#endif
   ADCSRA &= ~_BV(ADEN); // Disable ADC
   
   // Optional: disable ADC, BOD, etc. before sleep for more power saving
@@ -353,7 +393,9 @@ void system_sleep() {
   // --- CPU WAKES UP HERE ---
   sleep_disable(); // Disable sleep mode
   
+#if ENABLE_DEBUG_SERIAL
   debugSerial.println(F("Re-enabling ADC."));
+#endif
   ADCSRA |= _BV(ADEN);  // Re-enable ADC
   
   // Optional: re-enable peripherals disabled before sleep
