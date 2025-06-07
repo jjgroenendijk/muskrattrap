@@ -50,6 +50,7 @@ Available tasks:
 * **Run PayloadCoder Unit Tests:** Runs the unit tests for the C++ `payloadCoder` by executing the compiled test program. This task depends on the successful build of the executable.
 * **Monitor Arduino (nodeCode.ino) - Auto-detect Port:** Opens a serial monitor for the LoRaWAN node using `arduino-cli monitor`. This task attempts to automatically find the serial port for an Arduino Leonardo-compatible board (works best on macOS/Linux if only one such board is connected). If it fails, or if you have multiple boards, you might need to use the manual command line method described in the "Node (The Things Uno) Development" section.
 * **Generate Doxygen Documentation:** Generates Doxygen documentation for the entire project using the `Doxyfile` in the project root. The output will be in `docs/doxygen`.
+* **Start/Update Server Applications (Docker Compose):** Starts or updates all server-side applications (Node-RED, MariaDB, phpMyAdmin, Grafana) defined in `serverSide/docker-compose.yml`. It uses the `--force-recreate` flag to ensure containers are updated with any image changes. This task is run from the `serverSide/` directory.
 
 These tasks help streamline the compilation and testing processes directly within VSCode.
 
@@ -67,8 +68,13 @@ These tasks help streamline the compilation and testing processes directly withi
     ```bash
     docker-compose up -d
     ```
+    Alternatively, use the "Start/Update Server Applications (Docker Compose)" VSCode task.
 
-4. **Node-RED TTN Integration:**
+4. **Database Initialization:**
+    * The MariaDB service in `serverSide/docker-compose.yml` is configured to automatically import any `*.sql` files placed in its `/config/initdb.d/` directory upon first startup.
+    * The project's `serverSide/databaseSetup.sql` is mapped to this directory, ensuring the database schema is created when the MariaDB container is first run.
+
+5. **Node-RED TTN Integration:**
     * Use the JavaScript decoder from `serverSide/javascriptDecoder/decoder.js` and add it to the application decoder in The Things Network console.
     * For Node-RED Git integration (if needed for flow management):
         * Access the Node-RED container: `sudo docker exec -it nodered /bin/bash`
@@ -154,6 +160,8 @@ These tasks help streamline the compilation and testing processes directly withi
 * **2025-06-07 (Current Time) - Starting:** Convert Mini-Research Summary (`docs/mini-research-summary.md`) to PDF.
 * **2025-06-07 (Current Time) - Done:** Convert Mini-Research Summary (`docs/mini-research-summary.md`) to PDF.
 * **2025-06-07 (Current Time) - Starting:** Locate and submit peer review document for Mini-Research Summary (I.A.5).
+* **2025-06-07 (Current Time) - Done:** Added VSCode task "Start/Update Server Applications (Docker Compose)" to `.vscode/tasks.json`.
+* **2025-06-07 (Current Time) - Done:** Configured `serverSide/docker-compose.yml` for MariaDB to automatically import `serverSide/databaseSetup.sql` on initial startup.
 
 ### Key Outstanding Technical Tasks (derived from `docs-old/projectDescription/04-toDo.md` and `progress.md`)
 
@@ -225,6 +233,7 @@ These tasks help streamline the compilation and testing processes directly withi
 
 *(This section will document key architectural decisions, technology choices, and learnings, especially those from `context7` if used.)*
 
+* **Database Initialization:** The MariaDB Docker container (from `linuxserver/mariadb`) supports automatic execution of SQL scripts placed in its `/config/initdb.d/` directory during the first run. The `serverSide/docker-compose.yml` file leverages this by mapping the project's `serverSide/databaseSetup.sql` file to `/config/initdb.d/databaseSetup.sql` within the MariaDB container. This ensures that the required database schema is automatically created when the services are first started.
 * **Payload Size Clarification:** The LoRaWAN payload is 11 bytes. The specification in `docs-old/IoTNode/payload.md` mentions '10 bytes + 3 bits'; this refers to the three boolean flags (doorStatus, catchDetect, trapDisplacement) being packed into a single byte, contributing to the total 11-byte structure (4 bytes for ID, 1 byte for version, 1 byte for booleans, 1 byte for battery status, and 4 bytes for Unix time). The C++ encoder (`nodeCode/encoder.cpp`, `payloadCoder/encoder.cpp`) and the JavaScript TTN decoder (`serverSide/javascriptDecoder/decoder.js`) are consistent with this 11-byte structure.
 
 * **LPWAN Choice:** LoRaWAN was selected over NB-IoT and LTE-CAT-M due to its superior energy efficiency, long-range capabilities, cost-effectiveness, scalability, and robustness for remote deployments. (Details: `docs-old/projectDescription/01-LPWANComparison.md`)

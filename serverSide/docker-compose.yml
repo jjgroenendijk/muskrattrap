@@ -22,6 +22,7 @@ services:
         - MYSQL_ROOT_PASSWORD= # change this to a secure password
         volumes:
         - ./mariadb/config:/config
+        - ./databaseSetup.sql:/config/initdb.d/databaseSetup.sql
         ports:
         - 3306:3306
 

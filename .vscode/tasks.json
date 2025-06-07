@@ -4,7 +4,7 @@
     {
       "label": "Compile LoRaWAN Node (Release)",
       "type": "shell",
-      "command": "arduino-cli compile --fqbn arduino:avr:leonardo --build-property \\"compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=false\\" nodeCode/nodeCode.ino",
+      "command": "arduino-cli compile --fqbn arduino:avr:leonardo --build-property \"compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=false\" nodeCode/nodeCode.ino",
       "group": "build",
       "presentation": {
         "reveal": "always",
@@ -15,7 +15,7 @@
     {
       "label": "Compile LoRaWAN Node (Debug)",
       "type": "shell",
-      "command": "arduino-cli compile --fqbn arduino:avr:leonardo --build-property \\"compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=true\\" nodeCode/nodeCode.ino",
+      "command": "arduino-cli compile --fqbn arduino:avr:leonardo --build-property \"compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=true\" nodeCode/nodeCode.ino",
       "group": "build",
       "presentation": {
         "reveal": "always",
@@ -109,6 +109,24 @@
         "panel": "new"
       },
       "problemMatcher": []
+    },
+    {
+      "label": "Start/Update Server Applications (Docker Compose)",
+      "type": "shell",
+      "command": "docker-compose up -d --force-recreate",
+      "options": {
+        "cwd": "${workspaceFolder}/serverSide"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Starts or updates all server-side applications defined in docker-compose.yml, forcing a recreate of containers."
     }
   ]
 }
