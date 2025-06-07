@@ -3,21 +3,45 @@
 
 #include "IOTShieldConfig.h"
 
-/// Trap displacement detection is set to 0 (false), a trap displacement detected is set to 1 (true)
-
-class displacementSensor /// DisplacementStatus class declaration
+/**
+ * @class displacementSensor
+ * @brief Manages the status of a trap displacement sensor.
+ *
+ * This class simulates a displacement sensor. It uses an LED (rightRedLED)
+ * on the HAN IoT Shield to visually indicate whether the trap has been displaced.
+ * A status of `false` means no displacement, and `true` means displacement is detected.
+ */
+class displacementSensor
 {
 private:
-    bool _displacementStatus;
+    bool _displacementStatus; ///< Stores the current displacement status (false = not displaced, true = displaced).
 
 public:
-    displacementSensor();  /// constructor declaration, initializes the displacement sensor
-    ~displacementSensor(); /// destructor declaration, cleans up the displacement sensor
+    /**
+     * @brief Construct a new displacementSensor object.
+     * Initializes the displacement status to `false` (not displaced).
+     */
+    displacementSensor();
 
-    // Function for getting the displacement STATUS
+    /**
+     * @brief Destroy the displacementSensor object.
+     * Performs cleanup if necessary.
+     */
+    ~displacementSensor();
+
+    /**
+     * @brief Get the current displacement status.
+     * @return bool The current displacement status (`true` if displaced, `false` otherwise).
+     */
     bool getDisplacementStatus() { return _displacementStatus; }
 
-    void displacementSensor::setDisplacementStatus(bool displacementStatus);
+    /**
+     * @brief Set the displacement status and update the corresponding LED.
+     * If displacement is detected (status is true), the right red LED is turned on.
+     * Otherwise, it is turned off.
+     * @param displacementStatus The new displacement status to set.
+     */
+    void setDisplacementStatus(bool displacementStatus);
 };
 
 #endif // DISPLACEMENTSENSOR_H

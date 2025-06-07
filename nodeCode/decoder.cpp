@@ -1,5 +1,19 @@
 #include "decoder.h"
-/// #include <iostream> // cout, endl // debugging only
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h" // Older Arduino
+#include <iostream> // Fallback for non-Arduino, cout, endl // debugging only
+#endif
+
+// Define debugSerial if not already defined (e.g. for non-Arduino testing)
+#ifndef debugSerial
+#ifdef ARDUINO
+#define debugSerial Serial // Assuming Serial is the debug port on Arduino
+#else
+#define debugSerial std::cout // Fallback for non-Arduino
+#endif
+#endif
 
 /// @brief Constructs a new payloadDecoder object.
 payloadDecoder::payloadDecoder() : _id{0},
@@ -115,11 +129,22 @@ bool payloadDecoder::extract_bool(const uint8_t *buf, const unsigned char idx, u
     return value;
 }
 
-/* // print payload decoded
+// print payload decoded
 void payloadDecoder::printPayloadDecoded()
 {
-    
-    /// Prints the decoded payload information.
+    /**
+     * Prints the decoded payload information.
+     */
+    #ifdef ARDUINO
+    debugSerial.println("Payload decoded: ");
+    debugSerial.print("ID: "); debugSerial.println(_id);
+    debugSerial.print("Version: "); debugSerial.println(static_cast<int>(_version));
+    debugSerial.print("Door status: "); debugSerial.println(_doorStatus);
+    debugSerial.print("Catch detect: "); debugSerial.println(_catchDetect);
+    debugSerial.print("Trap displacement: "); debugSerial.println(_trapDisplacement);
+    debugSerial.print("Battery status: "); debugSerial.println(static_cast<int>(_batteryStatus));
+    debugSerial.print("Unix time: "); debugSerial.println(_unixTime);
+    #else
     std::cout << "Payload decoded: " << std::endl;
     std::cout << "ID: " << _id << std::endl;
     std::cout << "Version: " << static_cast<int>(_version) << std::endl;
@@ -128,4 +153,5 @@ void payloadDecoder::printPayloadDecoded()
     std::cout << "Trap displacement: " << _trapDisplacement << std::endl;
     std::cout << "Battery status: " << static_cast<int>(_batteryStatus) << std::endl;
     std::cout << "Unix time: " << _unixTime << std::endl;
-} */
+    #endif
+}

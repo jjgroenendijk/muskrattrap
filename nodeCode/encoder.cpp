@@ -1,5 +1,20 @@
 #include "encoder.h"
 #include <stdlib.h> // malloc()
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h" // Older Arduino
+#include <iostream> // Fallback for non-Arduino
+#endif
+
+// Define debugSerial if not already defined (e.g. for non-Arduino testing)
+#ifndef debugSerial
+#ifdef ARDUINO
+#define debugSerial Serial // Assuming Serial is the debug port on Arduino
+#else
+#define debugSerial std::cout // Fallback for non-Arduino
+#endif
+#endif
 
 /**
  * @brief Constructs a new payloadEncoder object.
@@ -47,6 +62,14 @@ void payloadEncoder::composePayload()
 
     _bufferSize = add_uint8(_bufferSize, _batteryStatus);
     _bufferSize = add_uint32(_bufferSize, _unixTime);
+
+    ///  show payload size in bytes for debugging purposes
+    #ifdef ARDUINO
+    debugSerial.print("Payload size in bytes: ");
+    debugSerial.println(static_cast<int>(_bufferSize));
+    #else
+    // std::cout << "Payload size in bytes: " << static_cast<int>(_bufferSize) << std::endl; // Keep for non-arduino if needed
+    #endif
 }
 
 unsigned char payloadEncoder::add_uint8(unsigned char idx_in, const uint8_t value)
@@ -88,11 +111,10 @@ unsigned char payloadEncoder::add_uint32(unsigned char idx_in, uint32_t value)
      * @return The updated index after adding the value.
      */
 
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        _buffer[idx_in++] = (value >> 24) & 0xFF; // msb
-        value = value << 8;                       // shift-left
-    }
+    _buffer[idx_in++] = (value >> 24) & 0xFF; // MSB
+    _buffer[idx_in++] = (value >> 16) & 0xFF;
+    _buffer[idx_in++] = (value >> 8) & 0xFF;
+    _buffer[idx_in++] = value & 0xFF;         // LSB
     return (idx_in);
 }
 
@@ -126,14 +148,53 @@ unsigned char payloadEncoder::add_bool(unsigned char idx_in, bool value, unsigne
     return (idx_in);
 }
 
-
-void payloadEncoder::setTestValues()
+/**
+void payloadEncoder::printPayloadBinary()
 {
-    set_id(2);
-    set_version(3);
-    set_doorStatus(false);
-    set_catchDetect(true);
-    set_trapDisplacement(false);
-    set_batteryStatus(4);
-    set_unixTime(5);
+    
+     * Prints the payload in binary format for debugging purposes.
+     *
+     * This function converts each byte in the payload buffer to its binary representation
+     * and prints it to the standard output. The binary representation is displayed as a
+     * sequence of 8 bits, separated by spaces.
+     *
+     * @note This function assumes that the payload buffer has been properly initialized
+     *       and contains valid data.
+
+    std::cout << "Encoder payload binary: ";
+    for (unsigned int i = 0; i < _bufferSize; ++i)
+    {
+        std::bitset<8> binary(_buffer[i]); /// convert to binary
+        std::cout << binary << " ";
+    }
+    // std::cout << std::endl; // Arduino doesn't have std::bitset easily
+}
+*/
+
+void payloadEncoder::printPayloadEncoded()
+{
+    /**
+     * Prints the encoded payload information.
+     * This function prints the ID, version, door status, catch detect,
+     * trap displacement, battery status, and Unix time of the encoded payload.
+     */
+    #ifdef ARDUINO
+    debugSerial.println("Payload encoded: ");
+    debugSerial.print("ID: "); debugSerial.println(_id);
+    debugSerial.print("Version: "); debugSerial.println(static_cast<int>(_version));
+    debugSerial.print("Door status: "); debugSerial.println(_doorStatus);
+    debugSerial.print("Catch detect: "); debugSerial.println(_catchDetect);
+    debugSerial.print("Trap displacement: "); debugSerial.println(_trapDisplacement);
+    debugSerial.print("Battery status: "); debugSerial.println(static_cast<int>(_batteryStatus));
+    debugSerial.print("Unix time: "); debugSerial.println(_unixTime);
+    #else
+    std::cout << "Payload encoded: " << std::endl;
+    std::cout << "ID: " << _id << std::endl;
+    std::cout << "Version: " << static_cast<int>(_version) << std::endl;
+    std::cout << "Door status: " << _doorStatus << std::endl;
+    std::cout << "Catch detect: " << _catchDetect << std::endl;
+    std::cout << "Trap displacement: " << _trapDisplacement << std::endl;
+    std::cout << "Battery status: " << static_cast<int>(_batteryStatus) << std::endl;
+    std::cout << "Unix time: " << _unixTime << std::endl;
+    #endif
 }

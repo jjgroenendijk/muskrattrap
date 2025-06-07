@@ -17,11 +17,11 @@
  * \brief functions to use hardware peripherals on the HAN IoT Shield.
  * \author Remko Welling (remko.welling@han.nl)
  * \date 17-12-2018
- * \version 1.1
+ * \version 1.2
  * 
  * Version|Date        |Note
  * -------|------------|----
- * 1.2    |  4- 2-2019 | Modified include "arduino.h" to "Arduino.h" to be linux compliant
+ * 1.2    |  4- 2-2019 | Modified include "arduino.h" to "Arduino.h" to be linux compliant. Added Doxygen comments.
  * 1.1    | 27-12-2018 | Updates on documentation
  * 1.0    | 15-12-2018 | Initial version
  * 
@@ -29,9 +29,52 @@
  */
 
  /*!
-  \todo make documentation complete
+  \mainpage HAN IoT Shield Library
+  
+  \section intro_sec Introduction
+  This library provides an interface to the hardware peripherals on the HAN IoT Shield 
+  designed for use with Arduino microcontrollers. It simplifies the interaction with 
+  LEDs, pushbuttons, potentiometers, and the Dallas one-wire temperature sensor 
+  available on the shield.
 
-  # HAN_IoT Shield Documentation
+  \section features_sec Features
+  - Easy control of 4 LEDs (2 red, 2 green).
+  - Reading states of 2 pushbuttons (red and black).
+  - Reading values from 2 potentiometers.
+  - Reading temperature from the onboard Dallas DS18S20 sensor.
+  - Class-based approach for organized code.
+
+  \section shield_layout_sec Shield Layout
+  Refer to the ASCII art diagram within the `HAN_IoT_Shield.h` file for a visual 
+  representation of the shield components and their typical placement.
+
+  \section usage_sec Usage
+  1. Include `HAN_IoT_Shield.h` in your Arduino sketch.
+  2. Create objects of the provided classes (e.g., `iotShieldLED`, `iotShieldButton`).
+  3. Use the methods of these objects to control or read from the shield components.
+
+  Example:
+  \code{.cpp}
+  #include "HAN_IoT_Shield.h"
+
+  iotShieldLED myLed(PIN_LED_1_RED);
+  iotShieldButton myButton(PIN_SWITCH_RED);
+
+  void setup() {
+    myLed.setState(LED_ON);
+  }
+
+  void loop() {
+    if (myButton.isPressed()) {
+      myLed.setState(LED_OFF);
+    } else {
+      myLed.setState(LED_ON);
+    }
+    delay(100);
+  }
+  \endcode
+
+  \todo Make documentation complete for all functions and classes.
 
   ## Shield layout
 
@@ -73,119 +116,179 @@
 #include <DallasTemperature.h>  // Dallas one wire sensor library
 
 // Defines for LEDs
-#define PIN_LED_1_RED    3     ///< Led 1 is red and connected to arduino pin 3
-#define PIN_LED_2_RED    4     ///< Led 2 is red and connected to arduino pin 4
-#define PIN_LED_3_GRN    5     ///< Led 3 is green and connected to arduino pin 5
-#define PIN_LED_4_GRN    6     ///< Led 4 is green and connected to arduino pin 6
+#define PIN_LED_1_RED    3     ///< @brief Arduino pin for LED 1 (Red).
+#define PIN_LED_2_RED    4     ///< @brief Arduino pin for LED 2 (Red).
+#define PIN_LED_3_GRN    5     ///< @brief Arduino pin for LED 3 (Green).
+#define PIN_LED_4_GRN    6     ///< @brief Arduino pin for LED 4 (Green).
 
 // Defines for pushbutton
-#define PIN_SWITCH_BLACK 8     ///< Black switch is connected to pin Arduino pin 8
-#define PIN_SWITCH_RED   9     ///< Red switch is connected to pin Arduino pin 9
-#define RELEASED HIGH          ///< represent activity of pushbutton, Released or not pressed is HIGH or '1'
-#define PRESSED  LOW           ///< represent activity of pushbutton, Pressed is LOW or '0'
+#define PIN_SWITCH_BLACK 8     ///< @brief Arduino pin for the Black pushbutton.
+#define PIN_SWITCH_RED   9     ///< @brief Arduino pin for the Red pushbutton.
+#define RELEASED HIGH          ///< @brief Logic level when a pushbutton is released.
+#define PRESSED  LOW           ///< @brief Logic level when a pushbutton is pressed.
 
 // defines for potentiometers.
-#define PIN_POT_RED      A0    ///< Potmeter 1 with red knob is connected to Arduino pin A0
-#define PIN_POT_WHITE    A1    ///< Potmeter 1 with white knob is connected to Arduino pin A1
+#define PIN_POT_RED      A0    ///< @brief Arduino analog pin for Potentiometer 1 (Red knob).
+#define PIN_POT_WHITE    A1    ///< @brief Arduino analog pin for Potentiometer 2 (White knob).
 
 // defines for Dallase one wire sensor
-#define PIN_DALLAS       2     ///< Dallas DS18S20 one-wire temperature sensor is connected to Arduino pin 2
+#define PIN_DALLAS       2     ///< @brief Arduino pin for the Dallas DS18S20 one-wire temperature sensor.
 
+/**
+ * @class iotShieldPotmeter
+ * @brief Manages a potentiometer on the HAN IoT Shield.
+ *
+ * This class allows reading the analog value from a potentiometer and mapping it
+ * to a specified range.
+ */
 class iotShieldPotmeter
 {
 private:
-uint8_t _pin;                 ///< Hardware pin to which the potentiometer is connected.
-  int16_t _aRange;            ///< Minimum value that the potentiiometer will give
-  int16_t _bRange;            ///< Maximum valie that the potentiometer will give.
+  uint8_t _pin;                 ///< @brief Hardware pin to which the potentiometer is connected.
+  int16_t _aRange;            ///< @brief Minimum value of the output range.
+  int16_t _bRange;            ///< @brief Maximum value of the output range.
 
 public:
-  /// \brief constructor
-  /// \pre requires a analog input pin to which the potentiometer is connected
-  /// The potentiometer shall apply 0 to VCC to the anlog input.
-  /// \param hardwarePin Arduino pin to which the potentiometeris connected
-  /// \param minimumValue of the range within the potentiometer will generate values. Default is 0
-  /// \param maximumValue of the range within the potentiometer will generate values. Default is 1023.
+  /**
+   * @brief Constructor for iotShieldPotmeter.
+   * @param hardwarePin Arduino analog input pin to which the potentiometer is connected.
+   * @param minimumValue The minimum value of the desired output range. Default is 0.
+   * @param maximumValue The maximum value of the desired output range. Default is 1023.
+   * @pre Requires an analog input pin. The potentiometer should apply 0 to VCC to this pin.
+   */
   iotShieldPotmeter(uint8_t hardwarePin, int minimumValue = 0, int maximumValue = 1023);
 
-  /// \brief Default destructor
+  /**
+   * @brief Default destructor.
+   */
   ~iotShieldPotmeter();
 
-  /// \brief read value from potentiometer
-  /// This function will transpose raw analog value form 0 to 1023 in to the range
-  /// specified by the minimum and maximumvalue given at creation of the object.
-  /// \return float transposed value from potentiometer in to the sepcified range.
+  /**
+   * @brief Reads the value from the potentiometer and maps it to the specified range.
+   * This function transposes the raw analog value (0-1023) into the range
+   * specified by `minimumValue` and `maximumValue` during object creation.
+   * @return float The mapped value from the potentiometer within the specified range.
+   */
   float getValue(void);
 };
 
-typedef enum { BUTTON_PRESSED,   ///< Button is pressed
-               BUTTON_RELEASED   ///< Button is released
-             } buttonState_t;
+/**
+ * @enum buttonState_t
+ * @brief Represents the state of a pushbutton.
+ */
+typedef enum { 
+    BUTTON_PRESSED,   ///< Indicates the button is currently pressed.
+    BUTTON_RELEASED   ///< Indicates the button is currently released.
+} buttonState_t;
                  
+/**
+ * @class iotShieldButton
+ * @brief Manages a pushbutton on the HAN IoT Shield.
+ *
+ * This class allows reading the state of a pushbutton (pressed or released).
+ */
 class iotShieldButton
 {
 private:
-  uint8_t _pin;                 ///< Hardware pin to which the potentiometer is connected.
+  uint8_t _pin;                 ///< @brief Hardware pin to which the pushbutton is connected.
 
 public:
-  /// \pre requires a digital input pin to which the button is connected
-  /// The button shall deliver HIGH when RELEASED and LOW when PRESSED
-  /// \param hardwarePin Arduino pin to which the button connected
+  /**
+   * @brief Constructor for iotShieldButton.
+   * @param hardwarePin Arduino digital input pin to which the button is connected.
+   * @pre Requires a digital input pin. The button should deliver HIGH when RELEASED and LOW when PRESSED.
+   */
   iotShieldButton(uint8_t hardwarePin);
 
-  /// \brief Default destructor
+  /**
+   * @brief Default destructor.
+   */
   ~iotShieldButton();
 
-  /// \brief get state of pushbutton enum
-  /// functions returns actual state of pushbutton. Either PRESSED or RELEASED
-  /// \return buttonState_t enum of state of pushbutton.
+  /**
+   * @brief Gets the current state of the pushbutton as an enum.
+   * @return buttonState_t The current state (BUTTON_PRESSED or BUTTON_RELEASED).
+   */
   buttonState_t getState();
 
-  /// \brief get state of pushbutton as boolean
-  /// functions returns actual state of pushbutton. Either PRESSED or RELEASED
-  /// \return bool state of pushbutton presed = true, released = false.
+  /**
+   * @brief Checks if the pushbutton is currently pressed.
+   * @return bool True if the button is pressed, false otherwise.
+   */
   bool isPressed();
 };
 
-typedef enum { LED_ON,   ///< LED is ON
-               LED_OFF   ///< LED is OFF
-             } ledState_t;
+/**
+ * @enum ledState_t
+ * @brief Represents the state of an LED.
+ */
+typedef enum { 
+    LED_ON,   ///< Indicates the LED should be turned on.
+    LED_OFF   ///< Indicates the LED should be turned off.
+} ledState_t;
 
+/**
+ * @class iotShieldLED
+ * @brief Manages an LED on the HAN IoT Shield.
+ *
+ * This class allows controlling the state of an LED (on or off).
+ */
 class iotShieldLED
 {
 private:
-  uint8_t _pin;                 ///< Hardware pin to which the potentiometer is connected.
+  uint8_t _pin;                 ///< @brief Hardware pin to which the LED is connected.
 
 public:
-  /// \pre requires a digital input pin to which the LED is connected
-  /// \param hardwarePin Arduino pin to which the LED connected
+  /**
+   * @brief Constructor for iotShieldLED.
+   * @param hardwarePin Arduino digital output pin to which the LED is connected.
+   * @pre Requires a digital output pin.
+   */
   iotShieldLED(uint8_t hardwarePin);
 
-  /// \brief Default destructor
+  /**
+   * @brief Default destructor.
+   */
   ~iotShieldLED();
 
-  /// \brief set state of LED
-  /// \param state set LED state using ledState_t enum.
+  /**
+   * @brief Sets the state of the LED.
+   * @param state The desired state of the LED (LED_ON or LED_OFF).
+   */
   void setState(ledState_t state);
 
 };
 
+/**
+ * @class iotShieldTempSensor
+ * @brief Manages the Dallas one-wire temperature sensor on the HAN IoT Shield.
+ *
+ * This class allows reading the temperature in degrees Celsius from the DS18S20 sensor.
+ */
 class iotShieldTempSensor
 {
 private:
-  float   _temperature;         ///< Local value to hold temperature read form Dallas sensor
-  OneWire _oneWireInterface;    ///< Object of onewire interface
-  DallasTemperature _sensors;   ///< Object of one wire sensors on one wire bus
+  float   _temperature;         ///< @brief Local storage for the last read temperature.
+  OneWire _oneWireInterface;    ///< @brief OneWire interface object for communication with the sensor.
+  DallasTemperature _sensors;   ///< @brief DallasTemperature library object to manage sensors on the OneWire bus.
   
 public:
-  /// \pre requires a digital input pin to which the LED is connected
-  /// \param hardwarePin Arduino pin to which the LED connected
+  /**
+   * @brief Constructor for iotShieldTempSensor.
+   * @param hardwarePin Arduino digital pin to which the Dallas sensor's data line is connected. Defaults to PIN_DALLAS.
+   * @pre Requires a digital pin for the OneWire interface.
+   */
   iotShieldTempSensor(uint8_t hardwarePin = PIN_DALLAS);
 
-  /// \brief Default destructor
+  /**
+   * @brief Default destructor.
+   */
   ~iotShieldTempSensor();
 
-  /// \brief set state of LED
-  /// \return state set LED state using ledState_t enum.
+  /**
+   * @brief Reads the current temperature from the Dallas sensor.
+   * @return float The temperature in degrees Celsius. Returns a pre-defined error value if the read fails (check DallasTemperature library specifics).
+   */
   float getTemperatureCelsius();
 
 };

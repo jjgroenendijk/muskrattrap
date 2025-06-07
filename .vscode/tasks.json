@@ -1,62 +1,60 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Build Debug",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "debug"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/payloadCoder"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "detail": "Generated task for building in debug mode."
-        },
-        {
-            "label": "Build Release",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "release"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/payloadCoder"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "detail": "Generated task for building in release mode."
-        },
-        {
-            "label": "Clean",
-            "type": "shell",
-            "command": "make",
-            "args": [
-                "clean"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/payloadCoder"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "detail": "Generated task for cleaning the build artifacts."
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compile LoRaWAN Node (nodeCode.ino)",
+      "type": "shell",
+      "command": "arduino-cli compile --fqbn arduino:avr:leonardo nodeCode/nodeCode.ino",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": ["$arduinoCli"]
+    },
+    {
+      "label": "Build PayloadCoder Executable",
+      "type": "shell",
+      "command": "make all",
+      "options": {
+        "cwd": "${workspaceFolder}/payloadCoder"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Run PayloadCoder Unit Tests",
+      "type": "shell",
+      "command": "make launch",
+      "options": {
+        "cwd": "${workspaceFolder}/payloadCoder"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "dependsOn": ["Build PayloadCoder Executable"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": [] // Test output is custom, no standard problem matcher.
+    },
+    {
+      "label": "Monitor Arduino (nodeCode.ino) - Auto-detect Port",
+      "type": "shell",
+      "command": "arduino-cli monitor -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Attempts to auto-detect the serial port for an Arduino Leonardo. Works best on macOS/Linux if only one Leonardo is connected."
+    }
+  ]
 }

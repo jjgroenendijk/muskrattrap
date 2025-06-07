@@ -67,13 +67,13 @@ public:
 
     /// \brief get ID
     /// Fetch the ID from the payload
-    /// \return ID
-    int get_id() const { return _id; }
+    /// \return ID (uint32_t)
+    uint32_t get_id() const { return _id; }
 
     /// \brief get version
     /// Fetch the version number from the payload
-    /// \return version
-    int get_version() const { return _version; }
+    /// \return version (uint8_t)
+    uint8_t get_version() const { return _version; }
 
     /// \brief get door status
     /// Fetch the door status from the payload
@@ -92,13 +92,13 @@ public:
 
     /// \brief get battery status
     /// Fetch the battery status from the payload
-    /// \return battery status
-    int get_batteryStatus() const { return _batteryStatus; }
+    /// \return battery status (uint8_t)
+    uint8_t get_batteryStatus() const { return _batteryStatus; }
 
     /// \brief get unix time
-    /// Fetch the unix time from the payload
-    /// \return unix time
-    int get_unixTime() const { return _unixTime; }
+    /// Fetch the unix time from thepayload
+    /// \return unix time (uint32_t)
+    uint32_t get_unixTime() const { return _unixTime; }
 
     /// \brief print decoded payload
     /// Print the decoded payload to the console

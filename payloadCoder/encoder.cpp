@@ -92,11 +92,10 @@ unsigned char payloadEncoder::add_uint32(unsigned char idx_in, uint32_t value)
      * @return The updated index after adding the value.
      */
 
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        _buffer[idx_in++] = (value >> 24) & 0xFF; // msb
-        value = value << 8;                       // shift-left
-    }
+    _buffer[idx_in++] = (value >> 24) & 0xFF; // MSB
+    _buffer[idx_in++] = (value >> 16) & 0xFF;
+    _buffer[idx_in++] = (value >> 8) & 0xFF;
+    _buffer[idx_in++] = value & 0xFF;         // LSB
     return (idx_in);
 }
 
