@@ -1,0 +1,523 @@
+[
+    {
+        "id": "6feec8e04bcef45b",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f5a2cebc5ac49db9",
+        "type": "tls-config",
+        "name": "",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": false,
+        "alpnprotocol": ""
+    },
+    {
+        "id": "a862733b31c57557",
+        "type": "MySQLdatabase",
+        "name": "mariadb",
+        "host": "mariadb",
+        "port": "3306",
+        "db": "muskrattrap_db",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "4fe80b17719e8724",
+        "type": "mqtt-broker",
+        "name": "muskrattrap@ttn",
+        "broker": "eu1.cloud.thethings.network",
+        "port": "1883",
+        "tls": "f5a2cebc5ac49db9",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "c863e9b2ec3be8ca",
+        "type": "mqtt in",
+        "z": "6feec8e04bcef45b",
+        "name": "muskrattrap@ttn",
+        "topic": "v3/muskrattrap@ttn/devices/#",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "4fe80b17719e8724",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 100,
+        "y": 40,
+        "wires": [
+            [
+                "ca3603af8b00063b",
+                "6d05ecf67a45f9b9"
+            ]
+        ]
+    },
+    {
+        "id": "918fa74303ce0827",
+        "type": "debug",
+        "z": "6feec8e04bcef45b",
+        "name": "unified output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 480,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "ca3603af8b00063b",
+        "type": "function",
+        "z": "6feec8e04bcef45b",
+        "name": "Unifier TTNV3",
+        "func": "var unified = {};\nunified.source = \"TTNV3\";\n\n\nif('join_accept' in msg.payload){\n    return;\n}\n\n// unified.dateTime = msg.collectedTime;\nvar tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds\nvar dateTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 19).replace('T', ' ');\nunified.dateTime = dateTime;\n\nunified.devID = msg.payload.end_device_ids.device_id;\nunified.appEUI = msg.payload.end_device_ids.join_eui;\nunified.devEUI = msg.payload.end_device_ids.dev_eui;\n\nif(typeof msg.payload.uplink_message.f_cnt !== 'undefined') {\n    unified.fcnt = msg.payload.uplink_message.f_cnt\n}else{\n    unified.fcnt = 0;\n}\n\nunified.port = msg.payload.uplink_message.f_port;\nunified.devAddr = msg.payload.end_device_ids.dev_addr;\nunified.frequency = parseInt(msg.payload.uplink_message.settings.frequency)/1000000;\n\nunified.sf = msg.payload.uplink_message.settings.data_rate.lora.spreading_factor\n// unified.sf = \"\";\n\nunified.payload = {};\nunified.payload.buffer = Buffer.from(msg.payload.uplink_message.frm_payload, 'base64');\nunified.payload.size = Buffer.byteLength(msg.payload.uplink_message.frm_payload);\nunified.payload.base64 = msg.payload.uplink_message.frm_payload;\nunified.payload.decoded = {};\nunified.payload.decoded = msg.payload.uplink_message.decoded_payload;\n\nunified.metaData = {};\nunified.metaData.gatewayCount = msg.payload.uplink_message.rx_metadata.length;\nunified.metaData.gateways = [];\nfor (var i=0 ; i < unified.metaData.gatewayCount ; i++) {\n    var data = {};\n    data.name = msg.payload.uplink_message.rx_metadata[i].gateway_ids.gateway_id;\n    \n    if(typeof msg.payload.uplink_message.rx_metadata[i].gateway_ids.eui !== 'undefined') {\n        data.id = msg.payload.uplink_message.rx_metadata[i].gateway_ids.eui;\n    } else {\n        data.id = 0;\n    }\n    \n    data.rssi = msg.payload.uplink_message.rx_metadata[i].rssi;\n    data.snr = msg.payload.uplink_message.rx_metadata[i].snr;\n    \n    if(typeof msg.payload.uplink_message.rx_metadata[i].location !== 'undefined') {\n        data.lat = msg.payload.uplink_message.rx_metadata[i].location.latitude;\n        data.lon = msg.payload.uplink_message.rx_metadata[i].location.longitude;\n        data.height = msg.payload.uplink_message.rx_metadata[i].location.altitude;\n    } else {\n        data.lat = 0;\n        data.lon = 0;\n        data.height = 0;\n    }\n    \n    unified.metaData.gateways.push(data);\n}\n\nreturn unified;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 40,
+        "wires": [
+            [
+                "918fa74303ce0827",
+                "4bef840c7cec618b",
+                "d001da7a00000001"
+            ]
+        ],
+        "inputLabels": [
+            "Helium"
+        ],
+        "outputLabels": [
+            "Unified"
+        ],
+        "icon": "font-awesome/fa-arrows-alt"
+    },
+    {
+        "id": "6d05ecf67a45f9b9",
+        "type": "debug",
+        "z": "6feec8e04bcef45b",
+        "name": "raw mqtt",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "counter",
+        "x": 230,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "312e3b32cec70ae1",
+        "type": "mysql",
+        "z": "6feec8e04bcef45b",
+        "mydb": "a862733b31c57557",
+        "name": "mariadb",
+        "x": 780,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4bef840c7cec618b",
+        "type": "function",
+        "z": "6feec8e04bcef45b",
+        "name": "database command transformer",
+        "func": "// Extract the payload from the MQTT message\nvar payload = msg.payload;\n\n// Construct the SQL INSERT statement\nvar sql = `INSERT INTO muskrattrap (messageSource, dateTime, devID, appEUI, devEUI, fcnt, port, devAddr, frequency, sf, batteryStatus, catchDetect, doorStatus, trapDisplacement, id, unixTime, version)\nVALUES (\n  '${msg.source}', '${msg.dateTime}', '${msg.devID}', \n  '${msg.appEUI}', '${msg.devEUI}', ${msg.fcnt}, ${msg.port}, \n  '${msg.devAddr}', ${msg.frequency}, ${msg.sf}, ${payload.decoded.data.batteryStatus}, \n  ${payload.decoded.data.catchDetect ? 1 : 0}, ${payload.decoded.data.doorStatus ? 1 : 0}, \n  ${payload.decoded.data.trapDisplacement ? 1 : 0}, ${payload.decoded.data.id}, \n  ${payload.decoded.data.unixTime}, ${payload.decoded.data.version}\n);`;\n\n// Set the SQL query in the payload\nmsg.topic = sql;\n\n// Return the message object\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 40,
+        "wires": [
+            [
+                "312e3b32cec70ae1",
+                "73e72d45c5b92872"
+            ]
+        ]
+    },
+    {
+        "id": "73e72d45c5b92872",
+        "type": "debug",
+        "z": "6feec8e04bcef45b",
+        "name": "database command debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "d001beef00000001",
+        "type": "ui_tab",
+        "name": "Dashboard",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "d001beef00000002",
+        "type": "ui_group",
+        "name": "Trap Overview",
+        "tab": "d001beef00000001",
+        "order": 1,
+        "disp": true,
+        "width": "12",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "d001da7a00000001",
+        "type": "function",
+        "z": "6feec8e04bcef45b",
+        "name": "Manage Trap Data for Table",
+        "func": "// Retrieve the existing map of trap data from flow context, or initialize an empty object.\nlet allTrapData = flow.get('allTrapData') || {};\n\n// Extract data from the incoming message (output of \"Unifier TTNV3\")\nconst devID = msg.devID;\nconst lastSeen = msg.dateTime; // Already formatted by Unifier\nconst doorStatus = msg.payload.decoded.data.doorStatus;\nconst catchDetect = msg.payload.decoded.data.catchDetect;\nconst trapDisplacement = msg.payload.decoded.data.trapDisplacement;\nconst batteryStatus = msg.payload.decoded.data.batteryStatus; // This is 0-255\n\n// Extract RSSI and SNR from the first gateway, if available\nlet rssi = 'N/A';\nlet snr = 'N/A';\nif (msg.metaData && msg.metaData.gateways && msg.metaData.gateways.length > 0) {\n    rssi = msg.metaData.gateways[0].rssi !== undefined ? msg.metaData.gateways[0].rssi : 'N/A';\n    snr = msg.metaData.gateways[0].snr !== undefined ? msg.metaData.gateways[0].snr : 'N/A';\n}\n\n// Format data for display\nconst displayData = {\n    devID: devID,\n    lastSeen: lastSeen,\n    door: doorStatus ? \"Closed\" : \"Open\",\n    catch: catchDetect ? \"Yes\" : \"No\",\n    displaced: trapDisplacement ? \"Yes\" : \"No\",\n    battery: Math.round(batteryStatus / 255 * 100) + \"%\", // Convert 0-255 to percentage\n    rssi: rssi, // This will be a number or 'N/A'\n    snr: snr   // This will be a number or 'N/A'\n};\n\n// Update the map with the new data for this device\nallTrapData[devID] = displayData;\n\n// Store the updated map back into flow context\nflow.set('allTrapData', allTrapData);\n\n// Calculate active catches\nlet activeCatches = 0;\nconst trapValues = Object.values(allTrapData); // Get array of trap data objects\nfor (const trap of trapValues) {\n    if (trap.catch === \"Yes\") {\n        activeCatches++;\n    }\n}\nflow.set('activeCatchesCount', activeCatches);\n\n// Calculate Average RSSI\nlet sumRssi = 0;\nlet countRssi = 0;\nfor (const trap of trapValues) {\n    if (typeof trap.rssi === 'number' && !isNaN(trap.rssi)) {\n        sumRssi += trap.rssi;\n        countRssi++;\n    }\n}\n\nlet averageRssiToStore;\nif (countRssi > 0) {\n    averageRssiToStore = (sumRssi / countRssi);\n} else {\n    averageRssiToStore = 'N/A';\n}\nflow.set('averageRssiValue', averageRssiToStore);\n\n// Calculate Total Traps Monitored\nconst totalTraps = Object.keys(allTrapData).length;\nflow.set('totalTrapsMonitored', totalTraps);\n\n// Convert the map values into an array for the ui_table\nmsg.payload = Object.values(allTrapData);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 120,
+        "wires": [
+            [
+                "d001da7a00000002"
+            ]
+        ]
+    },
+    {
+        "id": "d001da7a00000002",
+        "type": "ui_table",
+        "z": "6feec8e04bcef45b",
+        "group": "d001beef00000002",
+        "name": "Trap Status Overview",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "columns": [
+            {
+                "field": "devID",
+                "title": "Trap ID",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext"
+            },
+            {
+                "field": "lastSeen",
+                "title": "Last Seen",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext"
+            },
+            {
+                "field": "door",
+                "title": "Door",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext"
+            },
+            {
+                "field": "catch",
+                "title": "Catch",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext"
+            },
+            {
+                "field": "displaced",
+                "title": "Displaced",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext"
+            },
+            {
+                "field": "battery",
+                "title": "Battery",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext"
+            },
+            {
+                "field": "rssi",
+                "title": "RSSI",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext"
+            },
+            {
+                "field": "snr",
+                "title": "SNR",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext"
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 750,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "d001beef00000003",
+        "type": "ui_group",
+        "z": "6feec8e04bcef45b",
+        "name": "Summary Stats",
+        "tab": "d001beef00000001",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "d001da7a00000003",
+        "type": "inject",
+        "z": "6feec8e04bcef45b",
+        "name": "Update Active Catches",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 340,
+        "wires": [
+            [
+                "d001da7a00000004"
+            ]
+        ]
+    },
+    {
+        "id": "d001da7a00000004",
+        "type": "function",
+        "z": "6feec8e04bcef45b",
+        "name": "Get Active Catches Count",
+        "func": "let count = flow.get('activeCatchesCount') || 0;\nmsg.payload = \"Active Catches: \" + count;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 340,
+        "wires": [
+            [
+                "d001da7a00000005"
+            ]
+        ]
+    },
+    {
+        "id": "d001da7a00000005",
+        "type": "ui_text",
+        "z": "6feec8e04bcef45b",
+        "group": "d001beef00000003",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "Active Catches Display",
+        "label": "Status",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 600,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "d001da7a00000006",
+        "type": "inject",
+        "z": "6feec8e04bcef45b",
+        "name": "Update Average RSSI",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 400,
+        "wires": [
+            [
+                "d001da7a00000007"
+            ]
+        ]
+    },
+    {
+        "id": "d001da7a00000007",
+        "type": "function",
+        "z": "6feec8e04bcef45b",
+        "name": "Get Average RSSI",
+        "func": "let avgRssi = flow.get('averageRssiValue');\n\nif (avgRssi === undefined || avgRssi === null) {\n    msg.payload = \"Average RSSI: N/A\";\n} else if (typeof avgRssi === 'number') {\n    msg.payload = \"Average RSSI: \" + avgRssi.toFixed(1) + \" dBm\";\n} else { // avgRssi is 'N/A'\n    msg.payload = \"Average RSSI: \" + avgRssi;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 400,
+        "wires": [
+            [
+                "d001da7a00000008"
+            ]
+        ]
+    },
+    {
+        "id": "d001da7a00000008",
+        "type": "ui_text",
+        "z": "6feec8e04bcef45b",
+        "group": "d001beef00000003",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Average RSSI Display",
+        "label": "Signal",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 570,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "d001da7a00000009",
+        "type": "inject",
+        "z": "6feec8e04bcef45b",
+        "name": "Update Total Traps",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 460,
+        "wires": [
+            [
+                "d001da7a0000000a"
+            ]
+        ]
+    },
+    {
+        "id": "d001da7a0000000a",
+        "type": "function",
+        "z": "6feec8e04bcef45b",
+        "name": "Get Total Traps Count",
+        "func": "let count = flow.get('totalTrapsMonitored') || 0;\nmsg.payload = \"Total Traps: \" + count;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 460,
+        "wires": [
+            [
+                "d001da7a0000000b"
+            ]
+        ]
+    },
+    {
+        "id": "d001da7a0000000b",
+        "type": "ui_text",
+        "z": "6feec8e04bcef45b",
+        "group": "d001beef00000003",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "Total Traps Display",
+        "label": "Inventory",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 580,
+        "y": 460,
+        "wires": []
+    }
+]

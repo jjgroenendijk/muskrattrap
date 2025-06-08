@@ -1,0 +1,16 @@
+{
+    "name": "muskrattrap",
+    "description": "A Node-RED Project",
+    "version": "0.0.1",
+    "dependencies": {
+        "node-red-dashboard": "~3.6.5",
+        "node-red-node-mysql": "~2.0.0",
+        "node-red-node-ui-table": "~0.4.4"
+    },
+    "node-red": {
+        "settings": {
+            "flowFile": "flows.json",
+            "credentialsFile": "flows_cred.json"
+        }
+    }
+}

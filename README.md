@@ -4,7 +4,14 @@
 
 The SMARTrap project aims to develop a smart, humane, and efficient solution for controlling muskrat populations using IoT technology. Muskrats pose a significant threat to water management systems in the Netherlands. This project seeks to create a smart trap that detects trap status (open/closed), identifies captures, monitors trap movement, and reports its health status, all while ensuring non-lethal trapping and enabling remote monitoring.
 
-Detailed project documentation, including design choices, technical specifications, and setup guides, can be found in the `/docs-old` directory. The Mini-Research summary has been converted to English Markdown and is available at `docs/mini-research-summary.md`. Other documents are pending review and migration to the `docs/` directory.
+Detailed project documentation, including design choices, technical specifications, and setup guides, can now be found in the `/docs` directory. This includes:
+*   `docs/project-background.md`: Covers initial research, LPWAN/LoRaWAN comparisons, and trap design considerations.
+*   `docs/iot-node-details.md`: Details the IoT node hardware simulation and LoRaWAN payload structure.
+*   `docs/server-and-nodered-setup.md`: Outlines the server-side stack, database, and Node-RED setup.
+*   `docs/mini-research-summary.md`: The Mini-Research summary in English Markdown.
+*   `docs/doxygen/`: Doxygen-generated API documentation for the codebase (also published to GitHub Pages).
+
+The `docs-old/` directory has been removed as its content has been migrated and consolidated into the `docs/` directory.
 
 ## Environment Setup
 
@@ -79,9 +86,8 @@ These tasks help streamline the compilation and testing processes directly withi
     * **Credential Encryption:** The Node-RED `flows_cred.json` file (which stores sensitive credentials for your flows) is encrypted. A `credentialSecret` is defined in `serverSide/nodered/settings.js`.
         *   **ACTION REQUIRED FOR NEW USERS/DEPLOYMENTS:** The current `credentialSecret` in `serverSide/nodered/settings.js` is a placeholder (`change_this_to_a_strong_secret`). For security, change this to a strong, unique secret and store your chosen secret securely. Failure to use a strong, unique secret poses a security risk. After changing it, restart Node-RED and re-deploy your flows (make any minor change and deploy) to apply the new encryption key.
     * Use the JavaScript decoder from `serverSide/javascriptDecoder/decoder.js` and add it to the application decoder in The Things Network console.
-    * For Node-RED Git integration (if needed for flow management):
-        * Access the Node-RED container: `sudo docker exec -it nodered /bin/bash`
-        * Follow the SSH key setup and Git configuration steps outlined in `docs-old/NodeRed/nodeRed.md`.
+    * For Node-RED Git integration (if needed for flow management), refer to the setup guide in `docs/server-and-nodered-setup.md`.
+    * **Note on `serverSide/nodered`:** This directory was previously managed as a Git submodule. It has now been integrated directly into the main repository. Its contents are part of the main project's working tree and should be staged and committed as regular files.
 
 ### Node (The Things Uno) Development
 
@@ -186,7 +192,7 @@ These tasks help streamline the compilation and testing processes directly withi
 
 * [~] (II.A) Finalize Database Design and Implementation (MySQL).
   * [X] Configured MariaDB to automatically import `serverSide/databaseSetup.sql` on initial startup.
-* [~] (II.B) Implement Node-RED flows for TTN data reception and MySQL storage (In Progress)
+* [X] (II.B) Implement Node-RED flows for TTN data reception and MySQL storage.
   * Current Focus: Setting up Node-RED to receive data from The Things Network (TTN) and store it in a MySQL database.
   * Sub-tasks:
     * `[X] Start Docker Compose stack (if not already running).`
@@ -194,15 +200,15 @@ These tasks help streamline the compilation and testing processes directly withi
     * `[X] Refactor Node-RED environment variables to use an external \`variables.env\` file (\`serverSide/variables.env\`) and apply to all services.`
     * `[X] Reset corrupted \`flows_cred.json\` to resolve credential loading error.`
     * `[X] **Action Required:** Update placeholder values for TTN & MySQL credentials in \`serverSide/variables.env\`. (User confirmed completion)`
-    * `[~] Configure Node-RED TTN integration (decoder already done, ensure TTN application is configured with the decoder) (In Progress).`
+    * `[X] Configure Node-RED TTN integration (decoder already done, ensure TTN application is configured with the decoder).`
       * `[X] Confirm TTN application created and decoder function (\\\\`serverSide/javascriptDecoder/decoder.js\\\\`) added to the TTN application\\\'s payload formatters. (User confirmed completion)`
       * `[X] Obtain TTN Application ID (TTN_APP_NAME, TTN_APP_KEY_PASSWORD in serverSide/variables.env)`
       * `[X] Add and configure MQTT input node in Node-RED.`
         *   The `flows.json` was updated to hardcode `broker` ("eu1.cloud.thethings.network") and `port` ("1883") from `variables.env` due to editor limitations in referencing environment variables for these specific fields.
-        *   **Action Required (User):** Manually configure the MQTT broker node ("muskrattrap@ttn") credentials in the Node-RED editor. In the "Security" tab of the broker configuration, set "Username" and "Password" fields, preferably using the "Environment Variable" input type if available for credentials, to reference `TTN_APP_NAME` and `TTN_APP_KEY_PASSWORD`. If "Environment Variable" type is not available for credentials, try `{{TTN_APP_NAME}}` and `{{TTN_APP_KEY_PASSWORD}}` or, as a last resort, enter the literal values.
+        *   **(User Confirmed Completion - 2025-06-08):** Manually configure the MQTT broker node ("muskrattrap@ttn") credentials in the Node-RED editor. In the "Security" tab of the broker configuration, set "Username" and "Password" fields, preferably using the "Environment Variable" input type if available for credentials, to reference `TTN_APP_NAME` and `TTN_APP_KEY_PASSWORD`. If "Environment Variable" type is not available for credentials, try `{{TTN_APP_NAME}}` and `{{TTN_APP_KEY_PASSWORD}}` or, as a last resort, enter the literal values.
     * `[X] Configure Node-RED MySQL connection.`
         *   The `flows.json` was updated to hardcode `host` ("mariadb"), `port` ("3306"), `db` ("muskrattrap_db"), and `tz` ("Europe/Amsterdam") from `variables.env` due to editor limitations.
-        *   **Action Required (User):** Manually configure the MySQL database node ("mariadb") credentials in the Node-RED editor. Set the "User" and "Password" fields.
+        *   **(User Confirmed Completion - 2025-06-08):** Manually configure the MySQL database node ("mariadb") credentials in the Node-RED editor. Set the "User" and "Password" fields.
             *   For "User", use the value of the `MYSQL_USER` environment variable (which is `mysql_user`).
             *   For "Password", use the value of the `MYSQL_PASSWORD` environment variable (which is `mysql_password`).
             *   If the Node-RED editor allows referencing environment variables for credentials, use `MYSQL_USER` and `MYSQL_PASSWORD`. Otherwise, use the literal values.
@@ -211,14 +217,33 @@ These tasks help streamline the compilation and testing processes directly withi
     * `[X] Verify data insertion into MySQL via "database command transformer" function and MySQL node.`
 * [X] (II.D) Implement JavaScript TTN Payload Decoder.
 * [X] Added VSCode task "Start/Update Server Applications (Docker Compose)" to `.vscode/tasks.json`.
-* [ ] (I.D, II.A.3) Document relevant parts with Doxygen/Markdown.
+* [X] (I.D, II.A.3) Document relevant parts with Doxygen/Markdown. (Consolidated from `docs-old` to `docs`)
 
 #### Visualization & Reporting (Grafana & Node-RED UI)
 
-* [ ] Implement Node-RED UI Dashboard.
+* [X] Implement Node-RED UI Dashboard.
+  * [X] Initial design included individual UI elements for single trap display.
+  * [X] Refined dashboard strategy to focus on a `ui_table` for a multi-trap overview.
+  * [X] Removed single-trap `ui_text` and `ui_gauge` nodes.
+  * [X] Added a "Manage Trap Data for Table" function node that:
+    * Stores the latest status of each trap in Node-RED's flow context, keyed by `devID`, to support scalability for many devices.
+    * Formats data for display (e.g., booleans to "Open"/"Closed", battery to percentage, extracts RSSI/SNR from first gateway).
+    * Calculates and stores total active catches in flow context (`flow.activeCatchesCount`).
+    * Calculates and stores the average RSSI of all reporting traps in flow context (`flow.averageRssiValue`).
+    * Calculates and stores the total number of monitored traps in flow context (`flow.totalTrapsMonitored`).
+    * Outputs an array of all trap data objects for the main table.
+  * [X] Added a `ui_table` node ("Trap Status Overview") to the "Dashboard" tab in the "Trap Overview" group.
+    * Columns: Trap ID, Last Seen, Door, Catch, Displaced, Battery, RSSI, SNR.
+    * Populated by the "Manage Trap Data for Table" function.
+  * [X] Added a "Summary Stats" group to the "Dashboard" tab.
+    * [X] Added an "Active Catches" counter (`ui_text` node) that displays the total number of traps with a detected catch.
+    * [X] Added an "Average RSSI" display (`ui_text` node) showing the average signal strength across all traps.
+    * [X] Added a "Total Traps" counter (`ui_text` node) showing the total number of unique traps that have reported.
+    * All summary stats are updated periodically.
+  * [X] The "Unifier TTNV3" node is now wired to the "Manage Trap Data for Table" function.
+  * [X] The `ui_table` ("Trap Status Overview"), "Active Catches" counter, "Average RSSI" display, and "Total Traps" counter are key dashboard components.
 * [ ] Implement Grafana Dashboard.
   * [ ] Add additional relevant visualizations.
-  * [ ] (Optional/Future) Publish dashboard on public internet.
   * [ ] Implement alerts in Grafana for when a muskrat has been trapped.
 
 #### General Documentation & Project Management
@@ -231,8 +256,8 @@ These tasks help streamline the compilation and testing processes directly withi
 
 #### Documentation Review & Enhancement
 
-* [~] Review content in `docs-old/` and migrate relevant information to `docs/` (Mini-Research Summary migrated).
-* [ ] Ensure `README.md` appropriately refers to `docs-old/` and `docs/`.
+* [X] Review content in `docs-old/` and migrate relevant information to `docs/`. (Completed, `docs-old` removed)
+* [X] Ensure `README.md` appropriately refers to `docs/` (and no longer `docs-old/`).
 * [X] Set up Doxygen configuration (`Doxyfile` in root):
   * [X] Configured `PROJECT_NAME`.
   * [X] Configured `OUTPUT_DIRECTORY` to `docs/doxygen`.
@@ -250,16 +275,16 @@ These tasks help streamline the compilation and testing processes directly withi
 
 ## Design Notes & Rationale
 
-*(This section will document key architectural decisions, technology choices, and learnings, especially those from `context7` if used.)*
+*(This section will document key architectural decisions, technology choices, and learnings.)*
 
 * **Database Initialization:** The MariaDB Docker container (from `linuxserver/mariadb`) supports automatic execution of SQL scripts placed in its `/config/initdb.d/` directory during the first run. The `serverSide/docker-compose.yml` file leverages this by mapping the project's `serverSide/databaseSetup.sql` file to `/config/initdb.d/databaseSetup.sql` within the MariaDB container. This ensures that the required database schema is automatically created when the services are first started.
-* **Payload Size Clarification:** The LoRaWAN payload is 11 bytes. The specification in `docs-old/IoTNode/payload.md` mentions '10 bytes + 3 bits'; this refers to the three boolean flags (doorStatus, catchDetect, trapDisplacement) being packed into a single byte, contributing to the total 11-byte structure (4 bytes for ID, 1 byte for version, 1 byte for booleans, 1 byte for battery status, and 4 bytes for Unix time). The C++ encoder (`nodeCode/encoder.cpp`, `payloadCoder/encoder.cpp`) and the JavaScript TTN decoder (`serverSide/javascriptDecoder/decoder.js`) are consistent with this 11-byte structure.
+* **Payload Size Clarification:** The LoRaWAN payload is 11 bytes. The specification in `docs/iot-node-details.md` mentions '10 bytes + 3 bits'; this refers to the three boolean flags (doorStatus, catchDetect, trapDisplacement) being packed into a single byte, contributing to the total 11-byte structure (4 bytes for ID, 1 byte for version, 1 byte for booleans, 1 byte for battery status, and 4 bytes for Unix time). The C++ encoder (`nodeCode/encoder.cpp`, `payloadCoder/encoder.cpp`) and the JavaScript TTN decoder (`serverSide/javascriptDecoder/decoder.js`) are consistent with this 11-byte structure.
 
-* **LPWAN Choice:** LoRaWAN was selected over NB-IoT and LTE-CAT-M due to its superior energy efficiency, long-range capabilities, cost-effectiveness, scalability, and robustness for remote deployments. (Details: `docs-old/projectDescription/01-LPWANComparison.md`)
-* **LoRaWAN Provider:** The Things Network (TTN) was chosen over KPN LoRa due to its cost transparency, extensive community support and documentation, flexibility in network expansion, open-source nature, and scalability. (Details: `docs-old/projectDescription/02-LoraComparison.md`)
-* **Trap Design:** The trap utilizes magnetic sensors (door), weight sensors (catch detection), and wire-based sensors (movement), along with battery monitoring. (Details: `docs-old/projectDescription/03-trapDesign.md`)
-* **Payload Structure:** The LoRaWAN payload is optimized for size (10 bytes + 3 bits) and includes: ID, version, door status, catch detection, trap displacement, battery status, and Unix timestamp. (Details: `docs-old/IoTNode/payload.md`)
-* **Hardware Simulation:** Onboard buttons and LEDs of the HAN IoT Node (The Things Uno) are used to simulate sensor inputs and status indicators. (Details: `docs-old/IoTNode/hardwareSimulation.md`)
+* **LPWAN Choice:** LoRaWAN was selected over NB-IoT and LTE-CAT-M due to its superior energy efficiency, long-range capabilities, cost-effectiveness, scalability, and robustness for remote deployments. (Details: `docs/project-background.md`)
+* **LoRaWAN Provider:** The Things Network (TTN) was chosen over KPN LoRa due to its cost transparency, extensive community support and documentation, flexibility in network expansion, open-source nature, and scalability. (Details: `docs/project-background.md`)
+* **Trap Design:** The trap utilizes magnetic sensors (door), weight sensors (catch detection), and wire-based sensors (movement), along with battery monitoring. (Details: `docs/project-background.md`)
+* **Payload Structure:** The LoRaWAN payload is optimized for size and includes: ID, version, door status, catch detection, trap displacement, battery status, and Unix timestamp. (Details: `docs/iot-node-details.md`)
+* **Hardware Simulation:** Onboard buttons and LEDs of the HAN IoT Node (The Things Uno) are used to simulate sensor inputs and status indicators. (Details: `docs/iot-node-details.md`)
 
 ## Github Workflow for Doxygen
 
@@ -292,4 +317,3 @@ To follow the logs in real-time, you can add the `-f` flag:
 
 ```bash
 docker-compose logs -f <service_name>
-```
