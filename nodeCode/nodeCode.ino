@@ -119,7 +119,8 @@ bool prevDisplacementStatus = false; ///< @brief Previous state of the displacem
  * Currently set to 5 minutes for testing purposes.
  */
 // const unsigned long HEARTBEAT_INTERVAL_MS = 5UL * 60UL * 1000UL; // 5 minutes for testing
-const unsigned long HEARTBEAT_INTERVAL_MS = 24UL * 60UL * 60UL * 1000UL; // 24 hours for production
+// const unsigned long HEARTBEAT_INTERVAL_MS = 24UL * 60UL * 60UL * 1000UL; // 24 hours for production
+const unsigned long HEARTBEAT_INTERVAL_MS = 10UL * 1000UL; // 10 seconds for debugging
 /**
  * @brief Timestamp of the last heartbeat message sent.
  */

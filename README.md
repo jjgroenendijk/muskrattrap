@@ -68,6 +68,7 @@ These tasks help streamline the compilation and testing processes directly withi
     ```bash
     docker-compose up -d
     ```
+
     Alternatively, use the "Start/Update Server Applications (Docker Compose)" VSCode task.
 
 4. **Database Initialization:**
@@ -177,13 +178,26 @@ These tasks help streamline the compilation and testing processes directly withi
 
 * [~] (II.A) Finalize Database Design and Implementation (MySQL).
   * [X] Configured MariaDB to automatically import `serverSide/databaseSetup.sql` on initial startup.
-* [~] (II.B) Implement Node-RED flows for data reception from TTN, processing, and storage into MySQL (In Progress).
-  * [ ] Start Docker Compose stack (if not already running).
-  * [ ] Configure Node-RED TTN integration (decoder already done, ensure TTN application is configured with the decoder).
-  * [ ] Configure Node-RED MySQL connection.
-  * [ ] Develop flows for receiving data from TTN.
-  * [ ] Develop flows for processing received data.
-  * [ ] Develop flows for storing data into MySQL.
+* [~] (II.B) Implement Node-RED flows for TTN data reception and MySQL storage (In Progress)
+  * Current Focus: Setting up Node-RED to receive data from The Things Network (TTN) and store it in a MySQL database.
+  * Sub-tasks:
+    * `[X] Start Docker Compose stack (if not already running).`
+    * `[X] Add TTN and MySQL environment variables to Node-RED service in \`docker-compose.yml\`.`
+    * `[X] Refactor Node-RED environment variables to use an external \`variables.env\` file (\`serverSide/variables.env\`) and apply to all services.`
+    * `[X] Reset corrupted \`flows_cred.json\` to resolve credential loading error.`
+    * `[X] **Action Required:** Update placeholder values for TTN & MySQL credentials in \`serverSide/variables.env\`. (User confirmed completion)`
+    * `[~] Configure Node-RED TTN integration (decoder already done, ensure TTN application is configured with the decoder) (In Progress).`
+      * `[X] Confirm TTN application created and decoder function (\\\\`serverSide/javascriptDecoder/decoder.js\\\\`) added to the TTN application\\\'s payload formatters. (User confirmed completion)`
+      * `[X] Obtain TTN Application ID (TTN_APP_NAME, TTN_APP_KEY_PASSWORD in serverSide/variables.env)`
+      * `[X] Add and configure MQTT input node in Node-RED.`
+        *   The `flows.json` was updated to hardcode `broker` ("eu1.cloud.thethings.network") and `port` ("1883") from `variables.env` due to editor limitations in referencing environment variables for these specific fields.
+        *   **Action Required (User):** Manually configure the MQTT broker node ("muskrattrap@ttn") credentials in the Node-RED editor. In the "Security" tab of the broker configuration, set "Username" and "Password" fields, preferably using the "Environment Variable" input type if available for credentials, to reference `TTN_APP_NAME` and `TTN_APP_KEY_PASSWORD`. If "Environment Variable" type is not available for credentials, try `{{TTN_APP_NAME}}` and `{{TTN_APP_KEY_PASSWORD}}` or, as a last resort, enter the literal values.
+    * `[X] Configure Node-RED MySQL connection.`
+        *   The `flows.json` was updated to hardcode `host` ("mariadb"), `port` ("3306"), `db` ("muskrattrap_db"), and `tz` ("Europe/Amsterdam") from `variables.env` due to editor limitations.
+        *   **Action Required (User):** Manually configure the MySQL database node ("mariadb") credentials in the Node-RED editor. Set the "User" and "Password" fields, preferably using the "Environment Variable" input type if available, to reference `NODERED_MYSQL_USER` and `NODERED_MYSQL_PASSWORD`. If "Environment Variable" type is not available, try `{{NODERED_MYSQL_USER}}` and `{{NODERED_MYSQL_PASSWORD}}` or, as a last resort, enter the literal values.
+    * `[ ] Verify data reception from TTN via MQTT node.`
+    * `[ ] Verify data processing by "Unifier TTNV3" function.`
+    * `[ ] Verify data insertion into MySQL via "database command transformer" function and MySQL node.`
 * [X] (II.D) Implement JavaScript TTN Payload Decoder.
 * [X] Added VSCode task "Start/Update Server Applications (Docker Compose)" to `.vscode/tasks.json`.
 * [ ] (I.D, II.A.3) Document relevant parts with Doxygen/Markdown.
@@ -246,3 +260,25 @@ The workflow performs the following steps:
 2. **Install Doxygen**: Installs Doxygen on the runner.
 3. **Read Build Number**: Reads the build number from `payloadCoder/buildnumber.num`.
 4. **Generate Documentation**: Runs Doxygen using the `Doxyfile` in the project root.
+
+### Viewing Container Logs
+
+To view the logs of a specific container managed by Docker Compose, you can use the following command from the directory containing your `docker-compose.yml` file (e.g., `serverSide/`):
+
+```bash
+docker-compose logs <service_name>
+```
+
+Replace `<service_name>` with the name of the service as defined in your `docker-compose.yml` file (e.g., `nodered`, `mariadb`, `phpmyadmin`).
+
+For example, to view the logs for the Node-RED container:
+
+```bash
+docker-compose logs nodered
+```
+
+To follow the logs in real-time, you can add the `-f` flag:
+
+```bash
+docker-compose logs -f <service_name>
+```

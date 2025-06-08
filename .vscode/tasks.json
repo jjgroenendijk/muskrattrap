@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Compile LoRaWAN Node (Release)",
+      "label": "LoRaWAN Node: Compile (Release)",
       "type": "shell",
       "command": "arduino-cli compile --fqbn arduino:avr:leonardo --build-property \"compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=false\" nodeCode/nodeCode.ino",
       "group": "build",
@@ -13,7 +13,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Compile LoRaWAN Node (Debug)",
+      "label": "LoRaWAN Node: Compile (Debug)",
       "type": "shell",
       "command": "arduino-cli compile --fqbn arduino:avr:leonardo --build-property \"compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=true\" nodeCode/nodeCode.ino",
       "group": "build",
@@ -24,7 +24,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Build PayloadCoder Executable",
+      "label": "PayloadCoder: Build Executable",
       "type": "shell",
       "command": "make all",
       "options": {
@@ -38,7 +38,7 @@
       "problemMatcher": ["$gcc"]
     },
     {
-      "label": "Run PayloadCoder Unit Tests",
+      "label": "PayloadCoder: Run Unit Tests",
       "type": "shell",
       "command": "make launch",
       "options": {
@@ -48,7 +48,7 @@
         "kind": "test",
         "isDefault": true
       },
-      "dependsOn": ["Build PayloadCoder Executable"],
+      "dependsOn": ["PayloadCoder: Build Executable"],
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -56,7 +56,7 @@
       "problemMatcher": [] // Test output is custom, no standard problem matcher.
     },
     {
-      "label": "Monitor Arduino (nodeCode.ino) - Auto-detect Port",
+      "label": "LoRaWAN Node: Monitor (Auto-detect Port)",
       "type": "shell",
       "command": "arduino-cli monitor -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo",
       "group": "test",
@@ -68,11 +68,11 @@
       "detail": "Attempts to auto-detect the serial port for an Arduino Leonardo. Works best on macOS/Linux if only one Leonardo is connected."
     },
     {
-      "label": "Flash LoRaWAN Node (Release) - Auto-detect Port",
+      "label": "LoRaWAN Node: Flash (Release, Auto-detect Port)",
       "type": "shell",
       "command": "arduino-cli upload -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo nodeCode/nodeCode.ino",
       "group": "test",
-      "dependsOn": ["Compile LoRaWAN Node (Release)"],
+      "dependsOn": ["LoRaWAN Node: Compile (Release)"],
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -81,11 +81,11 @@
       "detail": "Compiles (Release) and then flashes the nodeCode.ino sketch to an auto-detected Arduino Leonardo."
     },
     {
-      "label": "Flash LoRaWAN Node (Debug) - Auto-detect Port",
+      "label": "LoRaWAN Node: Flash (Debug, Auto-detect Port)",
       "type": "shell",
       "command": "arduino-cli upload -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo nodeCode/nodeCode.ino",
       "group": "test",
-      "dependsOn": ["Compile LoRaWAN Node (Debug)"],
+      "dependsOn": ["LoRaWAN Node: Compile (Debug)"],
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -94,7 +94,7 @@
       "detail": "Compiles (Debug) and then flashes the nodeCode.ino sketch to an auto-detected Arduino Leonardo."
     },
     {
-      "label": "Generate Doxygen Documentation",
+      "label": "Docs: Generate Doxygen",
       "type": "shell",
       "command": "doxygen Doxyfile",
       "options": {
@@ -111,7 +111,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Start/Update Server Applications (Docker Compose)",
+      "label": "Server: Start/Update Stack (Docker Compose)",
       "type": "shell",
       "command": "docker-compose up -d --force-recreate",
       "options": {
