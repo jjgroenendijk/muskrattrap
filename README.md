@@ -165,28 +165,28 @@ These tasks help streamline the compilation and testing processes directly withi
 #### LoRaWAN Node (`nodeCode/`)
 
 * [~] Implement prototype LoRaWAN node on HAN IoT Node.
-  * [X] Emulate sensors using onboard components.
+  * [~] Emulate sensors using onboard components and integrate with payload.
+    * Sensor objects (`doorSensor`, `catchSensor`, `displacementSensor`, `batterySensor`) are instantiated.
+    * Simulated sensor states (buttons for door, catch, displacement) are updated in the loop.
+    * **Next Step:** Integrate actual simulated sensor values (including `POTMETER 2` for battery) into the LoRaWAN payload instead of `encoder.setTestValues()`.
     * Consolidated `encoder.h/cpp` and `decoder.h/cpp` from `payloadCoder/` into `nodeCode/`.
-  * [X] Implement event-triggered communication.
-    * Added logic to detect changes in sensor states (door, catch, displacement).
-    * Initialized previous sensor states after successful LoRaWAN join.
+  * [~] Implement event-triggered and heartbeat communication.
+    * Current `nodeCode.ino` sends data every loop cycle + delay, not based on state changes or `HEARTBEAT_INTERVAL_MS`.
+    * **Next Step:** Implement logic to send data only when sensor states change or at the `HEARTBEAT_INTERVAL_MS`. Requires tracking previous sensor states.
   * [~] Implement sleep functionality for maximum battery life.
-    * [X] Added basic MCU sleep using Watchdog Timer (WDT).
+    * [X] Added basic MCU sleep using Watchdog Timer (WDT) (Likely handled by TTN library).
     * [X] Optimize general power usage.
       * Conditionalized `debugSerial` output.
-      * Commented out explicit `ttn.sleep()` call.
-      * Added comments regarding further optimization.
-      * Created Debug and Release build/flash tasks.
-      * Tested Debug build on device.
+      * Comments regarding further optimization exist.
     * [~] Optimize data transmission (Target: once every 24 hours for routine updates) (In Progress).
-      * [X] Changed `HEARTBEAT_INTERVAL_MS` to 24 hours.
-      * [X] **Flash Firmware (Working Version - 10s Interval TBD):**
-        * `[X] User reverted to an older working version of nodeCode (from commit 6b19550, now in the main \`nodeCode/\` directory). The problematic newer version is in \`nodeCode_bugged/\`.`
-        * `[X] User manually set loraCommunication = true in the current \`nodeCode/nodeCode.ino\`.`
-        * `[ ] (Optional) Modify \`HEARTBEAT_INTERVAL_MS\` in current \`nodeCode/nodeCode.ino\` to 10 seconds if needed for testing.`
+      * [X] `HEARTBEAT_INTERVAL_MS` constant changed to 24 hours (but not yet used by send logic).
+      * [X] **Flash Firmware (Working Version):**
+        * `[X] User reverted to an older working version of nodeCode.`
+        * `[X] User manually set loraCommunication = true.`
+        * `[ ] (Optional) Modify \`HEARTBEAT_INTERVAL_MS\` to 10 seconds for testing if needed.`
         * `[X] Firmware (working version with LoRa enabled) successfully flashed by user.`
-* [ ] (I.D) Troubleshoot issues in `nodeCode_bugged/` to understand recent upload/runtime failures.
 * [~] (I.D) Document with Doxygen (In Progress).
+  * **Next Step:** Review and add Doxygen comments to `nodeCode.ino` and related headers/source files.
 
 #### Server-Side (`serverSide/`)
 
@@ -242,7 +242,7 @@ These tasks help streamline the compilation and testing processes directly withi
     * All summary stats are updated periodically.
   * [X] The "Unifier TTNV3" node is now wired to the "Manage Trap Data for Table" function.
   * [X] The `ui_table` ("Trap Status Overview"), "Active Catches" counter, "Average RSSI" display, and "Total Traps" counter are key dashboard components.
-* [ ] Implement Grafana Dashboard.
+* [~] Implement Grafana Dashboard.
   * [ ] Add additional relevant visualizations.
   * [ ] Implement alerts in Grafana for when a muskrat has been trapped.
 
@@ -317,3 +317,4 @@ To follow the logs in real-time, you can add the `-f` flag:
 
 ```bash
 docker-compose logs -f <service_name>
+```
