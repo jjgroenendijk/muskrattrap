@@ -6,12 +6,10 @@ services:
         restart: unless-stopped
         env_file:
           - variables.env
-        network_mode: host
+        ports:
+          - 1880:1880
         volumes:
         - ./nodered:/data
-        - ./nodered/flows.json:/data/flows.json
-        - ./nodered/package.json:/data/package.json
-        - ./nodered/flows_cred.json:/data/flows_cred.json
 
     mariadb:
         image: lscr.io/linuxserver/mariadb:latest

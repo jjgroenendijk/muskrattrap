@@ -4,6 +4,3 @@
 [submodule "examples/han-iot-node"]
 	path = examples/han-iot-node
 	url = https://gitlab.com/wlgrw/han-iot-node/
-[submodule "serverSide/nodered"]
-	path = serverSide/nodered
-	url = git@github.com:jjgroenendijk/nodered.git

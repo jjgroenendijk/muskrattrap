@@ -3,163 +3,105 @@
 
 #include <stdint.h> // uint8_t, uint16_t, and uint32_t type
 
-/**
- * @mainpage Payload Decoder
- *
- * @section intro_sec Introduction
- * This document describes the `payloadDecoder` class, which is responsible for
- * decoding a compact LoRaWAN payload into its constituent sensor readings and
- * status information.
- *
- * @section features_sec Features
- * - Decodes ID, version, door status, catch detection, trap displacement,
- *   battery status, and Unix time from a byte buffer.
- * - Provides methods to set the payload buffer and its size.
- * - Offers getter methods to retrieve individual decoded data fields.
- * - Supports printing the decoded payload in a human-readable format.
- *
- * @section usage_sec Usage
- * 1. Create an instance of `payloadDecoder`.
- * 2. Provide the payload buffer and its size using `setPayload()` and `setPayloadSize()`.
- * 3. Call `decodePayload()` to parse the buffer.
- * 4. Retrieve the decoded data fields using the `get_*()` methods.
- */
-
-/**
- * @class payloadDecoder
- * @brief Decodes a LoRaWAN payload into sensor data and status information.
- *
- * This class takes a byte array (payload) received over LoRaWAN and parses it
- * to extract meaningful data such as sensor states (door status, catch detection,
- * trap displacement, battery status), identification information (ID, version),
- * and a timestamp (Unix time).
- */
+/// \brief payload decode class
+/// This class wil decode variables out of a payload for use in a LoRaWAN application.
+/// The class is setup using both .h and .cpp files where the setters and getters are
+/// placed in to the .h file.
 class payloadDecoder
 {
 private:
-    uint32_t _id;           ///< @brief Decoded identification number (4 bytes).
-    uint8_t _version;       ///< @brief Decoded payload version number (1 byte).
-    bool _doorStatus;       ///< @brief Decoded door status (1 bit). True if closed, false if open.
-    bool _catchDetect;      ///< @brief Decoded catch detection (1 bit). True if a catch is detected.
-    bool _trapDisplacement; ///< @brief Decoded trap displacement (1 bit). True if the trap has been moved.
-    uint8_t _batteryStatus; ///< @brief Decoded battery status (1 byte). E.g., percentage.
-    uint32_t _unixTime;     ///< @brief Decoded date and time (4 bytes) as a Unix timestamp.
-    uint8_t *_buffer;       ///< @brief Pointer to the buffer containing the payload to be decoded.
-    uint8_t _bufferSize;    ///< @brief Size of the payload buffer in bytes.
+    uint32_t _id;           ///< Identification number (4 bytes)
+    uint8_t _version;       ///< Payload version number (1 byte)
+    bool _doorStatus;       ///< Door status (1 bit)
+    bool _catchDetect;      ///< Catch detection (1 bit)
+    bool _trapDisplacement; ///< Trap displacement (1 bit)
+    uint8_t _batteryStatus; ///< Battery status (1 byte)
+    uint32_t _unixTime;     ///< Date and time (4 bytes)
+    uint8_t *_buffer;       ///< buffer containing payload with sensor data
+    uint8_t _bufferSize;    ///< Size of payload for housekeeping.
 
-    /**
-     * @brief Extracts a uint8_t value from the buffer at the specified index.
-     * @param buf Pointer to the buffer.
-     * @param idx The index in the buffer from which to extract the value. Defaults to 0.
-     * @return The extracted uint8_t value.
-     */
+    /// \brief extract uint8 from payload
+    /// \param buf pointer to buffer
+    /// \param idx index in buffer
+    /// \return uint8_t value
     uint8_t extract_uint8(const uint8_t *buf, const unsigned char idx = 0);
 
-    /**
-     * @brief Extracts a uint16_t value from the buffer at the specified index.
-     * @param buf Pointer to the buffer.
-     * @param idx The starting index in the buffer from which to extract the value. Defaults to 0.
-     * @return The extracted uint16_t value.
-     */
+    /// \brief extract uint16 from payload
+    /// \param buf pointer to buffer
+    /// \param idx index in buffer
+    /// \return uint16_t value
     uint16_t extract_uint16(const uint8_t *buf, const unsigned char idx = 0);
 
-    /**
-     * @brief Extracts a uint32_t value from the buffer at the specified index.
-     * @param buf Pointer to the buffer.
-     * @param idx The starting index in the buffer from which to extract the value. Defaults to 0.
-     * @return The extracted uint32_t value.
-     */
+    /// \brief extract uint32 from payload
+    /// \param buf pointer to buffer
+    /// \param idx index in buffer
+    /// \return uint32_t value
     uint32_t extract_uint32(const uint8_t *buf, const unsigned char idx = 0);
 
-    /**
-     * @brief Extracts a boolean value from the buffer at the specified index and bit position.
-     * @param buf Pointer to the buffer.
-     * @param idx The index in the buffer where the byte containing the bit is located. Defaults to 0.
-     * @param pos The bit position (0-7) within the byte at idx from which to extract the boolean. Defaults to 0.
-     * @return The extracted boolean value (true for 1, false for 0).
-     */
+    /// \brief extract boolean from payload
+    /// \param buf pointer to buffer
+    /// \param idx index in buffer
+    /// \param pos position in byte
+    /// \return boolean value
     bool extract_bool(const uint8_t *buf, const unsigned char idx = 0, unsigned int pos = 0);
 
 public:
-    /**
-     * @brief Default constructor for payloadDecoder.
-     */
-    payloadDecoder();
+    payloadDecoder();                                           ///< Constructor
+    ~payloadDecoder();                                          ///< Destuctor
+    payloadDecoder(const payloadDecoder &) = delete;            ///< Copy constructor disabled
+    payloadDecoder &operator=(const payloadDecoder &) = delete; ///< Assignment operator disabled
 
-    /**
-     * @brief Destructor for payloadDecoder.
-     */
-    ~payloadDecoder();
-    
-    payloadDecoder(const payloadDecoder &) = delete;            ///< Copy constructor disabled.
-    payloadDecoder &operator=(const payloadDecoder &) = delete; ///< Assignment operator disabled.
-
-    /**
-     * @brief Sets the payload buffer to be decoded.
-     * @param payload Pointer to the buffer containing the payload data.
-     *                The payloadDecoder does not take ownership of this buffer.
-     */
+    /// \brief set payload
+    /// Copy the payload to the buffer
+    /// \param payload pointer to buffer
     void setPayload(uint8_t *payload) { _buffer = payload; }
 
-    /**
-     * @brief Sets the size of the payload buffer.
-     * @param size The size of the payload in bytes.
-     */
+    /// \brief set payload size
+    /// Set the size of the payload
+    /// \param size size of payload
     void setPayloadSize(uint8_t size) { _bufferSize = size; }
 
-    /**
-     * @brief Decodes the payload from the buffer.
-     * This function parses the `_buffer` (previously set by `setPayload` and `setPayloadSize`)
-     * and populates the internal member variables (_id, _version, etc.) with the decoded values.
-     */
+    /// \brief decode payload
+    /// Extract the variables from the payload
     void decodePayload();
 
-    /**
-     * @brief Gets the decoded identification number.
-     * @return The identification number.
-     */
-    uint32_t get_id() const { return _id; }
+    /// \brief get ID
+    /// Fetch the ID from the payload
+    /// \return ID
+    int get_id() const { return _id; }
 
-    /**
-     * @brief Gets the decoded payload version number.
-     * @return The payload version.
-     */
-    uint8_t get_version() const { return _version; }
+    /// \brief get version
+    /// Fetch the version number from the payload
+    /// \return version
+    int get_version() const { return _version; }
 
-    /**
-     * @brief Gets the decoded door status.
-     * @return True if the door is closed, false if open.
-     */
+    /// \brief get door status
+    /// Fetch the door status from the payload
+    /// \return door status
     bool get_doorStatus() const { return _doorStatus; }
 
-    /**
-     * @brief Gets the decoded catch detection status.
-     * @return True if a catch is detected, false otherwise.
-     */
+    /// \brief get catch detection
+    /// Fetch the catch detection from the payload
+    /// \return catch detection
     bool get_catchDetect() const { return _catchDetect; }
 
-    /**
-     * @brief Gets the decoded trap displacement status.
-     * @return True if the trap has been moved, false otherwise.
-     */
+    /// \brief get trap displacement
+    /// Fetch the trap displacement from the payload
+    /// \return trap displacement
     bool get_trapDisplacement() const { return _trapDisplacement; }
 
-    /**
-     * @brief Gets the decoded battery status.
-     * @return The battery status (e.g., percentage).
-     */
-    uint8_t get_batteryStatus() const { return _batteryStatus; }
+    /// \brief get battery status
+    /// Fetch the battery status from the payload
+    /// \return battery status
+    int get_batteryStatus() const { return _batteryStatus; }
 
-    /**
-     * @brief Gets the decoded Unix time.
-     * @return The Unix timestamp (seconds since epoch).
-     */
-    uint32_t get_unixTime() const { return _unixTime; }
+    /// \brief get unix time
+    /// Fetch the unix time from the payload
+    /// \return unix time
+    int get_unixTime() const { return _unixTime; }
 
-    /**
-     * @brief Prints the decoded payload in a human-readable format to the console.
-     * Displays each decoded field and its value.
-     */
+    /// \brief print decoded payload
+    /// Print the decoded payload to the console
     void printPayloadDecoded();
 };
 

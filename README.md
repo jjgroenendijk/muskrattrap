@@ -75,7 +75,9 @@ These tasks help streamline the compilation and testing processes directly withi
     * The MariaDB service in `serverSide/docker-compose.yml` is configured to automatically import any `*.sql` files placed in its `/config/initdb.d/` directory upon first startup.
     * The project's `serverSide/databaseSetup.sql` is mapped to this directory, ensuring the database schema is created when the MariaDB container is first run.
 
-5. **Node-RED TTN Integration:**
+5. **Node-RED TTN Integration & Setup:**
+    * **Credential Encryption:** The Node-RED `flows_cred.json` file (which stores sensitive credentials for your flows) is encrypted. A `credentialSecret` is defined in `serverSide/nodered/settings.js`.
+        *   **ACTION REQUIRED FOR NEW USERS/DEPLOYMENTS:** The current `credentialSecret` in `serverSide/nodered/settings.js` is a placeholder (`change_this_to_a_strong_secret`). For security, change this to a strong, unique secret and store your chosen secret securely. Failure to use a strong, unique secret poses a security risk. After changing it, restart Node-RED and re-deploy your flows (make any minor change and deploy) to apply the new encryption key.
     * Use the JavaScript decoder from `serverSide/javascriptDecoder/decoder.js` and add it to the application decoder in The Things Network console.
     * For Node-RED Git integration (if needed for flow management):
         * Access the Node-RED container: `sudo docker exec -it nodered /bin/bash`
@@ -172,6 +174,12 @@ These tasks help streamline the compilation and testing processes directly withi
       * Tested Debug build on device.
     * [~] Optimize data transmission (Target: once every 24 hours for routine updates) (In Progress).
       * [X] Changed `HEARTBEAT_INTERVAL_MS` to 24 hours.
+      * [X] **Flash Firmware (Working Version - 10s Interval TBD):**
+        * `[X] User reverted to an older working version of nodeCode (from commit 6b19550, now in the main \`nodeCode/\` directory). The problematic newer version is in \`nodeCode_bugged/\`.`
+        * `[X] User manually set loraCommunication = true in the current \`nodeCode/nodeCode.ino\`.`
+        * `[ ] (Optional) Modify \`HEARTBEAT_INTERVAL_MS\` in current \`nodeCode/nodeCode.ino\` to 10 seconds if needed for testing.`
+        * `[X] Firmware (working version with LoRa enabled) successfully flashed by user.`
+* [ ] (I.D) Troubleshoot issues in `nodeCode_bugged/` to understand recent upload/runtime failures.
 * [~] (I.D) Document with Doxygen (In Progress).
 
 #### Server-Side (`serverSide/`)
@@ -194,10 +202,13 @@ These tasks help streamline the compilation and testing processes directly withi
         *   **Action Required (User):** Manually configure the MQTT broker node ("muskrattrap@ttn") credentials in the Node-RED editor. In the "Security" tab of the broker configuration, set "Username" and "Password" fields, preferably using the "Environment Variable" input type if available for credentials, to reference `TTN_APP_NAME` and `TTN_APP_KEY_PASSWORD`. If "Environment Variable" type is not available for credentials, try `{{TTN_APP_NAME}}` and `{{TTN_APP_KEY_PASSWORD}}` or, as a last resort, enter the literal values.
     * `[X] Configure Node-RED MySQL connection.`
         *   The `flows.json` was updated to hardcode `host` ("mariadb"), `port` ("3306"), `db` ("muskrattrap_db"), and `tz` ("Europe/Amsterdam") from `variables.env` due to editor limitations.
-        *   **Action Required (User):** Manually configure the MySQL database node ("mariadb") credentials in the Node-RED editor. Set the "User" and "Password" fields, preferably using the "Environment Variable" input type if available, to reference `NODERED_MYSQL_USER` and `NODERED_MYSQL_PASSWORD`. If "Environment Variable" type is not available, try `{{NODERED_MYSQL_USER}}` and `{{NODERED_MYSQL_PASSWORD}}` or, as a last resort, enter the literal values.
-    * `[ ] Verify data reception from TTN via MQTT node.`
-    * `[ ] Verify data processing by "Unifier TTNV3" function.`
-    * `[ ] Verify data insertion into MySQL via "database command transformer" function and MySQL node.`
+        *   **Action Required (User):** Manually configure the MySQL database node ("mariadb") credentials in the Node-RED editor. Set the "User" and "Password" fields.
+            *   For "User", use the value of the `MYSQL_USER` environment variable (which is `mysql_user`).
+            *   For "Password", use the value of the `MYSQL_PASSWORD` environment variable (which is `mysql_password`).
+            *   If the Node-RED editor allows referencing environment variables for credentials, use `MYSQL_USER` and `MYSQL_PASSWORD`. Otherwise, use the literal values.
+    * `[X] Verify data reception from TTN via MQTT node.`
+    * `[X] Verify data processing by "Unifier TTNV3" function.`
+    * `[X] Verify data insertion into MySQL via "database command transformer" function and MySQL node.`
 * [X] (II.D) Implement JavaScript TTN Payload Decoder.
 * [X] Added VSCode task "Start/Update Server Applications (Docker Compose)" to `.vscode/tasks.json`.
 * [ ] (I.D, II.A.3) Document relevant parts with Doxygen/Markdown.
