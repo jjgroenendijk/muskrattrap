@@ -140,94 +140,88 @@ These tasks help streamline the compilation and testing processes directly withi
             arduino-cli monitor -p YOUR_SERIAL_PORT --fqbn arduino:avr:leonardo
             ```
 
-## Progress Tracker
+## Work Breakdown Structure
 
-- [x] ~~Set up Doxygen configuration for `nodeCode`, `payloadCoder`, and `serverSide` directories.~~ (Done - 2025-06-07)
-- [x] ~~Ensure Doxygen output is in `docs/doxygen`.~~ (Done - 2025-06-07)
-- [x] ~~Create a VS Code task to build all Doxygen documentation.~~ (Done - 2025-06-07)
-- [x] Create a GitHub workflow action to: (Done - 2025-06-07)
-  * [x] Execute Doxygen documentation generation.
-  * [x] Publish the resulting HTML to GitHub Pages.
-- [x] Integrate `buildnumber.num` into the Doxygen documentation. (Done - 2025-06-07, handled by GitHub workflow and Doxyfile `PROJECT_NUMBER = $(BUILD_NUMBER)`)
+#### Payload Coder (`payloadCoder/`)
 
-*(This section will be updated as tasks are started, completed, or blocked. For a detailed Work Breakdown Structure (WBS) and academic deliverables, please refer to `progress.md`.)*
+* [X] Implement and test C++ payload encoder/decoder classes (Custom binary format).
+  * [X] Corrected `add_uint32` bug in `payloadEncoder.cpp`.
+  * [X] Updated getter return types in `payloadDecoder.h` for type consistency.
+  * [X] Enhanced unit tests in `unitTest.cpp` (type corrections, min/max values, all boolean combinations).
+  * [~] Ensure compatibility with Cayenne LPP (Lower priority; focus on custom binary format).
+  * [~] Input validation of payload data (Handled by sensor/simulation logic in `nodeCode.ino`).
+  * [~] Add warning flag for when data is clipping (Covered by input validation handling).
+* [X] (I.D) Document with Doxygen.
 
-* **2025-06-07 19:34 - Initial Setup:** `README.md` structured based on project documentation. Context gathered from `docs-old` directory and `progress.md`. OS: macOS, Shell: bash.
-* **2025-06-07 19:45 - In Progress:** Started Doxygen documentation for `nodeCode/`.
-* **2025-06-07 - Done:** Create a VS Code task to build all Doxygen documentation. This involved:
-  * `[X]` Creating/configuring a Doxyfile in the project root (`Doxyfile`). Key settings updated: `PROJECT_NAME`, `OUTPUT_DIRECTORY` (to `docs/doxygen`), `INPUT` (to include `nodeCode`, `payloadCoder`, `serverSide`), `RECURSIVE` (to `YES`), `EXTRACT_ALL` (to `YES`), `EXTRACT_PRIVATE` (to `YES`), and `HAVE_DOT` (to `NO` as dot is not currently used).\n  * `[X]` Defining a `tasks.json` entry to execute Doxygen using the root `Doxyfile`.
-* **2025-06-07 (Current Time) - Done:** Verified Doxygen GitHub Action functionality, including build number integration. Updated `README.md` to reflect completion of related tasks.
-* **2025-06-07 (Current Time) - Starting:** Convert Mini-Research Summary (`docs/mini-research-summary.md`) to PDF.
-* **2025-06-07 (Current Time) - Done:** Convert Mini-Research Summary (`docs/mini-research-summary.md`) to PDF.
-* **2025-06-07 (Current Time) - Starting:** Locate and submit peer review document for Mini-Research Summary (I.A.5).
-* **2025-06-07 (Current Time) - Done:** Added VSCode task "Start/Update Server Applications (Docker Compose)" to `.vscode/tasks.json`.
-* **2025-06-07 (Current Time) - Done:** Configured `serverSide/docker-compose.yml` for MariaDB to automatically import `serverSide/databaseSetup.sql` on initial startup.
+#### LoRaWAN Node (`nodeCode/`)
 
-### Key Outstanding Technical Tasks (derived from `docs-old/projectDescription/04-toDo.md` and `progress.md`)
-
-#### Payload Coder (`payloadCoder/` & `examples/payload/MyPayloadEncoderDecoder/`) - Corresponds to `progress.md` item I.B
-
-* `[X]` Implement and test C++ payload encoder/decoder classes. (Custom binary format)
-  * `[X]` Corrected `add_uint32` bug in `payloadEncoder.cpp`.
-  * `[X]` Updated getter return types in `payloadDecoder.h` for type consistency.
-  * `[X]` Enhanced unit tests in `unitTest.cpp` (type corrections, min/max values, all boolean combinations).
-  * `[~]` Ensure compatibility with Cayenne LPP. (Decided this is lower priority; focusing on custom binary format as per `docs/lesson-summary.md` and existing efficient design).
-  * `[~]` Input validation of payload data (clip data to outer ranges when out of range). (Decided this should be handled by sensor/simulation logic in `nodeCode.ino` before data is passed to the encoder. Payload coder assumes input data conforms to type ranges).
-  * `[~]` Add warning flag for when data is clipping to maximum values. (Covered by the above point on input validation).
-* `[X]` (I.D) Document with Doxygen. (Reviewed and updated Doxygen comments in relevant `payloadCoder` files).
-
-#### LoRaWAN Node (`nodeCode/`) - Corresponds to `progress.md` item I.C
-
-* `[~]` Implement prototype LoRaWAN node on HAN IoT Node.
-  * `[X]` Emulate sensors using onboard components as per `docs-old/IoTNode/hardwareSimulation.md`.
+* [~] Implement prototype LoRaWAN node on HAN IoT Node.
+  * [X] Emulate sensors using onboard components.
     * Consolidated `encoder.h/cpp` and `decoder.h/cpp` from `payloadCoder/` into `nodeCode/`.
-  * `[X]` Implement event-triggered communication.
+  * [X] Implement event-triggered communication.
     * Added logic to detect changes in sensor states (door, catch, displacement).
-    * Initialized previous sensor states after successful LoRaWAN join to prevent immediate transmission on the first loop.
-  * `[~]` Implement sleep functionality for maximum battery life.
-    * `[X]` Added basic MCU sleep using Watchdog Timer (WDT) to periodically wake the ATmega32U4 from `SLEEP_MODE_PWR_DOWN`.
-    * `[X]` Optimize general power usage.
-      * Conditionalized all `debugSerial` output in `nodeCode.ino` using an `ENABLE_DEBUG_SERIAL` preprocessor flag.
-      * Commented out the explicit `ttn.sleep(HEARTBEAT_INTERVAL_MS)` call in `nodeCode.ino`.
-      * Added comments in `nodeCode.ino` regarding further optimization opportunities.
-      * Created separate Debug and Release build/flash tasks in `.vscode/tasks.json`.
-      * Tested Debug build on device, serial output confirmed working as expected.
-    * `[~]` Optimize data transmission (e.g., target once every 24 hours for routine updates). (In Progress)
-      * `[X]` Changed `HEARTBEAT_INTERVAL_MS` to 24 hours in `nodeCode.ino`.
-* `[~]` (I.D) Document with Doxygen. (Task started for `nodeCode/` files)
+    * Initialized previous sensor states after successful LoRaWAN join.
+  * [~] Implement sleep functionality for maximum battery life.
+    * [X] Added basic MCU sleep using Watchdog Timer (WDT).
+    * [X] Optimize general power usage.
+      * Conditionalized `debugSerial` output.
+      * Commented out explicit `ttn.sleep()` call.
+      * Added comments regarding further optimization.
+      * Created Debug and Release build/flash tasks.
+      * Tested Debug build on device.
+    * [~] Optimize data transmission (Target: once every 24 hours for routine updates) (In Progress).
+      * [X] Changed `HEARTBEAT_INTERVAL_MS` to 24 hours.
+* [~] (I.D) Document with Doxygen (In Progress).
 
 #### Server-Side (`serverSide/`)
 
-* `[ ]` (II.A) Finalize Database Design and Implementation (MySQL).
-* `[ ]` (II.B) Implement Node-RED flows for data reception from TTN, processing, and storage into MySQL.
-* `[X]` (II.D) Implement JavaScript TTN Payload Decoder. (Verified existing `serverSide/javascriptDecoder/decoder.js` correctly implements the 11-byte payload structure used by the C++ encoder).
-* `[ ]` (I.D, II.A.3) Document relevant parts with Doxygen/Markdown.
+* [~] (II.A) Finalize Database Design and Implementation (MySQL).
+  * [X] Configured MariaDB to automatically import `serverSide/databaseSetup.sql` on initial startup.
+* [~] (II.B) Implement Node-RED flows for data reception from TTN, processing, and storage into MySQL (In Progress).
+  * [ ] Start Docker Compose stack (if not already running).
+  * [ ] Configure Node-RED TTN integration (decoder already done, ensure TTN application is configured with the decoder).
+  * [ ] Configure Node-RED MySQL connection.
+  * [ ] Develop flows for receiving data from TTN.
+  * [ ] Develop flows for processing received data.
+  * [ ] Develop flows for storing data into MySQL.
+* [X] (II.D) Implement JavaScript TTN Payload Decoder.
+* [X] Added VSCode task "Start/Update Server Applications (Docker Compose)" to `.vscode/tasks.json`.
+* [ ] (I.D, II.A.3) Document relevant parts with Doxygen/Markdown.
 
-#### Visualization & Reporting (Grafana & Node-RED UI) - Corresponds to `progress.md` item II.C
+#### Visualization & Reporting (Grafana & Node-RED UI)
 
-* `[ ]` Implement Node-RED UI Dashboard.
-* `[ ]` Implement Grafana Dashboard.
-  * `[ ]` Add additional relevant visualizations.
-  * `[ ]` (Optional/Future) Publish dashboard on public internet.
-  * `[ ]` Implement alerts in Grafana for when a muskrat has been trapped.
+* [ ] Implement Node-RED UI Dashboard.
+* [ ] Implement Grafana Dashboard.
+  * [ ] Add additional relevant visualizations.
+  * [ ] (Optional/Future) Publish dashboard on public internet.
+  * [ ] Implement alerts in Grafana for when a muskrat has been trapped.
 
-#### General Documentation & Project Management (Refer to `progress.md` for full list)
+#### General Documentation & Project Management
 
-* `[~]` (I.A) Mini-Research Summary:
-  * `[X]` Converted to Markdown (`docs/mini-research-summary.md`), PII removed, and translated to English.
-  * `[X]` Original DOCX (`docs-old/Jaap-Jan Groenendijk LoRaWAN verwerkte feedback.docx`) added to `.gitignore`.
-  * `[X]` Convert to PDF as per deliverable requirements (I.A.5). (Done - 2025-06-07)
-  * `[X]` Locate and submit peer review document (I.A.5). (Done - 2025-06-07)
-* `[ ]` (I.D) Ensure all Doxygen documentation is complete and integrated across the project. (Postponed - 2025-06-07)
+* [X] (I.A) Mini-Research Summary:
+  * [X] Converted to Markdown, PII removed, and translated to English.
+  * [X] Original DOCX added to `.gitignore`.
+  * [X] Converted to PDF.
+  * [X] Located and submitted peer review document.
 
-## Documentation Review & Enhancement
+#### Documentation Review & Enhancement
 
-* `[~]` Review content in `docs-old/` and migrate relevant information to a new `docs/` directory. (Mini-Research Summary migrated to `docs/mini-research-summary.md`).
-* `[ ]` Ensure `README.md` appropriately refers to the `docs-old/` directory for current detailed context, and eventually to the new `docs/` directory as content is migrated.
-
-* **2025-06-07 (Current Time) - Postponed:** Task (I.D) Ensure all Doxygen documentation is complete and integrated across the project.
-* **2025-06-07 (Current Time) - Done:** Optimized general power usage for the LoRaWAN node (`nodeCode/`) by conditionalizing debug output, reducing LoRa send delay, refining LoRa module sleep strategy, and creating/testing new build/flash tasks.
-* **2025-06-07 (Current Time) - In Progress:** Optimizing data transmission for the LoRaWAN node (`nodeCode/`). Changed `HEARTBEAT_INTERVAL_MS` in `nodeCode.ino` to 24 hours.
+* [~] Review content in `docs-old/` and migrate relevant information to `docs/` (Mini-Research Summary migrated).
+* [ ] Ensure `README.md` appropriately refers to `docs-old/` and `docs/`.
+* [X] Set up Doxygen configuration (`Doxyfile` in root):
+  * [X] Configured `PROJECT_NAME`.
+  * [X] Configured `OUTPUT_DIRECTORY` to `docs/doxygen`.
+  * [X] Configured `INPUT` to include `nodeCode`, `payloadCoder`, `serverSide`.
+  * [X] Set `RECURSIVE = YES`.
+  * [X] Set `EXTRACT_ALL = YES`.
+  * [X] Set `EXTRACT_PRIVATE = YES`.
+  * [X] Set `HAVE_DOT = NO`.
+* [X] Create a VS Code task to build all Doxygen documentation:
+  * [X] Added `tasks.json` entry to execute Doxygen using the root `Doxyfile`.
+* [X] Create a GitHub workflow action to:
+  * [X] Execute Doxygen documentation generation.
+  * [X] Publish the resulting HTML to GitHub Pages.
+* [X] Integrate `buildnumber.num` into the Doxygen documentation.
 
 ## Design Notes & Rationale
 

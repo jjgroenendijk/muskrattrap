@@ -80,8 +80,8 @@ uint16_t payloadDecoder::extract_uint16(const uint8_t *buf, const unsigned char 
      * @brief Extracts a 16-bit unsigned integer from a buffer at the specified index.
      *
      * This function takes a buffer `buf` and an index `idx` and extracts a 16-bit unsigned integer
-     * from the buffer starting at the specified index. The most significant byte is located at `buf[idx]`
-     * and the least significant byte is located at `buf[idx + 1]`.
+     * from the buffer starting at the specified index. The most significant byte is located at `buf[idx]
+     * and the least significant byte is located at `buf[idx + 1].
      *
      * @param buf Pointer to the buffer containing the data.
      * @param idx Index of the most significant byte in the buffer.
@@ -99,8 +99,8 @@ uint32_t payloadDecoder::extract_uint32(const uint8_t *buf, const unsigned char 
     /**
      * Extracts a 32-bit unsigned integer from a buffer at the specified index.
      * This function takes a buffer `buf` and an index `idx` and extracts a 32-bit unsigned integer
-     * from the buffer starting at the specified index. The most significant byte is located at `buf[idx]`
-     * and the least significant byte is located at `buf[idx + 3]`.
+     * from the buffer starting at the specified index. The most significant byte is located at `buf[idx]
+     * and the least significant byte is located at `buf[idx + 3].
      * @param buf The buffer containing the data.
      * @param idx The index in the buffer where the 32-bit integer starts.
      * @return The extracted 32-bit unsigned integer.

@@ -166,7 +166,7 @@ unsigned char payloadEncoder::add_uint32(unsigned char idx_in, uint32_t value)
  *
  * @param idx_in The index of the byte in `_buffer` to modify.
  * @param value The boolean value to be added.
- * @param pos The bit position (0-7, where 0 is typically the LSB) within the byte `_buffer[idx_in]`.
+ * @param pos The bit position (0-7, where 0 is typically the LSB) within the byte `_buffer[idx_in].
  * @return The updated index. It increments `idx_in` if `pos` is 0, otherwise returns `idx_in` unchanged.
  */
 unsigned char payloadEncoder::add_bool(unsigned char idx_in, bool value, unsigned int pos)
