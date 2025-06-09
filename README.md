@@ -336,18 +336,25 @@ This project implements the firmware for a LoRaWAN-enabled muskrat trap IoT node
 
 ### To-Do
 
-* Refactor `nodeCode.ino` for true event-driven, ultra-low-power operation:
-  * Remove polling and delay-based sleep.
-  * Attach hardware interrupts to button pins for instant wakeup on trap events.
-  * Use the watchdog timer for periodic (heartbeat) wakeup.
-  * Ensure the main loop only wakes and sends when triggered by an interrupt or heartbeat.
-  * Test and verify the new event-driven, low-power behavior.
+* **Resolve Linter Errors in `nodeCode.ino`:** Address errors related to `Serial1`, sensor object type names, and watchdog timer registers.
+* **Finalize Interrupt Implementation:**
+    *   Confirm correct interrupt-capable pins for all sensors (door, catch, displacement). This may require hardware re-wiring or implementing Pin Change Interrupts (PCINT) for pins 8 and 9.
+    *   Implement and test actual interrupt attachment and ISR logic.
+* **Implement True Low-Power Sleep:**
+    *   Replace `enterSleepModePlaceholder()` with actual sleep logic using the LowPower library and ensuring interrupts can wake the device.
+* **Refine LoRaWAN Sending Strategy:** Ensure data is sent appropriately for different event types and heartbeats.
 * Update this README.md as implementation progresses.
 * (Optional) Further improve markdown style to resolve linter warnings.
 
 ### In-Progress
 
-* [ ] Refactoring `nodeCode.ino` to use hardware interrupts and watchdog timer for event-driven sleep/wake logic.
+* **[~] Refactoring `nodeCode.ino` for Event-Driven Operation:**
+    *   Added `volatile boolean` flags (`doorEvent`, `catchEvent`, `displacementEvent`) for specific sensor events.
+    *   Created placeholder ISR functions (`doorSensorISR`, `catchSensorISR`, `displacementSensorISR`) that set these flags.
+    *   Added commented-out placeholder `attachInterrupt()` calls in `setup()`, highlighting the pin compatibility issues for default sensor pins (8 and 9) on Arduino Leonardo and noting the need for re-wiring or PCINTs.
+    *   Modified the main `loop()` to check these flags and trigger LoRaWAN sends based on them, in addition to existing WDT/timed heartbeats.
+    *   Added a placeholder sleep function `enterSleepModePlaceholder()` and a call to it in the loop.
+    *   **Note:** The interrupt setup is currently a placeholder due to pin limitations. Full interrupt functionality requires hardware changes or more complex PCINT implementation. The sleep functionality is also a placeholder.
 
 ### Done
 
