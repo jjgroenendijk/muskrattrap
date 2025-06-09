@@ -83,3 +83,8 @@ serverSide/grafana/**
 !serverSide/grafana/provisioning/
 !serverSide/grafana/provisioning/**
 serverSide/.env
+
+
+
+serverSide/nodered/**
+!serverSide/nodered/**.json

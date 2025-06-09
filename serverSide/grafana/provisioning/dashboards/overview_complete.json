@@ -1,4 +1,53 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_MYSQL-MUSKRATTRAP",
+      "label": "MySQL-MuskratTrap",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "mysql",
+      "pluginName": "MySQL"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "12.0.1"
+    },
+    {
+      "type": "panel",
+      "id": "logs",
+      "name": "Logs",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "mysql",
+      "name": "MySQL",
+      "version": "12.0.1"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -18,13 +67,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 4,
+  "id": null,
   "links": [],
   "panels": [
     {
       "datasource": {
         "type": "mysql",
-        "uid": "mysql-muskrattrap-iot"
+        "uid": "${DS_MYSQL-MUSKRATTRAP}"
       },
       "fieldConfig": {
         "defaults": {
@@ -75,7 +124,7 @@
         {
           "datasource": {
             "type": "mysql",
-            "uid": "mysql-muskrattrap-iot"
+            "uid": "${DS_MYSQL-MUSKRATTRAP}"
           },
           "format": "table",
           "rawSql": "SELECT devID AS TrapID, dateTime AS LastSeen, batteryStatus AS Battery, doorStatus AS Door, catchDetect AS Catch, trapDisplacement AS Displacement, IF(dateTime < NOW() - INTERVAL 5 MINUTE, 'Offline', 'Online') AS Status FROM muskrattrap ORDER BY dateTime DESC",
@@ -88,7 +137,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "mysql-muskrattrap-iot"
+        "uid": "${DS_MYSQL-MUSKRATTRAP}"
       },
       "fieldConfig": {
         "defaults": {
@@ -137,7 +186,7 @@
         {
           "datasource": {
             "type": "mysql",
-            "uid": "mysql-muskrattrap-iot"
+            "uid": "${DS_MYSQL-MUSKRATTRAP}"
           },
           "format": "table",
           "rawSql": "SELECT COUNT(DISTINCT t1.devID) AS Value FROM muskrattrap t1 INNER JOIN (SELECT devID, MAX(dateTime) AS max_dateTime FROM muskrattrap GROUP BY devID) t2 ON t1.devID = t2.devID AND t1.dateTime = t2.max_dateTime WHERE t1.catchDetect = 1;",
@@ -150,7 +199,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "mysql-muskrattrap-iot"
+        "uid": "${DS_MYSQL-MUSKRATTRAP}"
       },
       "fieldConfig": {
         "defaults": {
@@ -199,7 +248,7 @@
         {
           "datasource": {
             "type": "mysql",
-            "uid": "mysql-muskrattrap-iot"
+            "uid": "${DS_MYSQL-MUSKRATTRAP}"
           },
           "format": "table",
           "rawSql": "SELECT t1.devID FROM muskrattrap t1 INNER JOIN (SELECT devID, MAX(dateTime) AS max_dateTime FROM muskrattrap GROUP BY devID) t2 ON t1.devID = t2.devID AND t1.dateTime = t2.max_dateTime ORDER BY t1.batteryStatus ASC LIMIT 1;",
@@ -212,7 +261,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "mysql-muskrattrap-iot"
+        "uid": "${DS_MYSQL-MUSKRATTRAP}"
       },
       "fieldConfig": {
         "defaults": {
@@ -293,7 +342,7 @@
         {
           "datasource": {
             "type": "mysql",
-            "uid": "mysql-muskrattrap-iot"
+            "uid": "${DS_MYSQL-MUSKRATTRAP}"
           },
           "format": "time_series",
           "rawSql": "SELECT dateTime AS time, devID AS metric, batteryStatus AS value FROM muskrattrap WHERE $__timeFilter(dateTime) ORDER BY dateTime ASC",
@@ -306,7 +355,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "mysql-muskrattrap-iot"
+        "uid": "${DS_MYSQL-MUSKRATTRAP}"
       },
       "fieldConfig": {
         "defaults": {
@@ -355,7 +404,7 @@
         {
           "datasource": {
             "type": "mysql",
-            "uid": "mysql-muskrattrap-iot"
+            "uid": "${DS_MYSQL-MUSKRATTRAP}"
           },
           "format": "table",
           "rawSql": "SELECT COUNT(DISTINCT devID) AS Value FROM muskrattrap;",
@@ -368,11 +417,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "mysql-muskrattrap-iot"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
+        "uid": "${DS_MYSQL-MUSKRATTRAP}"
       },
       "gridPos": {
         "h": 8,
@@ -397,7 +442,7 @@
         {
           "datasource": {
             "type": "mysql",
-            "uid": "mysql-muskrattrap-iot"
+            "uid": "${DS_MYSQL-MUSKRATTRAP}"
           },
           "format": "table",
           "rawSql": "SELECT dateTime AS time, devID, 'Displacement Detected' AS message FROM muskrattrap WHERE trapDisplacement = 1 AND $__timeFilter(dateTime) ORDER BY dateTime DESC LIMIT 100",
@@ -410,11 +455,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "mysql-muskrattrap-iot"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
+        "uid": "${DS_MYSQL-MUSKRATTRAP}"
       },
       "gridPos": {
         "h": 8,
@@ -439,7 +480,7 @@
         {
           "datasource": {
             "type": "mysql",
-            "uid": "mysql-muskrattrap-iot"
+            "uid": "${DS_MYSQL-MUSKRATTRAP}"
           },
           "format": "table",
           "rawSql": "SELECT dateTime AS time, devID, 'Catch Detected' AS message FROM muskrattrap WHERE catchDetect = 1 AND $__timeFilter(dateTime) ORDER BY dateTime DESC LIMIT 100",
@@ -450,7 +491,6 @@
       "type": "logs"
     }
   ],
-  "preload": false,
   "refresh": "5s",
   "schemaVersion": 41,
   "tags": [],
@@ -465,5 +505,6 @@
   "timezone": "browser",
   "title": "Muskrat Trap Fleet Overview Copy",
   "uid": "c6d6d49a-a748-4948-be76-6fc6d01bfcd6",
-  "version": 1
+  "version": 1,
+  "weekStart": ""
 }

@@ -277,10 +277,12 @@ These tasks help streamline the compilation and testing processes directly withi
         * [X] Deleted old dashboards (UIDs `0520bd8f-87c6-4e91-9360-bb66843c3cd8` and `muskrattrap`) via API.
         * [X] Created new dashboard `Muskrat Trap Fleet Overview` and saved to `serverSide/grafana/provisioning/dashboards/muskrat_trap_fleet_overview.json`.
         * [X] Updated dashboard JSON with correct table/column names from `databaseSetup.sql`.
-        * [~] Created `serverSide/grafana/provisioning/datasources/mysql_datasource.yml` to pre-provision the MySQL datasource. UID set to `mysql-muskrattrap-iot`. **The Prometheus datasource for the 'Active Alerts' panel still needs to be provisioned or its UID manually configured in the dashboard JSON.**
-        * [~] Updated dashboard JSON `muskrat_trap_fleet_overview.json` to use the provisioned MySQL datasource UID `mysql-muskrattrap-iot`.
-      * **Next:** Verify the new dashboard and MySQL datasource provisioning in Grafana UI. Address Prometheus datasource for the 'Active Alerts' panel. Then, continue with alert rule verification and contact point/notification policy configuration.
-        * **Verification Step:** Restart Grafana and check logs using the command: `docker-compose up -d --force-recreate grafana && sleep 10 && docker-compose logs grafana -n 30` (to be run from `serverSide/` directory).
+        * [X] Created `serverSide/grafana/provisioning/datasources/mysql_datasource.yml` to pre-provision the MySQL datasource. UID set to `mysql-muskrattrap-iot`.
+        * [X] Updated dashboard JSON `muskrat_trap_fleet_overview.json` to use the provisioned MySQL datasource UID `mysql-muskrattrap-iot`.
+        * [X] Fixed 'Battery Levels' panel (id: 2) in `muskrat_trap_fleet_overview.json` by adding datasource type, SQL query, and format; incremented version to 3.
+        * [X] Added new panels to `muskrat_trap_fleet_overview.json` (Total Monitored Traps, Lowest Battery Trap ID, Traps with Active Catch); incremented version to 4.
+        * [X] Restarted Grafana and verified all dashboard panels and MySQL datasource provisioning in the Grafana UI.
+      * **Next:** Address the Prometheus datasource for the 'Active Alerts' panel (UID `YOUR_PROMETHEUS_DATASOURCE_UID`). Then, continue with alert rule verification and contact point/notification policy configuration.
 
 #### General Documentation & Project Management
 
