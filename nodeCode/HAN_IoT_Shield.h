@@ -29,8 +29,6 @@
  */
 
  /*!
-  \todo make documentation complete
-
   # HAN_IoT Shield Documentation
 
   ## Shield layout
@@ -91,6 +89,12 @@
 // defines for Dallase one wire sensor
 #define PIN_DALLAS       2     ///< Dallas DS18S20 one-wire temperature sensor is connected to Arduino pin 2
 
+/*!
+ * \class iotShieldPotmeter
+ * \brief Represents a potentiometer on the HAN IoT Shield.
+ * Provides an interface to read the analog value from a potentiometer,
+ * mapping it to a specified range.
+ */
 class iotShieldPotmeter
 {
 private:
@@ -120,11 +124,16 @@ public:
 typedef enum { BUTTON_PRESSED,   ///< Button is pressed
                BUTTON_RELEASED   ///< Button is released
              } buttonState_t;
-                 
+
+/*!
+ * \class iotShieldButton
+ * \brief Represents a push button on the HAN IoT Shield.
+ * Provides an interface to read the state of a push button (pressed or released).
+ */
 class iotShieldButton
 {
 private:
-  uint8_t _pin;                 ///< Hardware pin to which the potentiometer is connected.
+  uint8_t _pin;                 ///< Hardware pin to which the button is connected.
 
 public:
   /// \pre requires a digital input pin to which the button is connected
@@ -150,10 +159,15 @@ typedef enum { LED_ON,   ///< LED is ON
                LED_OFF   ///< LED is OFF
              } ledState_t;
 
+/*!
+ * \class iotShieldLED
+ * \brief Represents an LED on the HAN IoT Shield.
+ * Provides an interface to control the state of an LED (on or off).
+ */
 class iotShieldLED
 {
 private:
-  uint8_t _pin;                 ///< Hardware pin to which the potentiometer is connected.
+  uint8_t _pin;                 ///< Hardware pin to which the LED is connected.
 
 public:
   /// \pre requires a digital input pin to which the LED is connected
@@ -177,15 +191,23 @@ private:
   DallasTemperature _sensors;   ///< Object of one wire sensors on one wire bus
   
 public:
-  /// \pre requires a digital input pin to which the LED is connected
-  /// \param hardwarePin Arduino pin to which the LED connected
+  /*!
+   * \class iotShieldTempSensor
+   * \brief Represents the Dallas DS18S20 temperature sensor on the HAN IoT Shield.
+   * Provides an interface to read the temperature in Celsius.
+   */
+  /*!
+   * \brief Constructor for iotShieldTempSensor.
+   * \pre Requires a digital input pin to which the temperature sensor's OneWire interface is connected.
+   * \param hardwarePin Arduino pin to which the temperature sensor is connected. Defaults to PIN_DALLAS.
+   */
   iotShieldTempSensor(uint8_t hardwarePin = PIN_DALLAS);
 
   /// \brief Default destructor
   ~iotShieldTempSensor();
 
-  /// \brief set state of LED
-  /// \return state set LED state using ledState_t enum.
+  /// \brief Reads the temperature from the Dallas DS18S20 sensor.
+  /// \return The temperature in degrees Celsius as a float.
   float getTemperatureCelsius();
 
 };
