@@ -1,3 +1,11 @@
+/**
+ * @file decoder.h
+ * @brief Payload decoder for muskrat trap LoRaWAN node. Decodes compact binary payloads into sensor and status fields.
+ *
+ * Fields decoded: id, version, door status, catch detect, trap displacement, battery status, unix time.
+ * Usage: Call decodePayload() with buffer, then use getters to access fields.
+ */
+
 #ifndef DECODER_H
 #define DECODER_H
 
@@ -7,8 +15,7 @@
 /// This class wil decode variables out of a payload for use in a LoRaWAN application.
 /// The class is setup using both .h and .cpp files where the setters and getters are
 /// placed in to the .h file.
-class payloadDecoder
-{
+class payloadDecoder {
 private:
     uint32_t _id;           ///< Identification number (4 bytes)
     uint8_t _version;       ///< Payload version number (1 byte)
@@ -63,42 +70,42 @@ public:
 
     /// \brief decode payload
     /// Extract the variables from the payload
-    void decodePayload();
+    void decodePayload(const uint8_t* buffer, uint8_t size);
 
     /// \brief get ID
     /// Fetch the ID from the payload
     /// \return ID (uint32_t)
-    uint32_t get_id() const { return _id; }
+    uint32_t get_id() const;
 
     /// \brief get version
     /// Fetch the version number from the payload
     /// \return version (uint8_t)
-    uint8_t get_version() const { return _version; }
+    uint8_t get_version() const;
 
     /// \brief get door status
     /// Fetch the door status from the payload
     /// \return door status
-    bool get_doorStatus() const { return _doorStatus; }
+    bool get_doorStatus() const;
 
     /// \brief get catch detection
     /// Fetch the catch detection from the payload
     /// \return catch detection
-    bool get_catchDetect() const { return _catchDetect; }
+    bool get_catchDetect() const;
 
     /// \brief get trap displacement
     /// Fetch the trap displacement from the payload
     /// \return trap displacement
-    bool get_trapDisplacement() const { return _trapDisplacement; }
+    bool get_trapDisplacement() const;
 
     /// \brief get battery status
     /// Fetch the battery status from the payload
     /// \return battery status (uint8_t)
-    uint8_t get_batteryStatus() const { return _batteryStatus; }
+    uint8_t get_batteryStatus() const;
 
     /// \brief get unix time
     /// Fetch the unix time from thepayload
     /// \return unix time (uint32_t)
-    uint32_t get_unixTime() const { return _unixTime; }
+    uint32_t get_unixTime() const;
 
     /// \brief print decoded payload
     /// Print the decoded payload to the console

@@ -1,8 +1,8 @@
 /*!
  * \file batterySensor.h
- * \brief Defines the interface for the batterySensor class.
- * This file contains the class definition for batterySensor, which simulates
- * battery level readings, typically using a potentiometer from the HAN IoT Shield.
+ * \brief Abstraction for the battery sensor on the muskrat trap node.
+ *
+ * Provides methods to read and update the battery level.
  */
 #ifndef NODECODE_BATTERYSENSOR_H
 #define NODECODE_BATTERYSENSOR_H
@@ -43,13 +43,15 @@ public:
     ~batterySensor();   ///< Destructor
 
     /**
-     * @brief Gets the current simulated battery level.
-     * In a real scenario, this would read from a hardware sensor. Here, it typically
-     * reads from potentiometer 2 on the HAN IoT Shield.
-     * @return The current battery level (e.g., a percentage or raw ADC value,
-     *         depending on implementation in .cpp and potmeter configuration).
+     * @brief Get the current battery level (percentage).
+     * @return Battery level (0-100)
      */
-    uint32_t getBatteryLevel();
+    uint8_t getBatteryLevel() const;
+
+    /**
+     * @brief Update the battery level from hardware or simulation.
+     */
+    void update();
 
     /**
      * @brief Sets the current simulated battery level and updates LED brightness.

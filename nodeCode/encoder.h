@@ -1,11 +1,10 @@
 /*!
-* @file encoder.h
-* @brief Encoder class for payloadCoder project
-* @author Jaap-Jan Groenendijk (github@jjgroenendijk.nl)
-* @date 2024-09-06
-* @version 1.0
-
-*/
+ * @file encoder.h
+ * @brief Payload encoder for muskrat trap LoRaWAN node. Encodes sensor and status data into a compact binary format.
+ *
+ * Fields encoded: id, version, door status, catch detect, trap displacement, battery status, unix time.
+ * Usage: Set fields via setters, then call composePayload() to generate the payload buffer.
+ */
 
 #ifndef ENCODER_H
 #define ENCODER_H
@@ -90,40 +89,47 @@ public:
     /// @return A pointer to the buffer containing the encoded payload.
     uint8_t *getPayload() { return _buffer; };
 
-    /// @brief set the identification number
-    /// This function sets the identification number in the payload.
-    /// @param id The identification number to be set in the payload.
-    void set_id(const uint32_t id) { _id = static_cast<uint32_t>(id); }
+    /**
+     * @brief Set the device ID for the payload.
+     * @param id Device identifier (uint32_t)
+     */
+    void set_id(uint32_t id);
 
-    /// @brief set the payload version number
-    /// This function sets the payload version number in the payload.
-    /// @param version The payload version number to be set in the payload.
-    void set_version(const uint8_t version) { _version = static_cast<uint8_t>(version); }
+    /**
+     * @brief Set the payload version.
+     * @param version Version number (uint8_t)
+     */
+    void set_version(uint8_t version);
 
-    /// @brief set the door status
-    /// This function sets the door status in the payload.
-    /// @param doorStatus The door status to be set in the payload.
-    void set_doorStatus(const bool doorStatus) { _doorStatus = doorStatus; }
+    /**
+     * @brief Set the door status.
+     * @param doorStatus True if closed, false if open
+     */
+    void set_doorStatus(bool doorStatus);
 
-    /// @brief set the catch detection status
-    /// This function sets the catch detection status in the payload.
-    /// @param catchDetect The catch detection status to be set in the payload.
-    void set_catchDetect(const bool catchDetect) { _catchDetect = catchDetect; }
+    /**
+     * @brief Set the catch detect flag.
+     * @param catchDetect True if catch detected
+     */
+    void set_catchDetect(bool catchDetect);
 
-    /// @brief set the trap displacement status
-    /// This function sets the trap displacement status in the payload.
-    /// @param trapDisplacement The trap displacement status to be set in the payload.
-    void set_trapDisplacement(const bool trapDisplacement) { _trapDisplacement = trapDisplacement; }
+    /**
+     * @brief Set the trap displacement flag.
+     * @param trapDisplacement True if trap displaced
+     */
+    void set_trapDisplacement(bool trapDisplacement);
 
-    /// @brief set the battery status
-    /// This function sets the battery status in the payload.
-    /// @param batteryStatus The battery status to be set in the payload.
-    void set_batteryStatus(const uint8_t batteryStatus) { _batteryStatus = static_cast<uint8_t>(batteryStatus); }
+    /**
+     * @brief Set the battery status (0-255).
+     * @param batteryStatus Battery level (uint8_t)
+     */
+    void set_batteryStatus(uint8_t batteryStatus);
 
-    /// @brief set the date and time
-    /// This function sets the date and time in the payload.
-    /// @param unixTime The date and time to be set in the payload.
-    void set_unixTime(const uint32_t unixTime) { _unixTime = static_cast<uint32_t>(unixTime); }
+    /**
+     * @brief Set the unix time for the payload.
+     * @param unixTime Unix timestamp (uint32_t)
+     */
+    void set_unixTime(uint32_t unixTime);
 
     /// @brief print the encoded payload
     /// This function prints the encoded payload in a human-readable format to the console.

@@ -68,7 +68,6 @@ depend
 # Original course documents
 docs-old
 courseLessons
-docs/doxygen
 docs/*.docx
 serverSide/node-red-data
 serverSide/phpmyadmin

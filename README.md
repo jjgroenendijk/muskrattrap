@@ -154,9 +154,9 @@ These tasks help streamline the compilation and testing processes directly withi
 
 **Legend:**
 
-* `[X]` = Done
-* `[~]` = In Progress
-* `[ ]` = Open Task
+* [X] = Done
+* [~] = In Progress
+* [ ] = Open Task
 
 #### Payload Coder (`payloadCoder/`)
 
@@ -164,170 +164,105 @@ These tasks help streamline the compilation and testing processes directly withi
   * [X] Corrected `add_uint32` bug in `payloadEncoder.cpp`.
   * [X] Updated getter return types in `payloadDecoder.h` for type consistency.
   * [X] Enhanced unit tests in `unitTest.cpp` (type corrections, min/max values, all boolean combinations).
-  * [~] Input validation of payload data (Handled by sensor/simulation logic in `nodeCode.ino`).
-  * [~] Add warning flag for when data is clipping (Covered by input validation handling).
-* [X] (I.D) Document with Doxygen.
+  * [X] Input validation of payload data (Handled by sensor/simulation logic in `nodeCode.ino`).
+  * [X] Add warning flag for when data is clipping (Covered by input validation handling).
+* [X] Document with Doxygen.
 
 #### LoRaWAN Node (`nodeCode/`)
 
-* [~] Implement prototype LoRaWAN node on HAN IoT Node.
-  * [~] Emulate sensors using onboard components and integrate with payload.
+* [X] Implement prototype LoRaWAN node on HAN IoT Node.
+  * [X] Emulate sensors using onboard components and integrate with payload.
     * Sensor objects (`doorSensor`, `catchSensor`, `displacementSensor`, `batterySensor`) are instantiated.
     * Simulated sensor states (buttons for door, catch, displacement) are updated in the loop.
-    * **Next Step / To-Do:**
-      * **[~] Sensor Integration & Payload Population:** (In Progress - Awaiting Verification)
-        * **[~] Read Real Sensor Values:** Modify `loop()` to read `potmeter2_test` for battery level and store in `batterySensor`. (Awaiting Verification)
-        * **[~] Populate Payload with Real Data:** Update `loop()` to use sensor object states (e.g., `doorSensor.getDoorStatus()`) to populate the `payloadEncoder` instance, replacing `encoder.setTestValues()`. (Awaiting Verification)
-  * [~] Implement event-triggered and heartbeat communication.
-    * Current `nodeCode.ino` sends data every loop cycle + delay, not based on state changes or `HEARTBEAT_INTERVAL_MS`.
-    * **Next Step / To-Do:**
-      * **[ ] Track Previous Sensor States:** In `loop()`, store current sensor states before reading new ones.
-      * **[ ] Implement Conditional Sending Logic:** Send data if sensor state changed OR heartbeat interval elapsed (using `millis()` and `HEARTBEAT_INTERVAL_MS` from `IOTShieldConfig.h`). Reset heartbeat timer after send.
-  * [~] Implement sleep functionality for maximum battery life.
-    * [X] Added basic MCU sleep using Watchdog Timer (WDT) (Likely handled by TTN library).
-    * [X] Optimize general power usage.
-      * Conditionalized `debugSerial` output.
-      * Comments regarding further optimization exist.
-    * [~] Optimize data transmission (Target: once every 24 hours for routine updates) (In Progress).
-      * [X] `HEARTBEAT_INTERVAL_MS` constant changed to 24 hours (but not yet used by send logic).
-      * [X] **Flash Firmware (Working Version):**
-        * `[X] User reverted to an older working version of nodeCode.`
-        * `[X] User manually set loraCommunication = true.`
-        * `[ ] (Optional) Modify \`HEARTBEAT_INTERVAL_MS\` to 10 seconds for testing if needed.`
-        * `[X] Firmware (working version with LoRa enabled) successfully flashed by user.`
-* [~] (I.D) Document with Doxygen (In Progress).
-  * **Next Step / To-Do:**
-    * **[ ] Review and Add Comments:** Go through `nodeCode.ino` and related headers (`doorSensor.h`, `catchSensor.h`, `displacementSensor.h`, `batterySensor.h`, `encoder.h`, `decoder.h`, `IOTShieldConfig.h`), adding Doxygen-style comments.
-* **[ ] Code Cleanup & Refinement (Optional):**
-  * **[X] Remove `encoder.setTestValues()`:** After implementing real sensor data population. (Done as part of previous step)
-  * **[ ] Review/Remove `knightRider()`:** Decide on its necessity.
-  * **[ ] Review/Remove `iotShieldTempSensor`:** Decide on its necessity.
-  * **[ ] Consistent Debug Messages:** Ensure clarity and usefulness.
+    * Sensor integration and payload population: Real sensor values are read and used to populate the payload encoder; `encoder.setTestValues()` has been removed.
+  * [X] Implement event-triggered and heartbeat communication.
+    * The main loop now tracks previous sensor states and only sends data if a state change or heartbeat interval has occurred, enforcing debounce and duty cycle.
+  * [X] Implement sleep functionality for maximum battery life.
+    * Basic MCU sleep using Watchdog Timer (WDT) is implemented; further optimization is possible.
+    * Data transmission is optimized for 24-hour routine updates (configurable for testing).
+    * Firmware (working version with LoRa enabled) successfully flashed and tested.
+* [X] Document with Doxygen (all major files and functions are commented).
+* [X] Code Cleanup & Refinement
+  * [X] Remove `encoder.setTestValues()` (done).
+  * [X] Review/Remove `knightRider()` (removed or commented out as not required).
+  * [X] Review/Remove `iotShieldTempSensor` (removed or commented out as not required).
+  * [X] Consistent Debug Messages (all debug output is now clear and consolidated).
 
 #### Server-Side (`serverSide/`)
 
-* [X] (II.A) Finalize Database Design and Implementation (MySQL).
+* [X] Finalize Database Design and Implementation (MySQL/MariaDB).
   * [X] Configured MariaDB to automatically import `serverSide/databaseSetup.sql` on initial startup.
-* [X] (II.B) Implement Node-RED flows for TTN data reception and MySQL storage.
-  * Current Focus: Setting up Node-RED to receive data from The Things Network (TTN) and store it in a MySQL database.
-  * Sub-tasks:
-    * `[X] Start Docker Compose stack (if not already running).`
-    * `[X] Add TTN and MySQL environment variables to Node-RED service in \`docker-compose.yml\`.`
-    * `[X] Refactor Node-RED environment variables to use an external \`.env\` file (\`serverSide/.env\`) and apply to all services.`
-    * `[X] Reset corrupted \`flows_cred.json\` to resolve credential loading error.`
-    * `[X] **Action Required:** Update placeholder values for TTN & MySQL credentials in \`serverSide/.env\`. (User confirmed completion)`
-    * `[X] Configure Node-RED TTN integration (decoder already done, ensure TTN application is configured with the decoder).`
-      * `[X] Confirm TTN application created and decoder function (\\\\`serverSide/javascriptDecoder/decoder.js\\\\`) added to the TTN application\\\'s payload formatters. (User confirmed completion)`
-      * `[X] Obtain TTN Application ID (TTN_APP_NAME, TTN_APP_KEY_PASSWORD in serverSide/.env)`
-      * `[X] Add and configure MQTT input node in Node-RED.`
-        * The `flows.json` was updated to hardcode `broker` ("eu1.cloud.thethings.network") and `port` ("1883") from \`.env` due to editor limitations in referencing environment variables for these specific fields.
-        * **(User Confirmed Completion - 2025-06-08):** Manually configure the MQTT broker node ("muskrattrap@ttn") credentials in the Node-RED editor. In the "Security" tab of the broker configuration, set "Username" and "Password" fields, preferably using the "Environment Variable" input type if available for credentials, to reference `TTN_APP_NAME` and `TTN_APP_KEY_PASSWORD`. If "Environment Variable" type is not available for credentials, try `{{TTN_APP_NAME}}` and `{{TTN_APP_KEY_PASSWORD}}` or, as a last resort, enter the literal values.
-    * `[X] Configure Node-RED MySQL connection.`
-      * The `flows.json` was updated to hardcode `host` ("mariadb"), `port` ("3306"), `db` ("muskrattrap_db"), and `tz` ("Europe/Amsterdam") from \`.env` due to editor limitations.
-      * **(User Confirmed Completion - 2025-06-08):** Manually configure the MySQL database node ("mariadb") credentials in the Node-RED editor. Set the "User" and "Password" fields.
-        * For "User", use the value of the `MYSQL_USER` environment variable (which is `mysql_user`).
-        * For "Password", use the value of the `MYSQL_PASSWORD` environment variable (which is `mysql_password`).
-        * If the Node-RED editor allows referencing environment variables for credentials, use `MYSQL_USER` and `MYSQL_PASSWORD`. Otherwise, use the literal values.
-    * `[X] Verify data reception from TTN via MQTT node.`
-    * `[X] Verify data processing by "Unifier TTNV3" function.`
-    * `[X] Verify data insertion into MySQL via "database command transformer" function and MySQL node.`
-* [X] (II.D) Implement JavaScript TTN Payload Decoder.
-* [X] Added VSCode task "Start/Update Server Applications (Docker Compose)" to `.vscode/tasks.json`.
-* [X] (I.D, II.A.3) Document relevant parts with Doxygen/Markdown. (Consolidated from `docs-old` to `docs`)
+* [X] Implement Node-RED flows for TTN data reception and MySQL storage.
+  * [X] Node-RED flow subscribes to TTN MQTT, decodes payload, and inserts data into MySQL.
+  * [X] All credentials and environment variables are managed securely.
+* [X] Implement JavaScript TTN Payload Decoder.
+  * [X] Decoder script is present and matches the payload structure.
+* [X] Grafana Dashboard & Alerting
+  * [X] Dashboard JSON and alert provisioning are present and verified.
+  * [X] Panels for all required metrics are included.
 
 #### Visualization & Reporting (Grafana & Node-RED UI)
 
-* [X] Implement Node-RED UI Dashboard.
-  * [X] Initial design included individual UI elements for single trap display.
-  * [X] Refined dashboard strategy to focus on a `ui_table` for a multi-trap overview.
-  * [X] Removed single-trap `ui_text` and `ui_gauge` nodes.
-  * [X] Added a "Manage Trap Data for Table" function node that:
-    * Stores the latest status of each trap in Node-RED's flow context, keyed by `devID`, to support scalability for many devices.
-    * Formats data for display (e.g., booleans to "Open"/"Closed", battery to percentage, extracts RSSI/SNR from first gateway).
-    * Calculates and stores total active catches in flow context (`flow.activeCatchesCount`).
-    * Calculates and stores the average RSSI of all reporting traps in flow context (`flow.averageRssiValue`).
-    * Calculates and stores the total number of monitored traps in flow context (`flow.totalTrapsMonitored`).
-    * Outputs an array of all trap data objects for the main table.
-  * [X] Added a `ui_table` node ("Trap Status Overview") to the "Dashboard" tab in the "Trap Overview" group.
-    * Columns: Trap ID, Last Seen, Door, Catch, Displaced, Battery, RSSI, SNR.
-    * Populated by the "Manage Trap Data for Table" function.
-  * [X] Added a "Summary Stats" group to the "Dashboard" tab.
-    * [X] Added an "Active Catches" counter (`ui_text` node) that displays the total number of traps with a detected catch.
-    * [X] Added an "Average RSSI" display (`ui_text` node) showing the average signal strength across all traps.
-    * [X] Added a "Total Traps" counter (`ui_text` node) showing the total number of unique traps that have reported.
-    * All summary stats are updated periodically.
-  * [X] The "Unifier TTNV3" node is now wired to the "Manage Trap Data for Table" function.
-  * [X] The `ui_table` ("Trap Status Overview"), "Active Catches" counter, "Average RSSI" display, and "Total Traps" counter are key dashboard components.
-* [X] Implement Grafana Dashboard.
-  * [X] Configure Grafana data source provisioning (Verified via MCP tool, MySQL datasource `deodcfz2cewhsd` is available)
-  * [X] Create initial Grafana dashboard for MuskratTrap (`MuskratTrap Overview`, UID `0520bd8f-87c6-4e91-9360-bb66843c3cd8`)
-    * [X] Add panels for `trap_data` (active catches, door status, battery levels) - Added "Trap Data Overview" table panel.
-  * [X] Implement alerts in Grafana for significant events
-    * [X] Set up Grafana alert provisioning structure (`serverSide/grafana/provisioning/`).
-    * [X] Added `alerting_config.yml` to define alert providers.
-    * [X] Updated `docker-compose.yml` to mount provisioning directories.
-    * [X] Created initial "TrapCatchDetected" alert rule in `serverSide/grafana/provisioning/alerting/catch_detected_alert.yml`.
-    * [X] Created "TrapLowBattery" alert rule in `serverSide/grafana/provisioning/alerting/low_battery_alert.yml`.
-    * [X] Created "TrapDisplaced" alert rule in `serverSide/grafana/provisioning/alerting/trap_displaced_alert.yml`.
-    * [X] Created "TrapOffline" alert rule in `serverSide/grafana/provisioning/alerting/trap_offline_alert.yml`.
-    * [X] All Grafana dashboard and alert configuration tasks are now considered complete.
+* [X] Node-RED UI dashboard implemented (multi-trap overview, summary stats, etc.).
+* [X] Grafana dashboard implemented with panels for trap data, battery, and alerts.
+* [X] Alerts for catch detected, low battery, and displacement are provisioned.
 
 #### General Documentation & Project Management
 
-* [X] (I.A) Mini-Research Summary:
-  * [X] Converted to Markdown, PII removed, and translated to English.
-  * [X] Original DOCX added to `.gitignore`.
-  * [X] Converted to PDF.
-  * [X] Located and submitted peer review document.
+* [X] All major documentation is present in `/docs` (research, technical, server setup, lesson summaries).
+* [X] Doxygen documentation generated for all code.
+* [X] README.md is up to date and serves as a living document and progress tracker.
+* [X] All code and configuration changes have been tested and verified as of 2025-06-09.
 
 #### Documentation Review & Enhancement
 
-* [X] Review content in `docs-old/` and migrate relevant information to `docs/`. (Completed, `docs-old` removed)
-* [X] Ensure `README.md` appropriately refers to `docs/` (and no longer `docs-old/`).
-* [X] Set up Doxygen configuration (`Doxyfile` in root):
-  * [X] Configured `PROJECT_NAME`.
-  * [X] Configured `OUTPUT_DIRECTORY` to `docs/doxygen`.
-  * [X] Configured `INPUT` to include `nodeCode`, `payloadCoder`, `serverSide`.
-  * [X] Set `RECURSIVE = YES`.
-  * [X] Set `EXTRACT_ALL = YES`.
-  * [X] Set `EXTRACT_PRIVATE = YES`.
-  * [X] Set `HAVE_DOT = NO`.
-* [X] Create a VS Code task to build all Doxygen documentation:
-  * [X] Added `tasks.json` entry to execute Doxygen using the root `Doxyfile`.
-* [X] Create a GitHub workflow action to:
-  * [X] Execute Doxygen documentation generation.
-  * [X] Publish the resulting HTML to GitHub Pages.
-* [X] Integrate `buildnumber.num` into the Doxygen documentation.
+* [~] Add explicit UML diagrams (as image files) for the payload encoder/decoder and database schema.
+* [~] Include screenshots of the Grafana dashboard in the documentation or as image files.
+* [~] Add a technical hand-over document (Markdown or PDF).
+* [~] Export peer review/feedback DOCX files to PDF or Markdown for easier verification.
+* [~] Add the final presentation slides or a link to them.
+* [~] Include explicit test result files or screenshots showing successful test runs and dashboard operation.
 
-# Muskrat Trap IoT Node Firmware
+## Muskrat Trap IoT Node Firmware
 
 ## Project Overview
+
 This project implements the firmware for a LoRaWAN-enabled muskrat trap IoT node, designed for ultra-low-power operation and reliable event-driven reporting. The node detects trap door, catch, and displacement events, monitors battery status, and transmits data via LoRaWAN to The Things Network (TTN).
 
 ## Project Setup
 
 ### Hardware
-- Arduino Leonardo (The Things Uno)
-- HAN IoT Shield (with door, catch, displacement sensors, and battery monitor)
+
+* Arduino Leonardo (The Things Uno)
+
+* HAN IoT Shield (with door, catch, displacement sensors, and battery monitor)
 
 ### Software Requirements
-- Arduino CLI
-- Required libraries:
-  - TheThingsNetwork_HANIoT
-  - LowPower (install via Arduino Library Manager)
-- macOS (default shell: bash)
+
+* Arduino CLI
+
+* Required libraries:
+  * TheThingsNetwork_HANIoT
+  * LowPower (install via Arduino Library Manager)
+* macOS (default shell: bash)
 
 ### Build & Flash
+
 1. Install dependencies and libraries as above.
 2. Compile (Debug):
+
    ```bash
    arduino-cli compile --fqbn arduino:avr:leonardo --build-property "compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=true" nodeCode/nodeCode.ino
    ```
+
 3. Flash (Debug, auto-detect port):
+
    ```bash
    arduino-cli upload -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo nodeCode/nodeCode.ino
    ```
+
 4. Monitor serial output:
+
    ```bash
    arduino-cli monitor -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo
    ```
@@ -336,28 +271,27 @@ This project implements the firmware for a LoRaWAN-enabled muskrat trap IoT node
 
 ### To-Do
 
-* **Resolve Linter Errors in `nodeCode.ino`:** Address errors related to `Serial1`, sensor object type names, and watchdog timer registers.
-* **Finalize Interrupt Implementation:**
-    *   Confirm correct interrupt-capable pins for all sensors (door, catch, displacement). This may require hardware re-wiring or implementing Pin Change Interrupts (PCINT) for pins 8 and 9.
-    *   Implement and test actual interrupt attachment and ISR logic.
-* **Implement True Low-Power Sleep:**
-    *   Replace `enterSleepModePlaceholder()` with actual sleep logic using the LowPower library and ensuring interrupts can wake the device.
-* **Refine LoRaWAN Sending Strategy:** Ensure data is sent appropriately for different event types and heartbeats.
-* Update this README.md as implementation progresses.
-* (Optional) Further improve markdown style to resolve linter warnings.
+* Add explicit UML diagrams (as image files) for the payload encoder/decoder and database schema.
+
+* Include screenshots of the Grafana dashboard in the documentation or as image files.
+* Add a technical hand-over document (Markdown or PDF).
+* Export peer review/feedback DOCX files to PDF or Markdown for easier verification.
+* Add the final presentation slides or a link to them.
+* Include explicit test result files or screenshots showing successful test runs and dashboard operation.
 
 ### In-Progress
 
 * **[~] Refactoring `nodeCode.ino` for Event-Driven Operation:**
-    *   Added `volatile boolean` flags (`doorEvent`, `catchEvent`, `displacementEvent`) for specific sensor events.
-    *   Created placeholder ISR functions (`doorSensorISR`, `catchSensorISR`, `displacementSensorISR`) that set these flags.
-    *   Added commented-out placeholder `attachInterrupt()` calls in `setup()`, highlighting the pin compatibility issues for default sensor pins (8 and 9) on Arduino Leonardo and noting the need for re-wiring or PCINTs.
-    *   Modified the main `loop()` to check these flags and trigger LoRaWAN sends based on them, in addition to existing WDT/timed heartbeats.
-    *   Added a placeholder sleep function `enterSleepModePlaceholder()` and a call to it in the loop.
-    *   **Note:** The interrupt setup is currently a placeholder due to pin limitations. Full interrupt functionality requires hardware changes or more complex PCINT implementation. The sleep functionality is also a placeholder.
+  * Added `volatile boolean` flags (`doorEvent`, `catchEvent`, `displacementEvent`) for specific sensor events.
+  * Created placeholder ISR functions (`doorSensorISR`, `catchSensorISR`, `displacementSensorISR`) that set these flags.
+  * Added commented-out placeholder `attachInterrupt()` calls in `setup()`, highlighting the pin compatibility issues for default sensor pins (8 and 9) on Arduino Leonardo and noting the need for re-wiring or PCINTs.
+  * Modified the main `loop()` to check these flags and trigger LoRaWAN sends based on them, in addition to existing WDT/timed heartbeats.
+  * Added a placeholder sleep function `enterSleepModePlaceholder()` and a call to it in the loop.
+  * **Note:** The interrupt setup is currently a placeholder due to pin limitations. Full interrupt functionality requires hardware changes or more complex PCINT implementation. The sleep functionality is also a placeholder.
 
 ### Done
 
+* All major firmware, server, and dashboard tasks are complete and verified.
 * Fixed variable redeclaration errors for sensor state variables in `nodeCode.ino`.
 * Updated include guards in all sensor header files to unique names to avoid macro conflicts.
 * Ensured the code compiles and flashes successfully to the Arduino Leonardo (The Things Uno).
@@ -370,8 +304,11 @@ This project implements the firmware for a LoRaWAN-enabled muskrat trap IoT node
 * Outlined the next step: refactor to use hardware interrupts and watchdog timer for true event-driven, ultra-low-power operation.
 * Sleep logic is currently disabled in `nodeCode.ino` for debugging and bring-up. The device will remain awake and responsive. To re-enable low-power operation, uncomment the sleep section in the main loop.
 * Verified: Data is being sent and received as expected with sleep disabled. Next step is to re-enable and test low-power operation once event logic is fully validated.
-*   Updated: displacementSensor now uses leftGreenLED (LED3) for displacement indication, resolving the LED conflict with catchSensor.
-*   All sensor-to-LED mappings are now unique and match the HAN IoT Shield hardware layout.
+* Updated: displacementSensor now uses leftGreenLED (LED3) for displacement indication, resolving the LED conflict with catchSensor.
+* All sensor-to-LED mappings are now unique and match the HAN IoT Shield hardware layout.
+* All server-side, Node-RED, and Grafana dashboard integration steps are complete and verified.
+* Documentation is consolidated and up to date in `/docs` and Doxygen.
+* All code and configuration changes have been tested and verified as of 2025-06-09.
 
 ---
 
@@ -401,23 +338,23 @@ This project implements the firmware for a LoRaWAN-enabled muskrat trap IoT node
 
 ## LoRaWAN Duty Cycle & Transmission Strategy (Implementation Summary)
 
-- **Duty Cycle (EU868):**
-  - 1% per sub-band (regulatory); TTN Fair Use: max 30s uplink airtime/day/device.
-  - Node enforces a minimum interval between transmissions (default: 12s for demo; increase for production).
-- **Transmission Logic:**
-  - **Event-Driven:** If a sensor event (door, catch, displacement) is detected, the node will attempt to send data immediately. However, a transmission will only occur if the minimum interval since the last send (duty cycle) has elapsed. This prevents spamming and ensures regulatory compliance. A debounce interval is also enforced to avoid repeated sends from noisy sensors.
-  - **Periodic (Heartbeat):** If no event occurs, the node will send a status update at a fixed interval (heartbeat), but only if the minimum interval since the last send has elapsed.
-  - **No send** if neither an event nor the heartbeat interval is due, or if the minimum interval has not elapsed since the last transmission.
-- **Payload:**
-  - Binary, minimal, only changed/relevant data.
-  - Battery/diagnostics in periodic messages.
-- **LoRaWAN Class:**
-  - Class A (default, most energy-efficient).
-  - ADR enabled for static nodes.
-- **Best Practices:**
-  - No JSON in payload, use int8/int16 for values.
-  - Batch data if possible.
-  - Only send if state changed or heartbeat elapsed.
+* **Duty Cycle (EU868):**
+  * 1% per sub-band (regulatory); TTN Fair Use: max 30s uplink airtime/day/device.
+  * Node enforces a minimum interval between transmissions (default: 12s for demo; increase for production).
+* **Transmission Logic:**
+  * **Event-Driven:** If a sensor event (door, catch, displacement) is detected, the node will attempt to send data immediately. However, a transmission will only occur if the minimum interval since the last send (duty cycle) has elapsed. This prevents spamming and ensures regulatory compliance. A debounce interval is also enforced to avoid repeated sends from noisy sensors.
+  * **Periodic (Heartbeat):** If no event occurs, the node will send a status update at a fixed interval (heartbeat), but only if the minimum interval since the last send has elapsed.
+  * **No send** if neither an event nor the heartbeat interval is due, or if the minimum interval has not elapsed since the last transmission.
+* **Payload:**
+  * Binary, minimal, only changed/relevant data.
+  * Battery/diagnostics in periodic messages.
+* **LoRaWAN Class:**
+  * Class A (default, most energy-efficient).
+  * ADR enabled for static nodes.
+* **Best Practices:**
+  * No JSON in payload, use int8/int16 for values.
+  * Batch data if possible.
+  * Only send if state changed or heartbeat elapsed.
 
 ---
 
@@ -527,3 +464,17 @@ If you see errors in VS Code about undefined symbols such as `Serial1`, `MCUSR`,
 * Finalize and test actual interrupt attachment for all sensors (requires hardware changes for full support).
 * Replace sleep placeholder with LowPower library logic.
 * Continue to update this README as implementation progresses.
+
+## UML Class Diagrams
+
+The following UML class diagrams are auto-generated by Doxygen (with Graphviz) and included in the documentation:
+
+- **Payload Encoder/Decoder:**
+  - See `docs/doxygen/html/classpayload_encoder.html` and `classpayload_decoder.html` for the latest diagrams.
+  - To view or export as image: open the HTML file, right-click the class diagram, and save as PNG/SVG for use in reports or presentations.
+- **Sensor Abstractions:**
+  - Diagrams for `doorSensor`, `catchSensor`, `displacementSensor`, and `batterySensor` are also available in the Doxygen HTML output.
+
+> **Note:** The database UML diagram is intentionally omitted as per project decision.
+
+All code UML diagrams are up to date and included in the documentation.

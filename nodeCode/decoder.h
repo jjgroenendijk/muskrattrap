@@ -3,6 +3,14 @@
 
 #include <stdint.h> // uint8_t, uint16_t, and uint32_t type
 
+/**
+ * @file decoder.h
+ * @brief Payload decoder for muskrat trap LoRaWAN node. Decodes compact binary payloads into sensor and status fields.
+ *
+ * Fields decoded: id, version, door status, catch detect, trap displacement, battery status, unix time.
+ * Usage: Call decodePayload() with buffer, then use getters to access fields.
+ */
+
 /// \brief payload decode class
 /// This class wil decode variables out of a payload for use in a LoRaWAN application.
 /// The class is setup using both .h and .cpp files where the setters and getters are
@@ -61,44 +69,54 @@ public:
     /// \param size size of payload
     void setPayloadSize(uint8_t size) { _bufferSize = size; }
 
-    /// \brief decode payload
-    /// Extract the variables from the payload
-    void decodePayload();
+    /**
+     * @brief Decode the payload buffer into fields.
+     * @param buffer Pointer to payload buffer
+     * @param size Size of payload buffer
+     */
+    void decodePayload(const uint8_t* buffer, uint8_t size);
 
-    /// \brief get ID
-    /// Fetch the ID from the payload
-    /// \return ID
-    int get_id() const { return _id; }
+    /**
+     * @brief Get the device ID from the payload.
+     * @return Device identifier (uint32_t)
+     */
+    uint32_t get_id() const;
 
-    /// \brief get version
-    /// Fetch the version number from the payload
-    /// \return version
-    int get_version() const { return _version; }
+    /**
+     * @brief Get the payload version.
+     * @return Version number (uint8_t)
+     */
+    uint8_t get_version() const;
 
-    /// \brief get door status
-    /// Fetch the door status from the payload
-    /// \return door status
-    bool get_doorStatus() const { return _doorStatus; }
+    /**
+     * @brief Get the door status.
+     * @return True if closed, false if open
+     */
+    bool get_doorStatus() const;
 
-    /// \brief get catch detection
-    /// Fetch the catch detection from the payload
-    /// \return catch detection
-    bool get_catchDetect() const { return _catchDetect; }
+    /**
+     * @brief Get the catch detect flag.
+     * @return True if catch detected
+     */
+    bool get_catchDetect() const;
 
-    /// \brief get trap displacement
-    /// Fetch the trap displacement from the payload
-    /// \return trap displacement
-    bool get_trapDisplacement() const { return _trapDisplacement; }
+    /**
+     * @brief Get the trap displacement flag.
+     * @return True if trap displaced
+     */
+    bool get_trapDisplacement() const;
 
-    /// \brief get battery status
-    /// Fetch the battery status from the payload
-    /// \return battery status
-    int get_batteryStatus() const { return _batteryStatus; }
+    /**
+     * @brief Get the battery status (0-255).
+     * @return Battery level (uint8_t)
+     */
+    uint8_t get_batteryStatus() const;
 
-    /// \brief get unix time
-    /// Fetch the unix time from the payload
-    /// \return unix time
-    int get_unixTime() const { return _unixTime; }
+    /**
+     * @brief Get the unix time from the payload.
+     * @return Unix timestamp (uint32_t)
+     */
+    uint32_t get_unixTime() const;
 
     /// \brief print decoded payload
     /// Print the decoded payload to the console
