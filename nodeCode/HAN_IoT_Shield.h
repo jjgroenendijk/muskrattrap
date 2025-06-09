@@ -134,6 +134,11 @@ class iotShieldButton
 {
 private:
   uint8_t _pin;                 ///< Hardware pin to which the button is connected.
+  // Debounce state
+  bool _lastStableState = false;
+  bool _lastReadState = false;
+  unsigned long _lastDebounceTime = 0;
+  const unsigned long _debounceDelay = 50; // ms
 
 public:
   /// \pre requires a digital input pin to which the button is connected
@@ -153,6 +158,9 @@ public:
   /// functions returns actual state of pushbutton. Either PRESSED or RELEASED
   /// \return bool state of pushbutton presed = true, released = false.
   bool isPressed();
+
+  /// Debounced rising edge detection
+  bool wasPressedDebounced();
 };
 
 typedef enum { LED_ON,   ///< LED is ON

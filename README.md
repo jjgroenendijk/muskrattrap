@@ -302,38 +302,87 @@ These tasks help streamline the compilation and testing processes directly withi
 
 ## Progress Tracker
 
-### In Progress
-- Verify sensor integration and payload population via serial monitor output.
-- Address `printPayloadEncoded()` in `encoder.cpp/h` (implement or remove).
-- Implement event-triggered and heartbeat communication in `nodeCode.ino`.
-- Add/review Doxygen comments for all relevant files.
-- Code cleanup & refinement (optional).
+### To-Do
+
+* (Optional) Make ID and unixTime dynamic (e.g., from EEPROM or RTC)
+* (Optional) Add heartbeat/event-driven sending logic
+* (Optional) Add/clean up Doxygen comments and code documentation
+* (Optional) Finalize and mark all tasks as "Done" after user verification
+
+### In-Progress
+
+* Improve serial output formatting for easier reading (add separators, blank lines, grouping) — **[Complete, pending verification]**
 
 ### Done
-- VS Code task: LoRaWAN Node: Compile, Flash & Monitor (Debug) (now working, see Design Notes)
-- Sensor data integration in `nodeCode.ino` (pending verification)
-- Task output redirection to `.vscode/task_output.log`
-- Arduino CLI upload errors resolved (see Design Notes)
 
-## Design Notes & Rationale
-
-- **OS/Shell:** macOS, default shell: bash. All shell commands and scripts are written for this environment.
-- **Arduino Leonardo Upload:** The correct way to upload is to use `arduino-cli upload -p <port> --fqbn arduino:avr:leonardo ...` without specifying a programmer. The Leonardo bootloader is auto-detected; specifying `-P avr109` is not supported by `arduino-cli` and causes errors. This matches Arduino IDE behavior and is now confirmed to work.
-- **Debugging Approach:** Used `.vscode/task_output.log` and `tail` for efficient log analysis, as required by project policy.
-- **Sensor Integration:** Real sensor data is now read and encoded in the LoRaWAN payload. Awaiting verification via serial monitor.
-
-## Replication Guide
-
-1. Install Arduino CLI and dependencies (see below).
-2. Use VS Code and run the task: "LoRaWAN Node: Compile, Flash & Monitor (Debug)".
-3. Monitor `.vscode/task_output.log` for build/upload status.
-4. Use the serial monitor for runtime output.
-
-**Dependencies:**
-- Arduino CLI (macOS, tested with bash)
-- Board: Arduino Leonardo (`arduino:avr:leonardo`)
-- All required libraries are listed in the project and should be installed via Arduino CLI or Library Manager.
+* Sensor integration & simulation: door, catch, displacement, battery (potmeter2)
+* LoRaWAN payload construction and always-on serial debug output
+* VS Code compile/flash/monitor workflow (macOS, bash)
+* Documentation: hardware simulation, payload, workflow, troubleshooting
+* Key learnings and configuration steps documented
 
 ---
 
-(For further details, see previous tracker entries and code comments.)
+## Design Notes & Rationale
+
+* **Serial Output Formatting:**
+  * Added clear separators, header, and footer to the payload debug output for rapid visual parsing during development and field testing.
+  * All payload fields are grouped and labeled for clarity.
+* **OS & Shell:**
+  * Target OS: macOS
+  * Default shell: bash
+  * All VS Code tasks and CLI commands are written/tested for this environment. No compatibility issues observed.
+* **LoRaWAN Node Simulation:**
+  * Door/catch/displacement sensors mapped to buttons; battery to potmeter2 (A1).
+  * Logic ensures toggling on button press (rising edge), displacement on both held.
+  * Battery mapped from analogRead(A1) to 0–100%.
+* **Payload:**
+  * Structure: id (4B), version (1B), doorStatus (1b), catchDetect (1b), trapDisplacement (1b), batteryStatus (1B), unixTime (4B).
+  * Payload always printed to serial for debug, regardless of LoRaWAN state.
+* **VS Code Workflow:**
+  * Compile, flash, and monitor tasks are stable and documented.
+  * Upload issues resolved by adding delay at setup() start.
+* **Documentation:**
+  * All setup, configuration, and troubleshooting steps are in this README and referenced docs.
+* **Button Debouncing Refactor:**
+  * Debounce logic is now implemented in the iotShieldButton class (`wasPressedDebounced()`), not in the main loop or sensor classes.
+  * This ensures all button-based sensors (door, catch, displacement) benefit from robust, reusable debouncing.
+  * The main loop is now cleaner and only toggles states on true debounced rising edges.
+  * This change improves reliability and maintainability for all button-driven features.
+
+---
+
+## Replication Guide
+
+### Prerequisites
+
+* macOS
+* bash shell
+* Git, Docker, Docker Compose
+* Arduino IDE or arduino-cli
+
+### Node (The Things Uno) Development
+
+1. Open `nodeCode/nodeCode.ino` in Arduino IDE or VS Code.
+2. Copy `nodeCode/secrets.example.h` to `nodeCode/secrets.h` and add TTN keys.
+3. Use VS Code tasks for compile/flash/monitor:
+   * Compile: "LoRaWAN Node: Compile (Debug/Release)"
+   * Flash: "LoRaWAN Node: Flash (Debug/Release, Auto-detect Port)"
+   * Monitor: "LoRaWAN Node: Monitor (Auto-detect Port)"
+   * Or use the combined "Compile, Flash & Monitor (Debug)" task.
+4. If upload fails, ensure only one Leonardo is connected and wait for the bootloader delay.
+
+### Server-Side Development
+
+* See `docs/server-and-nodered-setup.md` for Docker, MariaDB, Node-RED, and Grafana setup.
+
+---
+
+## Key Learnings
+
+* Always print payload debug output for field verification.
+* Use clear serial formatting for field engineers.
+* Add bootloader delay to avoid upload/serial conflicts.
+* Document all configuration and troubleshooting steps in README for rapid recovery.
+
+---

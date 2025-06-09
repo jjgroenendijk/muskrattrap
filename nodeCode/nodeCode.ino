@@ -17,7 +17,7 @@ const char *appKey = APPKEY;  ///< appKEY rtrieve from TTN Console application
 
 #define loraSerial Serial1
 #define debugSerial Serial
-bool loraCommunication = false;
+bool loraCommunication = false; ///< Set to true if you want to use LoRa communication, false for testing without LoRa
 
 // Replace REPLACE_ME with TTN_FP_EU868 or TTN_FP_US915
 #define freqPlan TTN_FP_EU868
@@ -35,6 +35,8 @@ iotShieldPotmeter potmeter2_test(potmeter2);
 
 void setup()
 {
+    delay(4000); // Allow bootloader to finish before using serial ports
+
     if (loraCommunication)
     {
         loraSerial.begin(57600);
@@ -62,83 +64,90 @@ void loop()
     debugSerial.println("-- LOOP");
     // knightRider();
 
-    ///< Check the red button (door sensor)
-    if (redButton.isPressed() && !blackButton.isPressed())
-    {
-        debugSerial.println(F("-- DOOR CLOSED"));
-        doorSensor.setDoorStatus(true);
+    ///< Toggle door and catch status on button press using debounced method
+    static bool doorClosed = false;
+    static bool catchDetected = false;
+
+    if (redButton.wasPressedDebounced()) {
+        doorClosed = !doorClosed;
     }
-    else
-    {
-        doorSensor.setDoorStatus(false);
+    if (blackButton.wasPressedDebounced()) {
+        catchDetected = !catchDetected;
     }
 
-    ///< Check the black button (catch sensor)
-    if (blackButton.isPressed() && !redButton.isPressed())
-    {
-        debugSerial.println(F("-- CATCH DETECTED"));
-        catchSensor.setCatchStatus(true);
-    }
-    else
-    {
-        catchSensor.setCatchStatus(false);
-    }
+    debugSerial.print(F("-- DOOR SENSOR: "));
+    debugSerial.println(doorClosed ? "CLOSED" : "OPEN");
+    doorSensor.setDoorStatus(doorClosed);
+
+    debugSerial.print(F("-- CATCH SENSOR: "));
+    debugSerial.println(catchDetected ? "DETECTED" : "NONE");
+    catchSensor.setCatchStatus(catchDetected);
 
     ///< Check the red and black button (displacement sensor)
-    if (redButton.isPressed() && blackButton.isPressed())
-    {
-        debugSerial.println(F("-- TRAP DISPLACEMENT DETECTED"));
-        displacementSensor.setDisplacementStatus(true);
-    }
-    else
-    {
-        displacementSensor.setDisplacementStatus(false);
-    }
+    bool displacement = redButton.isPressed() && blackButton.isPressed();
+    debugSerial.print(F("-- DISPLACEMENT SENSOR: "));
+    debugSerial.println(displacement ? "DISPLACED" : "STABLE");
+    displacementSensor.setDisplacementStatus(displacement);
 
     ///< Check the battery level
-    // Read potmeter2 to simulate battery level.
-    // The potmeter returns a value from 0 to 1023.
-    // We'll map this to a percentage (0-100) for the battery status.
-    // Note: The payload expects a uint8_t for battery status.
-    uint16_t potValue = potmeter2_test.getValue();
-    uint8_t batteryLevelPct = map(potValue, 0, 1023, 0, 100);
-    batterySensor.setBatteryLevel(batteryLevelPct); // Assuming batterySensor.setBatteryLevel takes the percentage
+    int potRaw = analogRead(A1); // Directly read potmeter2 (A1)
+    uint8_t batteryLevelPct = map(potRaw, 0, 1023, 0, 100);
+    batterySensor.setBatteryLevel(batteryLevelPct);
     debugSerial.print(F("-- BATTERY LEVEL (Potmeter2): "));
-    debugSerial.print(potValue);
+    debugSerial.print(potRaw);
     debugSerial.print(F(" -> %: "));
     debugSerial.println(batteryLevelPct);
 
-
+    // Always print payload info, even if loraCommunication is false
+    debugSerial.println("=========================");
+    debugSerial.println("LoRaWAN Payload Debug");
+    debugSerial.println("-------------------------");
+    payloadEncoder encoder;
+    uint32_t id = 12345; // Example ID
+    uint8_t version = 1;
+    bool door = doorSensor.getDoorStatus();
+    bool catch_ = catchSensor.getCatchStatus();
+    bool disp = displacementSensor.getDisplacementStatus();
+    uint8_t batt = batterySensor.getBatteryLevel();
+    uint32_t unixTime = 1717891200; // Example: 2024-06-09 00:00:00 UTC
+    encoder.set_id(id);
+    encoder.set_version(version);
+    encoder.set_doorStatus(door);
+    encoder.set_catchDetect(catch_);
+    encoder.set_trapDisplacement(disp);
+    encoder.set_batteryStatus(batt);
+    encoder.set_unixTime(unixTime);
+    encoder.composePayload();
+    uint8_t *payloadBuffer = encoder.getPayload();
+    uint8_t payloadSize = encoder.getPayloadSize();
+    debugSerial.print("Payload (");
+    debugSerial.print(payloadSize);
+    debugSerial.print(" bytes): ");
+    for (uint8_t i = 0; i < payloadSize; ++i) {
+        debugSerial.print(payloadBuffer[i], HEX);
+        debugSerial.print(" ");
+    }
+    debugSerial.println();
+    debugSerial.print("  id: ");
+    debugSerial.println(id);
+    debugSerial.print("  version: ");
+    debugSerial.println(version);
+    debugSerial.print("  doorStatus: ");
+    debugSerial.println(door ? "CLOSED (1)" : "OPEN (0)");
+    debugSerial.print("  catchDetect: ");
+    debugSerial.println(catch_ ? "DETECTED (1)" : "NONE (0)");
+    debugSerial.print("  trapDisplacement: ");
+    debugSerial.println(disp ? "DISPLACED (1)" : "STABLE (0)");
+    debugSerial.print("  batteryStatus: ");
+    debugSerial.println(batt);
+    debugSerial.print("  unixTime: ");
+    debugSerial.println(unixTime);
+    debugSerial.println("=========================");
     if (loraCommunication)
     {
-        payloadEncoder encoder;
-
-        // Populate encoder with actual sensor data
-        encoder.set_id(12345); // Example ID, consider making this configurable or dynamic
-        encoder.set_version(1);   // Example version
-        encoder.set_doorStatus(doorSensor.getDoorStatus());
-        encoder.set_catchDetect(catchSensor.getCatchStatus());
-        encoder.set_trapDisplacement(displacementSensor.getDisplacementStatus());
-        encoder.set_batteryStatus(batterySensor.getBatteryLevel()); // Assumes getBatteryLevel returns the uint8_t percentage
-        encoder.set_unixTime(0); // Example time, replace with actual time if available/needed
-
-        // encoder.setTestValues(); // This line is now replaced by the setters above
-
-        // Test 1: compose payload
-        encoder.composePayload();
-
-        uint8_t *payloadBuffer = encoder.getPayload();
-        uint8_t payloadSize = encoder.getPayloadSize();
-
-        debugSerial.println(F("Sending payload:"));
-        // encoder.printPayloadEncoded(); // Optional: print payload for debugging - UNDEFINED REFERENCE ERROR
-
         // Send it off
         ttn.sendBytes(payloadBuffer, payloadSize);
-
-        // Wait for the message to be sent
         delay(10000);
     }
-
     delay(500);
 }

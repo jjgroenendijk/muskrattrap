@@ -88,3 +88,4 @@ serverSide/nodered/**
 serverSide/mariadb/**
 !serverSide/mariadb/config/initdb.d/
 !serverSide/mariadb/config/initdb.d/**.sql
+.vscode/task_output.log

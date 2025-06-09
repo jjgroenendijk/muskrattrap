@@ -58,7 +58,11 @@ float iotShieldPotmeter::getValue()
  * \param hardwarePin The digital pin connected to the button.
  */
 iotShieldButton::iotShieldButton(uint8_t hardwarePin):
-  _pin(hardwarePin)
+  _pin(hardwarePin),
+  _lastReadState(LOW),
+  _lastStableState(LOW),
+  _debounceDelay(50),
+  _lastDebounceTime(0)
 {  
 }
 
@@ -100,6 +104,24 @@ bool iotShieldButton::isPressed()
   }
   return returnValue;
 };
+
+bool iotShieldButton::wasPressedDebounced() {
+    bool reading = (digitalRead(_pin) == PRESSED);
+    if (reading != _lastReadState) {
+        _lastDebounceTime = millis();
+    }
+    _lastReadState = reading;
+    if ((millis() - _lastDebounceTime) > _debounceDelay) {
+        if (reading != _lastStableState) {
+            _lastStableState = reading;
+            if (_lastStableState) {
+                // Rising edge: button was just pressed
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 // Functions for class: iotShieldLED
 /*!
