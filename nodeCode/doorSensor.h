@@ -1,5 +1,5 @@
-#ifndef DOORSENSOR_H
-#define DOORSENSOR_H
+#ifndef NODECODE_DOORSENSOR_H
+#define NODECODE_DOORSENSOR_H
 
 #include "IOTShieldConfig.h"
 
@@ -20,4 +20,4 @@ public:
     void setDoorStatus(bool doorStatus);
 };
 
-#endif // DOORSENSOR_H
+#endif // NODECODE_DOORSENSOR_H

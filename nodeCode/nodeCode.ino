@@ -60,10 +60,6 @@ void setup()
 
 void loop()
 {
-    ///< Loop indication for debugging
-    debugSerial.println("-- LOOP");
-    // knightRider();
-
     ///< Toggle door and catch status on button press using debounced method
     static bool doorClosed = false;
     static bool catchDetected = false;
@@ -75,28 +71,23 @@ void loop()
         catchDetected = !catchDetected;
     }
 
-    debugSerial.print(F("-- DOOR SENSOR: "));
-    debugSerial.println(doorClosed ? "CLOSED" : "OPEN");
-    doorSensor.setDoorStatus(doorClosed);
+    // REMOVE these lines:
+    // debugSerial.print(F("-- DOOR SENSOR: "));
+    // debugSerial.println(doorClosed ? "CLOSED" : "OPEN");
+    // doorSensor.setDoorStatus(doorClosed);
 
-    debugSerial.print(F("-- CATCH SENSOR: "));
-    debugSerial.println(catchDetected ? "DETECTED" : "NONE");
-    catchSensor.setCatchStatus(catchDetected);
+    // debugSerial.print(F("-- CATCH SENSOR: "));
+    // debugSerial.println(catchDetected ? "DETECTED" : "NONE");
+    // catchSensor.setCatchStatus(catchDetected);
 
-    ///< Check the red and black button (displacement sensor)
-    bool displacement = redButton.isPressed() && blackButton.isPressed();
-    debugSerial.print(F("-- DISPLACEMENT SENSOR: "));
-    debugSerial.println(displacement ? "DISPLACED" : "STABLE");
-    displacementSensor.setDisplacementStatus(displacement);
+    // debugSerial.print(F("-- DISPLACEMENT SENSOR: "));
+    // debugSerial.println(displacement ? "DISPLACED" : "STABLE");
+    // displacementSensor.setDisplacementStatus(displacement);
 
-    ///< Check the battery level
-    int potRaw = analogRead(A1); // Directly read potmeter2 (A1)
-    uint8_t batteryLevelPct = map(potRaw, 0, 1023, 0, 100);
-    batterySensor.setBatteryLevel(batteryLevelPct);
-    debugSerial.print(F("-- BATTERY LEVEL (Potmeter2): "));
-    debugSerial.print(potRaw);
-    debugSerial.print(F(" -> %: "));
-    debugSerial.println(batteryLevelPct);
+    // debugSerial.print(F("-- BATTERY LEVEL (Potmeter2): "));
+    // debugSerial.print(potRaw);
+    // debugSerial.print(F(" -> %: "));
+    // debugSerial.println(batteryLevelPct);
 
     ///< Track previous sensor states and heartbeat
     static bool prevDoorClosed = false;
@@ -105,61 +96,67 @@ void loop()
     static unsigned long lastSendTime = 0;
 
     ///< Read current sensor states
-    bool doorClosed = doorSensor.getDoorStatus();
-    bool catchDetected = catchSensor.getCatchStatus();
-    bool displacement = displacementSensor.getDisplacementStatus();
+    bool currentDoorClosed = doorSensor.getDoorStatus();
+    bool currentCatchDetected = catchSensor.getCatchStatus();
+    bool currentDisplacement = displacementSensor.getDisplacementStatus();
 
     ///< Check if any state changed
-    bool stateChanged = (doorClosed != prevDoorClosed) || (catchDetected != prevCatchDetected) || (displacement != prevDisplacement);
+    bool stateChanged = (currentDoorClosed != prevDoorClosed) || (currentCatchDetected != prevCatchDetected) || (currentDisplacement != prevDisplacement);
     unsigned long now = millis();
     bool heartbeatElapsed = (now - lastSendTime) > HEARTBEAT_INTERVAL_MS;
 
+    ///< Check the battery level
+    int potRaw = analogRead(A1); // Directly read potmeter2 (A1)
+    uint8_t batteryLevelPct = map(potRaw, 0, 1023, 0, 100);
+    batterySensor.setBatteryLevel(batteryLevelPct);
+
     ///< Only send payload if state changed or heartbeat interval elapsed
     if (stateChanged || heartbeatElapsed) {
-        prevDoorClosed = doorClosed;
-        prevCatchDetected = catchDetected;
-        prevDisplacement = displacement;
+        prevDoorClosed = currentDoorClosed;
+        prevCatchDetected = currentCatchDetected;
+        prevDisplacement = currentDisplacement;
         lastSendTime = now;
 
-        debugSerial.println("=========================");
-        debugSerial.println("LoRaWAN Payload Debug");
-        debugSerial.println("-------------------------");
+        // Compose payload
         payloadEncoder encoder;
         uint32_t id = 12345; // Example ID
         uint8_t version = 1;
         encoder.set_id(id);
         encoder.set_version(version);
-        encoder.set_doorStatus(doorClosed);
-        encoder.set_catchDetect(catchDetected);
-        encoder.set_trapDisplacement(displacement);
+        encoder.set_doorStatus(currentDoorClosed);
+        encoder.set_catchDetect(currentCatchDetected);
+        encoder.set_trapDisplacement(currentDisplacement);
         encoder.set_batteryStatus(batterySensor.getBatteryLevel());
         encoder.set_unixTime(1717891200); // Example: 2024-06-09 00:00:00 UTC
         encoder.composePayload();
         uint8_t *payloadBuffer = encoder.getPayload();
         uint8_t payloadSize = encoder.getPayloadSize();
-        debugSerial.print("Payload (");
-        debugSerial.print(payloadSize);
-        debugSerial.print(" bytes): ");
+
+        debugSerial.println("================ SENSOR & PAYLOAD STATUS ===============");
+        debugSerial.print("DOOR:           ");
+        debugSerial.println(currentDoorClosed ? "CLOSED (1)" : "OPEN (0)");
+        debugSerial.print("CATCH:          ");
+        debugSerial.println(currentCatchDetected ? "DETECTED (1)" : "NONE (0)");
+        debugSerial.print("DISPLACEMENT:   ");
+        debugSerial.println(currentDisplacement ? "DISPLACED (1)" : "STABLE (0)");
+        debugSerial.print("BATTERY:        Raw=");
+        debugSerial.print(potRaw);
+        debugSerial.print("  %=");
+        debugSerial.println(batteryLevelPct);
+        debugSerial.print("ID:             ");
+        debugSerial.println(id);
+        debugSerial.print("VERSION:        ");
+        debugSerial.println(version);
+        debugSerial.print("UNIXTIME:       ");
+        debugSerial.println(1717891200);
+        debugSerial.print("PAYLOAD (HEX):  ");
         for (uint8_t i = 0; i < payloadSize; ++i) {
             debugSerial.print(payloadBuffer[i], HEX);
-            debugSerial.print(" ");
+            debugSerial.print(i < payloadSize - 1 ? " " : "");
         }
         debugSerial.println();
-        debugSerial.print("  id: ");
-        debugSerial.println(id);
-        debugSerial.print("  version: ");
-        debugSerial.println(version);
-        debugSerial.print("  doorStatus: ");
-        debugSerial.println(doorClosed ? "CLOSED (1)" : "OPEN (0)");
-        debugSerial.print("  catchDetect: ");
-        debugSerial.println(catchDetected ? "DETECTED (1)" : "NONE (0)");
-        debugSerial.print("  trapDisplacement: ");
-        debugSerial.println(displacement ? "DISPLACED (1)" : "STABLE (0)");
-        debugSerial.print("  batteryStatus: ");
-        debugSerial.println(batterySensor.getBatteryLevel());
-        debugSerial.print("  unixTime: ");
-        debugSerial.println(1717891200);
-        debugSerial.println("=========================");
+        debugSerial.println("========================================================");
+
         if (loraCommunication)
         {
             // Send it off
@@ -167,5 +164,5 @@ void loop()
             delay(10000);
         }
     }
-    delay(100);
+    delay(1000);
 }

@@ -1,5 +1,5 @@
-#ifndef DISPLACEMENTSENSOR_H
-#define DISPLACEMENTSENSOR_H
+#ifndef NODECODE_DISPLACEMENTSENSOR_H
+#define NODECODE_DISPLACEMENTSENSOR_H
 
 #include "IOTShieldConfig.h"
 
@@ -20,4 +20,4 @@ public:
     void displacementSensor::setDisplacementStatus(bool displacementStatus);
 };
 
-#endif // DISPLACEMENTSENSOR_H
+#endif // NODECODE_DISPLACEMENTSENSOR_H

@@ -4,8 +4,8 @@
  * This file contains the class definition for batterySensor, which simulates
  * battery level readings, typically using a potentiometer from the HAN IoT Shield.
  */
-#ifndef BATTERYSENSOR_H
-#define BATTERYSENSOR_H
+#ifndef NODECODE_BATTERYSENSOR_H
+#define NODECODE_BATTERYSENSOR_H
 
 #include "IOTShieldConfig.h"
 #include <Arduino.h>
@@ -57,4 +57,4 @@ public:
     void setBatteryLevel(uint32_t batteryLevel);
 };
 
-#endif // BATTERYSENSOR_H
+#endif // NODECODE_BATTERYSENSOR_H

@@ -1,5 +1,5 @@
-#ifndef CATCHESENSOR_H
-#define CATCHESENSOR_H
+#ifndef NODECODE_CATCHSENSOR_H
+#define NODECODE_CATCHSENSOR_H
 
 #include "IOTShieldConfig.h"
 
@@ -20,4 +20,4 @@ public:
     void setCatchStatus( bool catchStatus );
 };
 
-#endif // CATCHESENSOR_H
+#endif // NODECODE_CATCHSENSOR_H
