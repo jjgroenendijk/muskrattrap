@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'muskrattrap-alerts'
+    orgId: 1
+    folder: '' # Alerts will be created in the General folder
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/alerting # Path to the directory with alert rule files

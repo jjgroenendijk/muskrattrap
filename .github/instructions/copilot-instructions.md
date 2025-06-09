@@ -49,3 +49,13 @@ If the user's only input is a greeting (e.g., "hi", "hello"), your immediate and
     * All human-facing text, including code comments and all sections of `readme.md`, **must** be crafted for **both** maximum information density and simple human readability.
     * **Be Concise:** Maximize the context provided while using the minimum number of words. Avoid filler language, verbose sentences, and redundant statements.
     * **Be Clear:** Use simple, unambiguous English. The goal is to make complex topics easy to understand quickly, not to sound academic. The final text should be information-rich yet effortless to read.
+
+7.  **Task Completion & Verification Mandate:**
+    * A task **must never** be moved to the 'Done' state in the `Progress Tracker` until it has been explicitly verified.
+    * **Code Verification:** For new features or bug fixes, verification **must** include a successful run of the affected code, passing relevant tests, or other demonstrable proof of functionality.
+    * **Configuration Verification:** After modifying any configuration file, the AI **must** verify the change was successful. The primary method for this is to check application or system logs for confirmation messages, successful restarts, or the absence of new errors.
+
+8.  **Resource-Efficient Log Analysis:**
+    * When inspecting logs or any large text file, the AI **must** prioritize minimizing token consumption.
+    * Brute-force reading of entire files (e.g., using `cat`) is forbidden unless the file is known to be small.
+    * The AI **must** use targeted commands like `tail` to view the most recent entries, `grep` to filter for specific keywords (e.g., `ERROR`, `SUCCESS`, a transaction ID), or other efficient line-filtering tools (`sed`, `awk`) to isolate the necessary information.

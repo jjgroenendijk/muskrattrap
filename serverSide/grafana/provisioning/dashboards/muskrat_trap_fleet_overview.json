@@ -1,0 +1,112 @@
+{
+  "uid": "muskrat_trap_fleet_overview",
+  "title": "Muskrat Trap Fleet Overview",
+  "tags": [ "iot", "muskrattrap" ],
+  "timezone": "browser",
+  "schemaVersion": 16,
+  "version": 2,
+  "refresh": "25s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Trap Status",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-muskrattrap-iot"
+          },
+          "rawSql": "SELECT devID AS TrapID, dateTime AS LastSeen, batteryStatus AS Battery, doorStatus AS Door, catchDetect AS Catch, trapDisplacement AS Displacement, IF(dateTime < NOW() - INTERVAL 5 MINUTE, 'Offline', 'Online') AS Status FROM muskrattrap ORDER BY dateTime DESC",
+          "format": "table"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Battery Levels",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-muskrattrap-iot"
+          },
+          "rawSql": "SELECT dateTime AS time, devID AS metric, batteryStatus AS value FROM muskrattrap WHERE $__timeFilter(dateTime) ORDER BY dateTime ASC",
+          "format": "time_series"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Active Alerts",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "YOUR_PROMETHEUS_DATASOURCE_UID" 
+          },
+          "expr": "sum(ALERTS{alertstate='firing', job='muskrattrap'})"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "values": false,
+          "calcs": [ "lastNotNull" ],
+          "fields": ""
+        },
+        "orientation": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "title": "Trap Catch Events",
+      "type": "logs",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "targets": [
+         {
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-muskrattrap-iot"
+          },
+          "rawSql": "SELECT dateTime AS time, devID, 'Catch Detected' AS message FROM muskrattrap WHERE catchDetect = 1 AND $__timeFilter(dateTime) ORDER BY dateTime DESC LIMIT 100",
+          "format": "table"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "enableLogDetails": true
+      }
+    },
+    {
+      "id": 5,
+      "title": "Trap Displacement Events",
+      "type": "logs",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [
+         {
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-muskrattrap-iot"
+          },
+          "rawSql": "SELECT dateTime AS time, devID, 'Displacement Detected' AS message FROM muskrattrap WHERE trapDisplacement = 1 AND $__timeFilter(dateTime) ORDER BY dateTime DESC LIMIT 100",
+          "format": "table"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "enableLogDetails": true
+      }
+    }
+  ]
+}

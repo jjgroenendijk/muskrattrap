@@ -5,11 +5,12 @@
 The SMARTrap project aims to develop a smart, humane, and efficient solution for controlling muskrat populations using IoT technology. Muskrats pose a significant threat to water management systems in the Netherlands. This project seeks to create a smart trap that detects trap status (open/closed), identifies captures, monitors trap movement, and reports its health status, all while ensuring non-lethal trapping and enabling remote monitoring.
 
 Detailed project documentation, including design choices, technical specifications, and setup guides, can now be found in the `/docs` directory. This includes:
-*   `docs/project-background.md`: Covers initial research, LPWAN/LoRaWAN comparisons, and trap design considerations.
-*   `docs/iot-node-details.md`: Details the IoT node hardware simulation and LoRaWAN payload structure.
-*   `docs/server-and-nodered-setup.md`: Outlines the server-side stack, database, and Node-RED setup.
-*   `docs/mini-research-summary.md`: The Mini-Research summary in English Markdown.
-*   `docs/doxygen/`: Doxygen-generated API documentation for the codebase (also published to GitHub Pages).
+
+* `docs/project-background.md`: Covers initial research, LPWAN/LoRaWAN comparisons, and trap design considerations.
+* `docs/iot-node-details.md`: Details the IoT node hardware simulation and LoRaWAN payload structure.
+* `docs/server-and-nodered-setup.md`: Outlines the server-side stack, database, and Node-RED setup.
+* `docs/mini-research-summary.md`: The Mini-Research summary in English Markdown.
+* `docs/doxygen/`: Doxygen-generated API documentation for the codebase (also published to GitHub Pages).
 
 The `docs-old/` directory has been removed as its content has been migrated and consolidated into the `docs/` directory.
 
@@ -84,7 +85,7 @@ These tasks help streamline the compilation and testing processes directly withi
 
 5. **Node-RED TTN Integration & Setup:**
     * **Credential Encryption:** The Node-RED `flows_cred.json` file (which stores sensitive credentials for your flows) is encrypted. A `credentialSecret` is defined in `serverSide/nodered/settings.js`.
-        *   **ACTION REQUIRED FOR NEW USERS/DEPLOYMENTS:** The current `credentialSecret` in `serverSide/nodered/settings.js` is a placeholder (`change_this_to_a_strong_secret`). For security, change this to a strong, unique secret and store your chosen secret securely. Failure to use a strong, unique secret poses a security risk. After changing it, restart Node-RED and re-deploy your flows (make any minor change and deploy) to apply the new encryption key.
+        * **ACTION REQUIRED FOR NEW USERS/DEPLOYMENTS:** The current `credentialSecret` in `serverSide/nodered/settings.js` is a placeholder (`change_this_to_a_strong_secret`). For security, change this to a strong, unique secret and store your chosen secret securely. Failure to use a strong, unique secret poses a security risk. After changing it, restart Node-RED and re-deploy your flows (make any minor change and deploy) to apply the new encryption key.
     * Use the JavaScript decoder from `serverSide/javascriptDecoder/decoder.js` and add it to the application decoder in The Things Network console.
     * For Node-RED Git integration (if needed for flow management), refer to the setup guide in `docs/server-and-nodered-setup.md`.
     * **Note on `serverSide/nodered`:** This directory was previously managed as a Git submodule. It has now been integrated directly into the main repository. Its contents are part of the main project's working tree and should be staged and committed as regular files.
@@ -151,6 +152,12 @@ These tasks help streamline the compilation and testing processes directly withi
 
 ## Work Breakdown Structure
 
+**Legend:**
+
+* `[X]` = Done
+* `[~]` = In Progress
+* `[ ]` = Open Task
+
 #### Payload Coder (`payloadCoder/`)
 
 * [X] Implement and test C++ payload encoder/decoder classes (Custom binary format).
@@ -197,21 +204,21 @@ These tasks help streamline the compilation and testing processes directly withi
   * Sub-tasks:
     * `[X] Start Docker Compose stack (if not already running).`
     * `[X] Add TTN and MySQL environment variables to Node-RED service in \`docker-compose.yml\`.`
-    * `[X] Refactor Node-RED environment variables to use an external \`variables.env\` file (\`serverSide/variables.env\`) and apply to all services.`
+    * `[X] Refactor Node-RED environment variables to use an external \`.env\` file (\`serverSide/.env\`) and apply to all services.`
     * `[X] Reset corrupted \`flows_cred.json\` to resolve credential loading error.`
-    * `[X] **Action Required:** Update placeholder values for TTN & MySQL credentials in \`serverSide/variables.env\`. (User confirmed completion)`
+    * `[X] **Action Required:** Update placeholder values for TTN & MySQL credentials in \`serverSide/.env\`. (User confirmed completion)`
     * `[X] Configure Node-RED TTN integration (decoder already done, ensure TTN application is configured with the decoder).`
       * `[X] Confirm TTN application created and decoder function (\\\\`serverSide/javascriptDecoder/decoder.js\\\\`) added to the TTN application\\\'s payload formatters. (User confirmed completion)`
-      * `[X] Obtain TTN Application ID (TTN_APP_NAME, TTN_APP_KEY_PASSWORD in serverSide/variables.env)`
+      * `[X] Obtain TTN Application ID (TTN_APP_NAME, TTN_APP_KEY_PASSWORD in serverSide/.env)`
       * `[X] Add and configure MQTT input node in Node-RED.`
-        *   The `flows.json` was updated to hardcode `broker` ("eu1.cloud.thethings.network") and `port` ("1883") from `variables.env` due to editor limitations in referencing environment variables for these specific fields.
-        *   **(User Confirmed Completion - 2025-06-08):** Manually configure the MQTT broker node ("muskrattrap@ttn") credentials in the Node-RED editor. In the "Security" tab of the broker configuration, set "Username" and "Password" fields, preferably using the "Environment Variable" input type if available for credentials, to reference `TTN_APP_NAME` and `TTN_APP_KEY_PASSWORD`. If "Environment Variable" type is not available for credentials, try `{{TTN_APP_NAME}}` and `{{TTN_APP_KEY_PASSWORD}}` or, as a last resort, enter the literal values.
+        * The `flows.json` was updated to hardcode `broker` ("eu1.cloud.thethings.network") and `port` ("1883") from \`.env\` due to editor limitations in referencing environment variables for these specific fields.
+        * **(User Confirmed Completion - 2025-06-08):** Manually configure the MQTT broker node ("muskrattrap@ttn") credentials in the Node-RED editor. In the "Security" tab of the broker configuration, set "Username" and "Password" fields, preferably using the "Environment Variable" input type if available for credentials, to reference `TTN_APP_NAME` and `TTN_APP_KEY_PASSWORD`. If "Environment Variable" type is not available for credentials, try `{{TTN_APP_NAME}}` and `{{TTN_APP_KEY_PASSWORD}}` or, as a last resort, enter the literal values.
     * `[X] Configure Node-RED MySQL connection.`
-        *   The `flows.json` was updated to hardcode `host` ("mariadb"), `port` ("3306"), `db` ("muskrattrap_db"), and `tz` ("Europe/Amsterdam") from `variables.env` due to editor limitations.
-        *   **(User Confirmed Completion - 2025-06-08):** Manually configure the MySQL database node ("mariadb") credentials in the Node-RED editor. Set the "User" and "Password" fields.
-            *   For "User", use the value of the `MYSQL_USER` environment variable (which is `mysql_user`).
-            *   For "Password", use the value of the `MYSQL_PASSWORD` environment variable (which is `mysql_password`).
-            *   If the Node-RED editor allows referencing environment variables for credentials, use `MYSQL_USER` and `MYSQL_PASSWORD`. Otherwise, use the literal values.
+      * The `flows.json` was updated to hardcode `host` ("mariadb"), `port` ("3306"), `db` ("muskrattrap_db"), and `tz` ("Europe/Amsterdam") from \`.env\` due to editor limitations.
+      * **(User Confirmed Completion - 2025-06-08):** Manually configure the MySQL database node ("mariadb") credentials in the Node-RED editor. Set the "User" and "Password" fields.
+        * For "User", use the value of the `MYSQL_USER` environment variable (which is `mysql_user`).
+        * For "Password", use the value of the `MYSQL_PASSWORD` environment variable (which is `mysql_password`).
+        * If the Node-RED editor allows referencing environment variables for credentials, use `MYSQL_USER` and `MYSQL_PASSWORD`. Otherwise, use the literal values.
     * `[X] Verify data reception from TTN via MQTT node.`
     * `[X] Verify data processing by "Unifier TTNV3" function.`
     * `[X] Verify data insertion into MySQL via "database command transformer" function and MySQL node.`
@@ -242,9 +249,38 @@ These tasks help streamline the compilation and testing processes directly withi
     * All summary stats are updated periodically.
   * [X] The "Unifier TTNV3" node is now wired to the "Manage Trap Data for Table" function.
   * [X] The `ui_table` ("Trap Status Overview"), "Active Catches" counter, "Average RSSI" display, and "Total Traps" counter are key dashboard components.
-* [~] Implement Grafana Dashboard.
-  * [ ] Add additional relevant visualizations.
-  * [ ] Implement alerts in Grafana for when a muskrat has been trapped.
+* [X] Implement Grafana Dashboard.
+  * [X] Configure Grafana data source provisioning (Verified via MCP tool, MySQL datasource `deodcfz2cewhsd` is available)
+  * [X] Create initial Grafana dashboard for MuskratTrap (`MuskratTrap Overview`, UID `0520bd8f-87c6-4e91-9360-bb66843c3cd8`)
+    * [X] Add panels for `trap_data` (active catches, door status, battery levels) - Added "Trap Data Overview" table panel.
+  * [~] Implement alerts in Grafana for significant events
+    * [X] Set up Grafana alert provisioning structure (`serverSide/grafana/provisioning/`).
+    * [X] Added `alerting_config.yml` to define alert providers.
+    * [X] Updated `docker-compose.yml` to mount provisioning directories.
+    * [X] Created initial "TrapCatchDetected" alert rule in `serverSide/grafana/provisioning/alerting/catch_detected_alert.yml`.
+    * [X] Created "TrapLowBattery" alert rule in `serverSide/grafana/provisioning/alerting/low_battery_alert.yml`.
+    * [X] Created "TrapDisplaced" alert rule in `serverSide/grafana/provisioning/alerting/trap_displaced_alert.yml`.
+    * [X] Created "TrapOffline" alert rule in `serverSide/grafana/provisioning/alerting/trap_offline_alert.yml`.
+    * **In Progress:** Address dashboard issues. Then, verify rules in Grafana UI, configure contact points & notification policies.
+      * Grafana service restarted. Alert rules successfully listed via API.
+      * User reported existing dashboards are not working.
+      * **Next:** Create a new dashboard (details pending user input) and save it to `serverSide/grafana/provisioning/dashboards/`. Then, remove old/non-functional dashboard(s), and continue with alert rule verification and contact point/notification policy configuration. The `MuskratTrap Alerts` folder (UID `deofeshxsl2ioe`) will be kept.
+        * **Proposed New Dashboard Name:** `Muskrat Trap Fleet Overview`
+        * **Proposed Panels:**
+          * Trap Status Table (ID, Last Seen, Battery, Door, Catch, Displacement, Offline)
+          * Battery Levels Over Time (Time-series graph)
+          * Active Alerts Count (Stat panel)
+          * Trap Catch Events (Log/Table)
+          * Trap Displacement Events (Log/Table)
+        * **Action Required:** User to confirm deletion of old dashboards (UIDs `0520bd8f-87c6-4e91-9360-bb66843c3cd8` and `muskrattrap`) and approve/modify the new dashboard proposal.
+        * **Update:** User approved deletion of old dashboards and the new dashboard proposal.
+        * [X] Deleted old dashboards (UIDs `0520bd8f-87c6-4e91-9360-bb66843c3cd8` and `muskrattrap`) via API.
+        * [X] Created new dashboard `Muskrat Trap Fleet Overview` and saved to `serverSide/grafana/provisioning/dashboards/muskrat_trap_fleet_overview.json`.
+        * [X] Updated dashboard JSON with correct table/column names from `databaseSetup.sql`.
+        * [~] Created `serverSide/grafana/provisioning/datasources/mysql_datasource.yml` to pre-provision the MySQL datasource. UID set to `mysql-muskrattrap-iot`. **The Prometheus datasource for the 'Active Alerts' panel still needs to be provisioned or its UID manually configured in the dashboard JSON.**
+        * [~] Updated dashboard JSON `muskrat_trap_fleet_overview.json` to use the provisioned MySQL datasource UID `mysql-muskrattrap-iot`.
+      * **Next:** Verify the new dashboard and MySQL datasource provisioning in Grafana UI. Address Prometheus datasource for the 'Active Alerts' panel. Then, continue with alert rule verification and contact point/notification policy configuration.
+        * **Verification Step:** Restart Grafana and check logs using the command: `docker-compose up -d --force-recreate grafana && sleep 10 && docker-compose logs grafana -n 30` (to be run from `serverSide/` directory).
 
 #### General Documentation & Project Management
 

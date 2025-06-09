@@ -1,0 +1,19 @@
+# filepath: serverSide/grafana/provisioning/datasources/mysql_datasource.yml
+apiVersion: 1
+
+datasources:
+  - name: MySQL-MuskratTrap
+    type: mysql
+    uid: mysql-muskrattrap-iot # Unique identifier for the datasource
+    url: mariadb:3306 # Hostname from docker-compose and default MySQL port
+    user: ${MYSQL_USER} # From .env
+    database: ${MYSQL_DATABASE} # From .env
+    secureJsonData:
+      password: ${MYSQL_PASSWORD} # From .env
+    jsonData:
+      tlsAuth: false
+      tlsAuthWithCACert: false
+      sslmode: 'disable' # Adjust if SSL is configured on MariaDB
+      maxOpenConns: 100
+      maxIdleConns: 100
+      connMaxLifetime: 14400

@@ -1,0 +1,55 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: MuskratTrapAlerts
+    folder: "MuskratTrap Alerts"
+    interval: 1m
+    rules:
+      - uid: trap_catch_detected
+        title: TrapCatchDetected
+        condition: B
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: 'deodcfz2cewhsd'
+            model:
+              rawSql: |
+                SELECT
+                  devID AS devID_label,
+                  catchDetect AS trap_catch_status
+                FROM trap_data td1
+                WHERE td1.timestamp = (
+                  SELECT MAX(td2.timestamp)
+                  FROM trap_data td2
+                  WHERE td2.devID = td1.devID
+                ) AND td1.catchDetect = 1;
+              format: table
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+              expression: A
+        noDataState: OK
+        execErrState: Error
+        for: 1m
+        isPaused: false
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Catch detected in trap {{ $labels.devID_label }}'
+          description: 'Trap {{ $labels.devID_label }} has reported a catch (catchDetect = 1). Please check immediately.'

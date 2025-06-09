@@ -70,11 +70,16 @@ docs-old
 courseLessons
 docs/doxygen
 docs/*.docx
-serverSide/grafana
 serverSide/mariadb
 serverSide/node-red-data
 serverSide/phpmyadmin
 
 nodeCode_bugged
 
-serverSide/variables.env
+# Ignore the Grafana directory and its contents initially
+serverSide/grafana/**
+
+# But un-ignore the provisioning subdirectory and everything inside it
+!serverSide/grafana/provisioning/
+!serverSide/grafana/provisioning/**
+serverSide/.env

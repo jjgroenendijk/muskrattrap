@@ -5,11 +5,14 @@ services:
         container_name: nodered
         restart: unless-stopped
         env_file:
-          - variables.env
+          - .env
         ports:
           - 1880:1880
         volumes:
         - ./nodered:/data
+        depends_on:
+          mariadb:
+            condition: service_healthy
 
     mariadb:
         image: lscr.io/linuxserver/mariadb:latest
@@ -17,12 +20,18 @@ services:
         hostname: mariadb
         restart: unless-stopped
         env_file:
-          - variables.env
+          - .env
         volumes:
         - ./mariadb/config:/config
         - ./databaseSetup.sql:/config/initdb.d/databaseSetup.sql
         ports:
         - 3306:3306
+        healthcheck:
+          test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+          start_period: 30s
 
     phpmyadmin:
         image: lscr.io/linuxserver/phpmyadmin:latest
@@ -30,11 +39,14 @@ services:
         hostname: phpmyadmin
         restart: unless-stopped
         env_file:
-          - variables.env
+          - .env
         volumes:
         - ./phpmyadmin/config:/config
         ports:
         - 8086:80
+        depends_on:
+          mariadb:
+            condition: service_healthy
 
     grafana:
         image: grafana/grafana-enterprise
@@ -42,8 +54,15 @@ services:
         hostname: grafana
         restart: unless-stopped
         env_file:
-          - variables.env
+          - .env
         ports:
         - 3000:3000
         volumes:
         - ./grafana/data:/var/lib/grafana
+        - ./grafana/provisioning/datasources/:/etc/grafana/provisioning/datasources/
+        - ./grafana/provisioning/dashboards/:/etc/grafana/provisioning/dashboards/
+        - ./grafana/provisioning/alerting/:/etc/grafana/provisioning/alerting/
+        - ./grafana/provisioning/alerting_config.yml:/etc/grafana/provisioning/alerting.yaml
+        depends_on:
+          mariadb:
+            condition: service_healthy

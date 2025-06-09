@@ -1,0 +1,55 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: MuskratTrapAlerts
+    folder: "MuskratTrap Alerts"
+    interval: 1m
+    rules:
+      - uid: trap_displaced
+        title: TrapDisplaced
+        condition: B
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: 'deodcfz2cewhsd'
+            model:
+              rawSql: |
+                SELECT
+                  devID AS devID_label,
+                  trapDisplacement AS trap_displacement_status
+                FROM trap_data td1
+                WHERE td1.timestamp = (
+                  SELECT MAX(td2.timestamp)
+                  FROM trap_data td2
+                  WHERE td2.devID = td1.devID
+                ) AND td1.trapDisplacement = 1;
+              format: table
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+              expression: A
+        noDataState: OK
+        execErrState: Error
+        for: 1m
+        isPaused: false
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Trap {{ $labels.devID_label }} may have been displaced!'
+          description: 'Trap {{ $labels.devID_label }} has reported a displacement (trapDisplacement = 1). Please check its physical status.'
