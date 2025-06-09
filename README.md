@@ -164,7 +164,6 @@ These tasks help streamline the compilation and testing processes directly withi
   * [X] Corrected `add_uint32` bug in `payloadEncoder.cpp`.
   * [X] Updated getter return types in `payloadDecoder.h` for type consistency.
   * [X] Enhanced unit tests in `unitTest.cpp` (type corrections, min/max values, all boolean combinations).
-  * [~] Ensure compatibility with Cayenne LPP (Lower priority; focus on custom binary format).
   * [~] Input validation of payload data (Handled by sensor/simulation logic in `nodeCode.ino`).
   * [~] Add warning flag for when data is clipping (Covered by input validation handling).
 * [X] (I.D) Document with Doxygen.

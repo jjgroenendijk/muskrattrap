@@ -64,6 +64,9 @@ extern iotShieldLED leftGreenLED;
  */
 extern iotShieldLED rightGreenLED;
 
+// Heartbeat interval for event/periodic sending (default: 24h, set to 10s for testing)
+#define HEARTBEAT_INTERVAL_MS 10000UL
+
 
 /*!
  * \brief Declares the function to configure the IoT Shield.
