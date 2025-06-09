@@ -2,6 +2,7 @@
 #define NODECODE_DOORSENSOR_H
 
 #include "IOTShieldConfig.h"
+#include "HAN_IoT_Shield.h" // For leftRedLED
 
 /// An open door is set to 0 (false), a closed door is set to 1 (true)
 

@@ -189,6 +189,10 @@ public:
   /// \param state set LED state using ledState_t enum.
   void setState(ledState_t state);
 
+  /// \brief get the pin number of the LED
+  /// \return The pin number to which the LED is connected.
+  uint8_t getPin() const { return _pin; } 
+
 };
 
 class iotShieldTempSensor

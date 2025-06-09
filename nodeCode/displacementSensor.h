@@ -2,6 +2,7 @@
 #define NODECODE_DISPLACEMENTSENSOR_H
 
 #include "IOTShieldConfig.h"
+#include "HAN_IoT_Shield.h" // Required for iotShieldLED, LED_ON, LED_OFF, and LED objects
 
 /// Trap displacement detection is set to 0 (false), a trap displacement detected is set to 1 (true)
 
@@ -17,7 +18,7 @@ public:
     // Function for getting the displacement STATUS
     bool getDisplacementStatus() { return _displacementStatus; }
 
-    void displacementSensor::setDisplacementStatus(bool displacementStatus);
+    void setDisplacementStatus(bool displacementStatus);
 };
 
 #endif // NODECODE_DISPLACEMENTSENSOR_H

@@ -7,6 +7,9 @@
  */
 #include "catchSensor.h"
 
+// Use rightRedLED (LED 2, pin 4) for catch indication
+extern iotShieldLED rightRedLED;
+
 /**
  * @brief Constructor for the catchSensor class.
  * Initializes the catch status to false (no catch detected).
@@ -17,7 +20,7 @@ catchSensor::catchSensor() : _catchStatus{false}
 {
     ///< Initialize catch sensor here
     // Ensure LED is off on initialization, matching the initial _catchStatus.
-    leftGreenLED.setState(LED_OFF);
+    rightRedLED.setState(LED_OFF);
 }
 
 /**
@@ -27,17 +30,16 @@ catchSensor::catchSensor() : _catchStatus{false}
  */
 catchSensor::~catchSensor()
 {
-    ///< Stop catch sensor here
-    // Optionally, ensure LED is off when sensor is destroyed.
-    // leftGreenLED.setState(LED_OFF);
+    // Ensure LED is off when sensor object is destructed
+    rightRedLED.setState(LED_OFF);
 }
 
 /**
- * @brief Sets the catch status and updates an LED indicator.
+ * @brief Sets the catch status and updates the corresponding LED.
  * This method updates the internal catch status of the sensor.
- * Based on the new status, it controls `leftGreenLED` on the HAN IoT Shield:
- * - If a catch is detected (catchStatus is true), `leftGreenLED` is turned ON.
- * - If no catch is detected (catchStatus is false), `leftGreenLED` is turned OFF.
+ * Based on the new status, it controls `rightRedLED` on the HAN IoT Shield:
+ * - If a catch is detected (catchStatus is true), `rightRedLED` is turned ON.
+ * - If no catch is detected (catchStatus is false), `rightRedLED` is turned OFF.
  * @param catchStatus Boolean value representing the new catch status.
  *                    True indicates a catch, false indicates no catch.
  */
@@ -45,14 +47,15 @@ void catchSensor::setCatchStatus(bool catchStatus)
 {
     _catchStatus = catchStatus;
 
-    if (catchStatus)
+    // Turn on/off rightRedLED based on the catch status
+    if (_catchStatus)
     {
-        ///< Turn on LED2 to indicate that the catch is detected
-        leftGreenLED.setState(LED_ON);
+        // Turn on rightRedLED to indicate a catch
+        rightRedLED.setState(LED_ON);
     }
     else
     {
-        ///< Turn off LED2 to indicate that the catch is not detected
-        leftGreenLED.setState(LED_OFF);
+        // Turn off rightRedLED to indicate no catch
+        rightRedLED.setState(LED_OFF);
     }
 }

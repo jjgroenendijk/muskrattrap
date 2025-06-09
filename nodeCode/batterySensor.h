@@ -26,13 +26,15 @@ class batterySensor /// BatteryStatus class declaration:
 {
 private:
     uint32_t _batteryLevel; ///< Stores the current battery level.
+    iotShieldLED* _batteryLed; ///< Pointer to the LED used for battery indication.
 
 public:
     /**
      * @brief Constructor for batterySensor.
      * Initializes the battery sensor object.
+     * @param led Pointer to the iotShieldLED object to be used for battery level indication.
      */
-    batterySensor();    ///< Constructor
+    batterySensor(iotShieldLED* led);    ///< Constructor
 
     /**
      * @brief Destructor for batterySensor.
@@ -50,11 +52,17 @@ public:
     uint32_t getBatteryLevel();
 
     /**
-     * @brief Sets the battery level manually.
-     * Useful for simulation or testing purposes to override any sensor reading.
-     * @param batteryLevel The desired battery level to set.
+     * @brief Sets the current simulated battery level and updates LED brightness.
+     * @param batteryLevel The battery level to set (e.g., 0-100).
      */
     void setBatteryLevel(uint32_t batteryLevel);
+
+    /**
+     * @brief Updates the battery indicator LED based on the current battery level.
+     * Uses PWM to control LED brightness if the LED pin supports PWM.
+     * Otherwise, it will turn the LED ON for high levels and OFF for low levels.
+     */
+    void updateLedIndicator();
 };
 
 #endif // NODECODE_BATTERYSENSOR_H

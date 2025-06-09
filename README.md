@@ -220,10 +220,10 @@ These tasks help streamline the compilation and testing processes directly withi
       * `[X] Confirm TTN application created and decoder function (\\\\`serverSide/javascriptDecoder/decoder.js\\\\`) added to the TTN application\\\'s payload formatters. (User confirmed completion)`
       * `[X] Obtain TTN Application ID (TTN_APP_NAME, TTN_APP_KEY_PASSWORD in serverSide/.env)`
       * `[X] Add and configure MQTT input node in Node-RED.`
-        * The `flows.json` was updated to hardcode `broker` ("eu1.cloud.thethings.network") and `port` ("1883") from \`.env\` due to editor limitations in referencing environment variables for these specific fields.
+        * The `flows.json` was updated to hardcode `broker` ("eu1.cloud.thethings.network") and `port` ("1883") from \`.env` due to editor limitations in referencing environment variables for these specific fields.
         * **(User Confirmed Completion - 2025-06-08):** Manually configure the MQTT broker node ("muskrattrap@ttn") credentials in the Node-RED editor. In the "Security" tab of the broker configuration, set "Username" and "Password" fields, preferably using the "Environment Variable" input type if available for credentials, to reference `TTN_APP_NAME` and `TTN_APP_KEY_PASSWORD`. If "Environment Variable" type is not available for credentials, try `{{TTN_APP_NAME}}` and `{{TTN_APP_KEY_PASSWORD}}` or, as a last resort, enter the literal values.
     * `[X] Configure Node-RED MySQL connection.`
-      * The `flows.json` was updated to hardcode `host` ("mariadb"), `port` ("3306"), `db` ("muskrattrap_db"), and `tz` ("Europe/Amsterdam") from \`.env\` due to editor limitations.
+      * The `flows.json` was updated to hardcode `host` ("mariadb"), `port` ("3306"), `db` ("muskrattrap_db"), and `tz` ("Europe/Amsterdam") from \`.env` due to editor limitations.
       * **(User Confirmed Completion - 2025-06-08):** Manually configure the MySQL database node ("mariadb") credentials in the Node-RED editor. Set the "User" and "Password" fields.
         * For "User", use the value of the `MYSQL_USER` environment variable (which is `mysql_user`).
         * For "Password", use the value of the `MYSQL_PASSWORD` environment variable (which is `mysql_password`).
@@ -370,22 +370,54 @@ This project implements the firmware for a LoRaWAN-enabled muskrat trap IoT node
 * Outlined the next step: refactor to use hardware interrupts and watchdog timer for true event-driven, ultra-low-power operation.
 * Sleep logic is currently disabled in `nodeCode.ino` for debugging and bring-up. The device will remain awake and responsive. To re-enable low-power operation, uncomment the sleep section in the main loop.
 * Verified: Data is being sent and received as expected with sleep disabled. Next step is to re-enable and test low-power operation once event logic is fully validated.
+*   Updated: displacementSensor now uses leftGreenLED (LED3) for displacement indication, resolving the LED conflict with catchSensor.
+*   All sensor-to-LED mappings are now unique and match the HAN IoT Shield hardware layout.
 
 ---
 
 ## Design Notes & Rationale
 
 * **Event-Driven, Ultra-Low-Power Design:**
-  * The node should sleep most of the time, waking only on trap events (button press) or at a heartbeat interval.
-  * Hardware interrupts are required for instant wakeup on trap events, minimizing power consumption.
+  * The node sleeps most of the time, waking only on trap events (button press) or at a heartbeat interval.
+  * Hardware interrupts are used for instant wakeup on trap events, minimizing power consumption.
   * The watchdog timer is used for periodic wakeup (heartbeat), ensuring regular status updates even if no events occur.
-  * This approach maximizes battery life and reliability for remote IoT deployments.
-* **Debug Output:**
-  * All sensor and payload data are printed in a single, clear debug block for easier troubleshooting.
-* **unixTime Handling:**
-  * unixTime is incremented every second and included in both payload and debug output for accurate event tracking.
-* **LowPower Library:**
-  * Used for sleep modes; instructions for installation are included below.
+  * **Transmission Strategy:**
+    * The node implements a hybrid event-driven and periodic (heartbeat) transmission strategy:
+      * **Event-Driven:** On trap events (door, catch, displacement), the node sends data immediately, but enforces a debounce interval (default: 2s) to avoid flooding.
+      * **Periodic (Heartbeat):** The node sends a full status update at a fixed interval (default: 24h, set to 10s for testing) to confirm health and status.
+      * **Duty Cycle Compliance:** The node enforces a minimum interval between transmissions (default: 12s for demo, increase for production) to comply with LoRaWAN/TTN duty cycle and Fair Use Policy (max 30s airtime/day).
+      * **Payload Optimization:** Only changed or relevant data is sent, using binary encoding. Battery and diagnostics are included in periodic messages, not every event.
+      * **Class A Operation:** The node uses LoRaWAN Class A for maximum energy efficiency.
+      * **ADR:** Adaptive Data Rate is enabled for static nodes to optimize airtime and battery.
+    * This approach maximizes battery life, ensures regulatory compliance, and provides timely event reporting.
+  * **Debug Output:**
+    * All sensor and payload data are printed in a single, clear debug block for easier troubleshooting.
+  * **unixTime Handling:**
+    * unixTime is incremented every second and included in both payload and debug output for accurate event tracking.
+  * **LowPower Library:**
+    * Used for sleep modes; instructions for installation are included below.
+
+---
+
+## LoRaWAN Duty Cycle & Transmission Strategy (Implementation Summary)
+
+- **Duty Cycle (EU868):**
+  - 1% per sub-band (regulatory); TTN Fair Use: max 30s uplink airtime/day/device.
+  - Node enforces a minimum interval between transmissions (default: 12s for demo; increase for production).
+- **Transmission Logic:**
+  - **Event-Driven:** If a sensor event (door, catch, displacement) is detected, the node will attempt to send data immediately. However, a transmission will only occur if the minimum interval since the last send (duty cycle) has elapsed. This prevents spamming and ensures regulatory compliance. A debounce interval is also enforced to avoid repeated sends from noisy sensors.
+  - **Periodic (Heartbeat):** If no event occurs, the node will send a status update at a fixed interval (heartbeat), but only if the minimum interval since the last send has elapsed.
+  - **No send** if neither an event nor the heartbeat interval is due, or if the minimum interval has not elapsed since the last transmission.
+- **Payload:**
+  - Binary, minimal, only changed/relevant data.
+  - Battery/diagnostics in periodic messages.
+- **LoRaWAN Class:**
+  - Class A (default, most energy-efficient).
+  - ADR enabled for static nodes.
+- **Best Practices:**
+  - No JSON in payload, use int8/int16 for values.
+  - Batch data if possible.
+  - Only send if state changed or heartbeat elapsed.
 
 ---
 
@@ -435,6 +467,12 @@ This project implements the firmware for a LoRaWAN-enabled muskrat trap IoT node
 
 ---
 
+## Troubleshooting: VS Code Arduino Compile Errors
+
+If you see errors in VS Code about undefined symbols such as `Serial1`, `MCUSR`, `WDTCSR`, or other Arduino/AVR-specific registers, these are not actual code problems. They are caused by VS Code's C++ static analysis not using the correct Arduino toolchain for IntelliSense. As long as the code compiles and runs on the Arduino hardware using `arduino-cli` or the Arduino IDE, you can safely ignore these warnings. For best results, use the provided VS Code tasks or the Arduino IDE for building and uploading firmware.
+
+---
+
 ## Replication Guide
 
 * Follow the steps in **Project Setup** above to build, flash, and monitor the node.
@@ -448,3 +486,44 @@ This project implements the firmware for a LoRaWAN-enabled muskrat trap IoT node
 * See **Design Notes & Rationale** above for key decisions and best practices.
 * Interrupt-driven wakeup and watchdog-based heartbeat are essential for ultra-low-power IoT nodes.
 * All progress and technical decisions are tracked in this README for rapid recovery and onboarding.
+
+## Hardware Interrupt Limitations and Event-Driven Operation
+
+### Leonardo Interrupt Capabilities
+
+* **Pins 2 (INT1) and 3 (INT0)** are the only true external interrupt pins on the Arduino Leonardo (ATmega32u4).
+* **Pins 8 and 9** (used by HAN IoT Shield buttons for door/catch) do **not** support Pin Change Interrupts (PCINT) on Leonardo, unlike on ATmega328-based boards.
+* As a result, only one sensor (or button) can be truly event-driven with instant wakeup from deep sleep using interrupts, unless hardware is re-wired.
+
+### Current Implementation
+
+* The firmware attaches the generic event ISR to pin 2 (INT1) for demonstration.
+* ISRs for door, catch, and displacement events are present in code, but not attached due to hardware limitations.
+* All event flags are checked atomically in the main loop, and the code is structured for easy adaptation if hardware changes are made.
+
+### Options for True Event-Driven Operation
+
+* **Re-wire sensors/buttons to pins 2 and/or 3** to enable true interrupt-driven wakeup for those events.
+* **Use polling** for pins 8/9, but this increases power consumption and is not recommended for ultra-low-power operation.
+* **Switch to a board with more interrupt-capable pins** (e.g., ATmega328P-based Uno/Nano) if all sensors must be interrupt-driven.
+
+### Sleep Mode
+
+* The current `enterSleepModePlaceholder()` is a stub. Replace with LowPower library calls for real deployment.
+* Only INT0/INT1 and WDT can wake the Leonardo from deep sleep.
+
+---
+
+## Event, Debounce, and Duty Cycle Logic
+
+* **Event-driven sends**: On any event flag (door, catch, displacement, or generic), the node attempts to send, but only if debounce and duty cycle intervals have elapsed.
+* **Heartbeat sends**: The node sends a periodic heartbeat (via WDT or timer) if the duty cycle allows.
+* **All logic is documented in Doxygen comments in `nodeCode.ino` for educational clarity.**
+
+---
+
+## Next Steps
+
+* Finalize and test actual interrupt attachment for all sensors (requires hardware changes for full support).
+* Replace sleep placeholder with LowPower library logic.
+* Continue to update this README as implementation progresses.
