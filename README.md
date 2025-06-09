@@ -1,16 +1,30 @@
 # IoT-muskrattrap: The Intelligent Muskrat Trap
 
+---
+
+## Workspace Structure & Key Files
+
+The repository is organized as follows:
+- `nodeCode/`: Arduino firmware and sensor logic for the IoT node.
+- `payloadCoder/`: C++ payload encoder/decoder and unit tests.
+- `serverSide/`: Docker Compose stack (Node-RED, MariaDB, Grafana, etc.).
+- `docs/`: All project documentation, research, and Doxygen output.
+- `screenshots/`: Dashboard and UI screenshots for verification.
+- `.vscode/tasks.json`: VSCode tasks for build, flash, monitor, and documentation.
+
+---
+
 ## Project Overview
 
 The SMARTrap project aims to develop a smart, humane, and efficient solution for controlling muskrat populations using IoT technology. Muskrats pose a significant threat to water management systems in the Netherlands. This project seeks to create a smart trap that detects trap status (open/closed), identifies captures, monitors trap movement, and reports its health status, all while ensuring non-lethal trapping and enabling remote monitoring.
 
 Detailed project documentation, including design choices, technical specifications, and setup guides, can now be found in the `/docs` directory. This includes:
 
-* `docs/project-background.md`: Covers initial research, LPWAN/LoRaWAN comparisons, and trap design considerations.
-* `docs/iot-node-details.md`: Details the IoT node hardware simulation and LoRaWAN payload structure.
-* `docs/server-and-nodered-setup.md`: Outlines the server-side stack, database, and Node-RED setup.
-* `docs/mini-research-summary.md`: The Mini-Research summary in English Markdown.
-* `docs/doxygen/`: Doxygen-generated API documentation for the codebase (also published to GitHub Pages).
+- `docs/project-background.md`: Covers initial research, LPWAN/LoRaWAN comparisons, and trap design considerations.
+- `docs/iot-node-details.md`: Details the IoT node hardware simulation and LoRaWAN payload structure.
+- `docs/server-and-nodered-setup.md`: Outlines the server-side stack, database, and Node-RED setup.
+- `docs/mini-research-summary.md`: The Mini-Research summary in English Markdown.
+- `docs/doxygen/`: Doxygen-generated API documentation for the codebase (also published to GitHub Pages).
 
 The `docs-old/` directory has been removed as its content has been migrated and consolidated into the `docs/` directory.
 
@@ -29,7 +43,7 @@ The `docs-old/` directory has been removed as its content has been migrated and 
 * **Data Visualization:** Grafana
 * **Server Orchestration:** Docker & Docker Compose
 
-## Replication Guide & Getting Started
+## Development setup
 
 ### Prerequisites
 
@@ -46,6 +60,24 @@ The `docs-old/` directory has been removed as its content has been migrated and 
     git clone git@github.com:jjgroenendijk/muskrattrap.git
     cd muskrattrap
     ```
+
+2. Install Arduino CLI and required libraries:
+
+   ```bash
+   brew install arduino-cli # or see https://arduino.github.io/arduino-cli/latest/installation/
+   arduino-cli core update-index
+   arduino-cli core install arduino:avr
+   arduino-cli lib install OneWire
+   arduino-cli lib install DallasTemperature
+   arduino-cli lib install LowPower
+   ```
+
+3. Install Docker & Docker Compose (see https://docs.docker.com/get-docker/)
+4. Copy `serverSide/example.env` to `serverSide/.env` and configure secrets and passwords as needed before running the stack:
+   ```bash
+   cp serverSide/example.env serverSide/.env
+   # Edit serverSide/.env to set secure values for all secrets and passwords
+   ```
 
 ### Development Workflow with VSCode Tasks
 
@@ -150,402 +182,125 @@ These tasks help streamline the compilation and testing processes directly withi
             arduino-cli monitor -p YOUR_SERIAL_PORT --fqbn arduino:avr:leonardo
             ```
 
-## Work Breakdown Structure
+## Project context
 
-**Legend:**
+This section provides a comprehensive overview of the project's background, design, and implementation details, consolidating information from various project documents.
 
-* [X] = Done
-* [~] = In Progress
-* [ ] = Open Task
+### Project Rationale and Technology Selection
 
-#### Payload Coder (`payloadCoder/`)
+#### Challenge: Muskrat Management
 
-* [X] Implement and test C++ payload encoder/decoder classes (Custom binary format).
-  * [X] Corrected `add_uint32` bug in `payloadEncoder.cpp`.
-  * [X] Updated getter return types in `payloadDecoder.h` for type consistency.
-  * [X] Enhanced unit tests in `unitTest.cpp` (type corrections, min/max values, all boolean combinations).
-  * [X] Input validation of payload data (Handled by sensor/simulation logic in `nodeCode.ino`).
-  * [X] Add warning flag for when data is clipping (Covered by input validation handling).
-* [X] Document with Doxygen.
+In the Netherlands, water boards are tasked with controlling muskrat populations to prevent damage to dikes and subsequent flooding. The SMARTrap project was initiated to create a humane and efficient IoT solution for this task. The goal is a low-cost, sustainable, and user-friendly "smart" trap that provides remote monitoring capabilities to reduce animal suffering and improve management efficiency.
 
-#### LoRaWAN Node (`nodeCode/`)
+#### LPWAN Technology Comparison
 
-* [X] Implement prototype LoRaWAN node on HAN IoT Node.
-  * [X] Emulate sensors using onboard components and integrate with payload.
-    * Sensor objects (`doorSensor`, `catchSensor`, `displacementSensor`, `batterySensor`) are instantiated.
-    * Simulated sensor states (buttons for door, catch, displacement) are updated in the loop.
-    * Sensor integration and payload population: Real sensor values are read and used to populate the payload encoder; `encoder.setTestValues()` has been removed.
-  * [X] Implement event-triggered and heartbeat communication.
-    * The main loop now tracks previous sensor states and only sends data if a state change or heartbeat interval has occurred, enforcing debounce and duty cycle.
-  * [X] Implement sleep functionality for maximum battery life.
-    * Basic MCU sleep using Watchdog Timer (WDT) is implemented; further optimization is possible.
-    * Data transmission is optimized for 24-hour routine updates (configurable for testing).
-    * Firmware (working version with LoRa enabled) successfully flashed and tested.
-* [X] Document with Doxygen (all major files and functions are commented).
-* [X] Code Cleanup & Refinement
-  * [X] Remove `encoder.setTestValues()` (done).
-  * [X] Review/Remove `knightRider()` (removed or commented out as not required).
-  * [X] Review/Remove `iotShieldTempSensor` (removed or commented out as not required).
-  * [X] Consistent Debug Messages (all debug output is now clear and consolidated).
+A core requirement for the smart trap is a communication network with long range and very low power consumption, as the traps are battery-powered and located in remote areas. Three Low Power Wide Area Network (LPWAN) technologies were evaluated:
 
-#### Server-Side (`serverSide/`)
+  * **LoRaWAN (Long Range Wide Area Network):** Optimized for energy-efficient, long-distance communication. It offers a range of 3 km in urban and up to 10 km in rural areas, with 3 to 5 times lower energy consumption than other LPWAN technologies.
+  * **NB-IoT (Narrowband Internet of Things):** Uses existing LTE networks and is optimized for low energy use and long distances, with a focus on indoor coverage.
+  * **LTE-CAT-M:** Offers higher speeds and mobility than NB-IoT but at the cost of higher power consumption and hardware costs.
 
-* [X] Finalize Database Design and Implementation (MySQL/MariaDB).
-  * [X] Configured MariaDB to automatically import `serverSide/databaseSetup.sql` on initial startup.
-* [X] Implement Node-RED flows for TTN data reception and MySQL storage.
-  * [X] Node-RED flow subscribes to TTN MQTT, decodes payload, and inserts data into MySQL.
-  * [X] All credentials and environment variables are managed securely.
-* [X] Implement JavaScript TTN Payload Decoder.
-  * [X] Decoder script is present and matches the payload structure.
-* [X] Grafana Dashboard & Alerting
-  * [X] Dashboard JSON and alert provisioning are present and verified.
-  * [X] Panels for all required metrics are included.
+**Conclusion:** LoRaWAN was selected as the most suitable technology due to its superior energy efficiency, extensive range in rural settings, cost-effectiveness, and robustness, all of which are critical for this application.
 
-#### Visualization & Reporting (Grafana & Node-RED UI)
+#### LoRaWAN Provider Comparison: TTN vs. KPN
 
-* [X] Node-RED UI dashboard implemented (multi-trap overview, summary stats, etc.).
-* [X] Grafana dashboard implemented with panels for trap data, battery, and alerts.
-* [X] Alerts for catch detected, low battery, and displacement are provisioned.
-
-#### General Documentation & Project Management
-
-* [X] All major documentation is present in `/docs` (research, technical, server setup, lesson summaries).
-* [X] Doxygen documentation generated for all code.
-* [X] README.md is up to date and serves as a living document and progress tracker.
-* [X] All code and configuration changes have been tested and verified as of 2025-06-09.
-
-#### Documentation Review & Enhancement
-
-* [~] Add explicit UML diagrams (as image files) for the payload encoder/decoder and database schema.
-* [~] Include screenshots of the Grafana dashboard in the documentation or as image files.
-* [~] Add a technical hand-over document (Markdown or PDF).
-* [~] Export peer review/feedback DOCX files to PDF or Markdown for easier verification.
-* [~] Add the final presentation slides or a link to them.
-* [~] Include explicit test result files or screenshots showing successful test runs and dashboard operation.
-
-## Muskrat Trap IoT Node Firmware
-
-## Project Overview
-
-This project implements the firmware for a LoRaWAN-enabled muskrat trap IoT node, designed for ultra-low-power operation and reliable event-driven reporting. The node detects trap door, catch, and displacement events, monitors battery status, and transmits data via LoRaWAN to The Things Network (TTN).
-
-## Project Setup
-
-### Hardware
-
-* Arduino Leonardo (The Things Uno)
-
-* HAN IoT Shield (with door, catch, displacement sensors, and battery monitor)
-
-### Software Requirements
-
-* Arduino CLI
-
-* Required libraries:
-  * TheThingsNetwork_HANIoT
-  * LowPower (install via Arduino Library Manager)
-* macOS (default shell: bash)
-
-### Build & Flash
-
-1. Install dependencies and libraries as above.
-2. Compile (Debug):
-
-   ```bash
-   arduino-cli compile --fqbn arduino:avr:leonardo --build-property "compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=true" nodeCode/nodeCode.ino
-   ```
-
-3. Flash (Debug, auto-detect port):
-
-   ```bash
-   arduino-cli upload -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo nodeCode/nodeCode.ino
-   ```
-
-4. Monitor serial output:
-
-   ```bash
-   arduino-cli monitor -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo
-   ```
-
-## Progress Tracker
-
-### To-Do
-
-* Add explicit UML diagrams (as image files) for the payload encoder/decoder and database schema.
-* Add a technical hand-over document (Markdown or PDF).
-* Export peer review/feedback DOCX files to PDF or Markdown for easier verification.
-* Add the final presentation slides or a link to them.
-* Include explicit test result files or screenshots showing successful test runs and dashboard operation.
-
-### In-Progress
-
-* **[~] Refactoring `nodeCode.ino` for Event-Driven Operation:**
-  * Added `volatile boolean` flags (`doorEvent`, `catchEvent`, `displacementEvent`) for specific sensor events.
-  * Created placeholder ISR functions (`doorSensorISR`, `catchSensorISR`, `displacementSensorISR`) that set these flags.
-  * Added commented-out placeholder `attachInterrupt()` calls in `setup()`, highlighting the pin compatibility issues for default sensor pins (8 and 9) on Arduino Leonardo and noting the need for re-wiring or PCINTs.
-  * Modified the main `loop()` to check these flags and trigger LoRaWAN sends based on them, in addition to existing WDT/timed heartbeats.
-  * Added a placeholder sleep function `enterSleepModePlaceholder()` and a call to it in the loop.
-  * **Note:** The interrupt setup is currently a placeholder due to pin limitations. Full interrupt functionality requires hardware changes or more complex PCINT implementation. The sleep functionality is also a placeholder.
-
-### Done
-
-* All major firmware, server, and dashboard tasks are complete and verified.
-* Fixed variable redeclaration errors for sensor state variables in `nodeCode.ino`.
-* Updated include guards in all sensor header files to unique names to avoid macro conflicts.
-* Ensured the code compiles and flashes successfully to the Arduino Leonardo (The Things Uno).
-* Improved serial debug output: all sensor and payload data now printed in a single, clear block.
-* Made unixTime increment every second and included it in both payload and debug output.
-* Removed redundant debug lines for sensor and battery status.
-* Added LowPower sleep (8x125ms) between main loop iterations for basic low-power operation.
-* Provided instructions to install the LowPower library.
-* Updated README.md to document the new event-driven, low-power design requirements, rationale, and current progress.
-* Outlined the next step: refactor to use hardware interrupts and watchdog timer for true event-driven, ultra-low-power operation.
-* Sleep logic is currently disabled in `nodeCode.ino` for debugging and bring-up. The device will remain awake and responsive. To re-enable low-power operation, uncomment the sleep section in the main loop.
-* Verified: Data is being sent and received as expected with sleep disabled. Next step is to re-enable and test low-power operation once event logic is fully validated.
-* Updated: displacementSensor now uses leftGreenLED (LED3) for displacement indication, resolving the LED conflict with catchSensor.
-* All sensor-to-LED mappings are now unique and match the HAN IoT Shield hardware layout.
-* All server-side, Node-RED, and Grafana dashboard integration steps are complete and verified.
-* Documentation is consolidated and up to date in `/docs` and Doxygen.
-* All code and configuration changes have been tested and verified as of 2025-06-09.
-* **[X] Included screenshots of the Grafana dashboard in the documentation as image files.**
-* **[X] Included screenshots of the Node-RED dashboard and Node-RED flow in the documentation as image files.**
-
----
-
-## Design Notes & Rationale
-
-* **Event-Driven, Ultra-Low-Power Design:**
-  * The node sleeps most of the time, waking only on trap events (button press) or at a heartbeat interval.
-  * Hardware interrupts are used for instant wakeup on trap events, minimizing power consumption.
-  * The watchdog timer is used for periodic wakeup (heartbeat), ensuring regular status updates even if no events occur.
-  * **Transmission Strategy:**
-    * The node implements a hybrid event-driven and periodic (heartbeat) transmission strategy:
-      * **Event-Driven:** On trap events (door, catch, displacement), the node sends data immediately, but enforces a debounce interval (default: 2s) to avoid flooding.
-      * **Periodic (Heartbeat):** The node sends a full status update at a fixed interval (default: 24h, set to 10s for testing) to confirm health and status.
-      * **Duty Cycle Compliance:** The node enforces a minimum interval between transmissions (default: 12s for demo, increase for production) to comply with LoRaWAN/TTN duty cycle and Fair Use Policy (max 30s airtime/day).
-      * **Payload Optimization:** Only changed or relevant data is sent, using binary encoding. Battery and diagnostics are included in periodic messages, not every event.
-      * **Class A Operation:** The node uses LoRaWAN Class A for maximum energy efficiency.
-      * **ADR:** Adaptive Data Rate is enabled for static nodes to optimize airtime and battery.
-    * This approach maximizes battery life, ensures regulatory compliance, and provides timely event reporting.
-  * **Debug Output:**
-    * All sensor and payload data are printed in a single, clear debug block for easier troubleshooting.
-  * **unixTime Handling:**
-    * unixTime is incremented every second and included in both payload and debug output for accurate event tracking.
-  * **LowPower Library:**
-    * Used for sleep modes; instructions for installation are included below.
+Two LoRaWAN network providers in the Netherlands were considered:
 
----
+  * **KPN LoRa:** A commercial network provided by KPN. Information on costs was not provided upon request. While KPN offers location determination, its precision of 174 meters is insufficient for quickly locating a trap.
+  * **The Things Network (TTN):** A community-driven network with a clear and fair business model, offering free use for small-scale projects and paid tiers for larger deployments. Crucially, TTN allows users to extend network coverage by adding their own gateways and has extensive online documentation, which is highly beneficial for a study project.
 
-## LoRaWAN Duty Cycle & Transmission Strategy (Implementation Summary)
+**Conclusion:** The Things Network (TTN) was chosen over KPN LoRa due to its cost transparency, extensive community support and documentation, and the flexibility to expand the network where needed.
 
-* **Duty Cycle (EU868):**
-  * 1% per sub-band (regulatory); TTN Fair Use: max 30s uplink airtime/day/device.
-  * Node enforces a minimum interval between transmissions (default: 12s for demo; increase for production).
-* **Transmission Logic:**
-  * **Event-Driven:** If a sensor event (door, catch, displacement) is detected, the node will attempt to send data immediately. However, a transmission will only occur if the minimum interval since the last send (duty cycle) has elapsed. This prevents spamming and ensures regulatory compliance. A debounce interval is also enforced to avoid repeated sends from noisy sensors.
-  * **Periodic (Heartbeat):** If no event occurs, the node will send a status update at a fixed interval (heartbeat), but only if the minimum interval since the last send has elapsed.
-  * **No send** if neither an event nor the heartbeat interval is due, or if the minimum interval has not elapsed since the last transmission.
-* **Payload:**
-  * Binary, minimal, only changed/relevant data.
-  * Battery/diagnostics in periodic messages.
-* **LoRaWAN Class:**
-  * Class A (default, most energy-efficient).
-  * ADR enabled for static nodes.
-* **Best Practices:**
-  * No JSON in payload, use int8/int16 for values.
-  * Batch data if possible.
-  * Only send if state changed or heartbeat elapsed.
+### SMARTrap System Design and Operation
 
----
+#### Conceptual Sensor Integration
 
-## Project Setup
+The SMARTrap is designed with multiple sensors to provide a complete picture of its status:
 
-### Target OS & Shell
+1.  **Magnetic Door Sensor:** Detects if the trap door is open or closed.
+2.  **Weight Sensor:** A sensor on the bottom of the trap detects the weight of a captured animal.
+3.  **Movement Detection Sensor:** A wire-based sensor detects if the trap has been moved from its position.
 
-* **OS:** macOS
-* **Default Shell:** bash
-* No compatibility issues foreseen for Arduino CLI or LowPower library on macOS.
+A signal is transmitted to the server application when the door is closed and the weight sensor is triggered, indicating a successful capture. A separate signal is sent if the trap is moved. The trap also continuously monitors and reports its battery status for maintenance.
 
-### Dependencies
+#### Communicated Events
 
-* Arduino CLI
-* LowPower library (install via Arduino Library Manager)
-* All required sensor and LoRaWAN libraries (see `nodeCode.ino` includes)
+The IoT node must communicate four critical events:
 
-### Build & Flash
+1.  **Trap Status (Door Open/Closed):** Indicates if the trap is set or has been triggered.
+2.  **Catch Detection:** Confirms if an animal has been captured.
+3.  **Trap Displacement:** Alerts if the trap has been moved.
+4.  **Health Status:** Reports the operational status, primarily the battery level.
 
-1. Install Arduino CLI and required libraries.
-2. Compile (Debug):
+### IoT Node Implementation
 
-   ```bash
-   arduino-cli compile --fqbn arduino:avr:leonardo --build-property "compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=true" nodeCode/nodeCode.ino
-   ```
+#### Hardware and Development Simulation
 
-3. Flash (Debug, auto-detect port):
+Development and simulation are performed using The Things Uno (based on Arduino Leonardo), which is the core of the IoT node. To facilitate development without physical sensors, onboard components are used for simulation:
 
-   ```bash
-   arduino-cli upload -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo nodeCode/nodeCode.ino
-   ```
+  * **Door Status (Closed):** Simulated by pressing `SWITCH 1`, which turns `LED1` ON.
+  * **Catch Detection:** Simulated by pressing `SWITCH 2`, which turns `LED2` ON.
+  * **Trap Movement:** Simulated by pressing `SWITCH 1` and `SWITCH 2` simultaneously, which turns `LED3` ON.
+  * **Battery Level:** Simulated by reading the position of `POTMETER 2`, with the brightness of `LED4` indicating the level.
 
-4. Monitor serial output:
+#### LoRaWAN Payload Structure
 
-   ```bash
-   arduino-cli monitor -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo
-   ```
+To conserve power and airtime, data is encoded into a compact binary payload. The total payload size is 11 bytes.
 
-### LowPower Library Installation
+| Name | ID | Type | Size | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| Identification number | `id` | unsigned integer | 4 bytes | A unique ID assigned to each trap. |
+| Payload version number | `version` | unsigned integer | 1 byte | Version of the payload format. |
+| Door status | `doorStatus` | boolean | 1 bit | `0` for Open, `1` for Closed. |
+| Catch detection | `catchDetect` | boolean | 1 bit | `0` for No Catch, `1` for Catch Detected. |
+| Trap Displacement | `trapDisplacement` | boolean | 1 bit | `0` for No Displacement, `1` for Displaced. |
+| Battery status | `batteryStatus` | unsigned integer | 1 byte | Battery level percentage (0-255). |
+| Date and time | `unixTime` | unsigned integer | 4 bytes | Unix epoch timestamp of the event. |
 
-* In Arduino IDE: Tools > Manage Libraries > Search for "LowPower" > Install
-* Or via CLI:
+*(Note: The three boolean values are packed into a single byte using bitwise operations to save space.)*
 
-   ```bash
-   arduino-cli lib install LowPower
-   ```
+### Server-Side Architecture
 
----
+The server-side infrastructure is managed using a portable, containerized environment.
 
-## Troubleshooting: VS Code Arduino Compile Errors
+#### Hosting Stack (Docker)
 
-If you see errors in VS Code about undefined symbols such as `Serial1`, `MCUSR`, `WDTCSR`, or other Arduino/AVR-specific registers, these are not actual code problems. They are caused by VS Code's C++ static analysis not using the correct Arduino toolchain for IntelliSense. As long as the code compiles and runs on the Arduino hardware using `arduino-cli` or the Arduino IDE, you can safely ignore these warnings. For best results, use the provided VS Code tasks or the Arduino IDE for building and uploading firmware.
+The environment is orchestrated using Docker and Docker Compose, defining all services in the `serverSide/docker-compose.yml` file. This allows the stack to run on various platforms. The core services include:
 
----
+  * Node-RED
+  * MariaDB (MySQL)
+  * Grafana
+  * phpMyAdmin
 
-## Replication Guide
+#### Database Schema
 
-* Follow the steps in **Project Setup** above to build, flash, and monitor the node.
-* Ensure all hardware connections (buttons, sensors) match the pin assignments in `nodeCode.ino`.
-* For event-driven operation, ensure the node is powered by battery and not USB for accurate low-power testing.
+Data from the traps is stored in a MariaDB database. The primary table is structured as follows (refer to `serverSide/databaseSetup.sql` for the definitive schema):
 
----
-
-## Architectural Decisions & Learnings
-
-* See **Design Notes & Rationale** above for key decisions and best practices.
-* Interrupt-driven wakeup and watchdog-based heartbeat are essential for ultra-low-power IoT nodes.
-* All progress and technical decisions are tracked in this README for rapid recovery and onboarding.
-
-## Hardware Interrupt Limitations and Event-Driven Operation
-
-### Leonardo Interrupt Capabilities
-
-* **Pins 2 (INT1) and 3 (INT0)** are the only true external interrupt pins on the Arduino Leonardo (ATmega32u4).
-* **Pins 8 and 9** (used by HAN IoT Shield buttons for door/catch) do **not** support Pin Change Interrupts (PCINT) on Leonardo, unlike on ATmega328-based boards.
-* As a result, only one sensor (or button) can be truly event-driven with instant wakeup from deep sleep using interrupts, unless hardware is re-wired.
-
-### Current Implementation
-
-* The firmware attaches the generic event ISR to pin 2 (INT1) for demonstration.
-* ISRs for door, catch, and displacement events are present in code, but not attached due to hardware limitations.
-* All event flags are checked atomically in the main loop, and the code is structured for easy adaptation if hardware changes are made.
-
-### Options for True Event-Driven Operation
-
-* **Re-wire sensors/buttons to pins 2 and/or 3** to enable true interrupt-driven wakeup for those events.
-* **Use polling** for pins 8/9, but this increases power consumption and is not recommended for ultra-low-power operation.
-* **Switch to a board with more interrupt-capable pins** (e.g., ATmega328P-based Uno/Nano) if all sensors must be interrupt-driven.
-
-### Sleep Mode
-
-* The current `enterSleepModePlaceholder()` is a stub. Replace with LowPower library calls for real deployment.
-* Only INT0/INT1 and WDT can wake the Leonardo from deep sleep.
-
----
-
-## Event, Debounce, and Duty Cycle Logic
-
-* **Event-driven sends**: On any event flag (door, catch, displacement, or generic), the node attempts to send, but only if debounce and duty cycle intervals have elapsed.
-* **Heartbeat sends**: The node sends a periodic heartbeat (via WDT or timer) if the duty cycle allows.
-* **All logic is documented in Doxygen comments in `nodeCode.ino` for educational clarity.**
-
----
-
-## Next Steps
-
-* Finalize and test actual interrupt attachment for all sensors (requires hardware changes for full support).
-* Replace sleep placeholder with LowPower library logic.
-* Continue to update this README as implementation progresses.
-
-## UML Class Diagrams
-
-The following UML class diagrams are auto-generated by Doxygen (with Graphviz) and included in the documentation:
-
-* **Payload Encoder/Decoder:**
-  * See `docs/doxygen/html/classpayload_encoder.html` and `classpayload_decoder.html` for the latest diagrams.
-  * To view or export as image: open the HTML file, right-click the class diagram, and save as PNG/SVG for use in reports or presentations.
-* **Sensor Abstractions:**
-  * Diagrams for `doorSensor`, `catchSensor`, `displacementSensor`, and `batterySensor` are also available in the Doxygen HTML output.
-
-> **Note:** The database UML diagram is intentionally omitted as per project decision.
-
-All code UML diagrams are up to date and included in the documentation.
-
----
-
-## Grafana Dashboard Screenshot
-
-A screenshot of the live Grafana dashboard, showing trap data, battery status, and alerts, is included for verification and grading purposes:
-
-![Grafana Dashboard](screenshots/grafana%20dashboard.png)
-
-* **Location:** `screenshots/grafana dashboard.png`
-* This image demonstrates the operational state of the dashboard as provisioned by the project. It can be used to verify correct data flow and visualization as described in the documentation.
-
----
-
-## Node-RED Dashboard & Flow Screenshots
-
-Screenshots of the Node-RED dashboard and Node-RED flow are included for documentation and verification:
-
-* **Node-RED Dashboard:**
-  * ![Node-RED Dashboard](screenshots/node-red-dashboard.png)
-  * Location: `screenshots/node-red-dashboard.png`
-* **Node-RED Flow:**
-  * ![Node-RED Flow](screenshots/node-red.png)
-  * Location: `screenshots/node-red.png`
-
-These images demonstrate the operational state of the Node-RED UI and flow configuration as provisioned by the project. Reviewers can use them to verify correct data flow, UI layout, and integration as described in the documentation.
-
----
-
-### Progress Tracker: To-Do
-
-* Add explicit UML diagrams (as image files) for the payload encoder/decoder and database schema.
-* Add a technical hand-over document (Markdown or PDF).
-* Export peer review/feedback DOCX files to PDF or Markdown for easier verification.
-* Add the final presentation slides or a link to them.
-* Include explicit test result files or screenshots showing successful test runs and dashboard operation.
-
-### Progress Tracker: In-Progress
-
-* [~] Refactoring `nodeCode.ino` for Event-Driven Operation:
-  * Added `volatile boolean` flags (`doorEvent`, `catchEvent`, `displacementEvent`) for specific sensor events.
-  * Created placeholder ISR functions (`doorSensorISR`, `catchSensorISR`, `displacementSensorISR`) that set these flags.
-  * Added commented-out placeholder `attachInterrupt()` calls in `setup()`, highlighting the pin compatibility issues for default sensor pins (8 and 9) on Arduino Leonardo and noting the need for re-wiring or PCINTs.
-  * Modified the main `loop()` to check these flags and trigger LoRaWAN sends based on them, in addition to existing WDT/timed heartbeats.
-  * Added a placeholder sleep function `enterSleepModePlaceholder()` and a call to it in the loop.
-  * **Note:** The interrupt setup is currently a placeholder due to pin limitations. Full interrupt functionality requires hardware changes or more complex PCINT implementation. The sleep functionality is also a placeholder.
-
-### Progress Tracker: Done
-
-* All major firmware, server, and dashboard tasks are complete and verified.
-* Fixed variable redeclaration errors for sensor state variables in `nodeCode.ino`.
-* Updated include guards in all sensor header files to unique names to avoid macro conflicts.
-* Ensured the code compiles and flashes successfully to the Arduino Leonardo (The Things Uno).
-* Improved serial debug output: all sensor and payload data now printed in a single, clear block.
-* Made unixTime increment every second and included it in both payload and debug output.
-* Removed redundant debug lines for sensor and battery status.
-* Added LowPower sleep (8x125ms) between main loop iterations for basic low-power operation.
-* Provided instructions to install the LowPower library.
-* Updated README.md to document the new event-driven, low-power design requirements, rationale, and current progress.
-* Outlined the next step: refactor to use hardware interrupts and watchdog timer for true event-driven, ultra-low-power operation.
-* Sleep logic is currently disabled in `nodeCode.ino` for debugging and bring-up. The device will remain awake and responsive. To re-enable low-power operation, uncomment the sleep section in the main loop.
-* Verified: Data is being sent and received as expected with sleep disabled. Next step is to re-enable and test low-power operation once event logic is fully validated.
-* Updated: displacementSensor now uses leftGreenLED (LED3) for displacement indication, resolving the LED conflict with catchSensor.
-* All sensor-to-LED mappings are now unique and match the HAN IoT Shield hardware layout.
-* All server-side, Node-RED, and Grafana dashboard integration steps are complete and verified.
-* Documentation is consolidated and up to date in `/docs` and Doxygen.
-* All code and configuration changes have been tested and verified as of 2025-06-09.
-* **[X] Included screenshots of the Grafana dashboard in the documentation as image files.**
-* **[X] Included screenshots of the Node-RED dashboard and Node-RED flow in the documentation as image files.**
-
----
+| Column Name | Data Type | Comment |
+| :--- | :--- | :--- |
+| autoIncrement | BIGINT(20) UNSIGNED ZEROFILL | Auto-incrementing primary key. |
+| UUID | UUID | Default value generated with `uuid()` function. |
+| messageSource | VARCHAR(32) | Source of the message (e.g., "TTNV3"). |
+| dateTime | DATETIME | Timestamp of data reception/processing. |
+| devID | VARCHAR(32) | Device ID from TTN. |
+| devEUI | CHAR(16) | LoRaWAN Device EUI. |
+| fcnt | INT(11) UNSIGNED | LoRaWAN frame counter. |
+| port | TINYINT(3) UNSIGNED | LoRaWAN FPort. |
+| devAddr | CHAR(8) | LoRaWAN Device Address. |
+| frequency | FLOAT | Transmission frequency. |
+| sf | TINYINT(3) UNSIGNED | Spreading Factor used. |
+| batteryStatus | TINYINT(3) UNSIGNED | Battery level from payload (0-255). |
+| catchDetect | TINYINT(1) | Boolean (0/1) for catch detection. |
+| doorStatus | TINYINT(1) | Boolean (0/1) for door status. |
+| trapDisplacement | TINYINT(1) | Boolean (0/1) for trap movement. |
+| id | INT(11) | Trap's unique ID from payload. |
+| unixTime | INT(11) UNSIGNED | Unix timestamp from payload. |
+| version | TINYINT(3) UNSIGNED | Payload version from payload. |
+
+#### Data Flow and Processing (Node-RED)
+
+Node-RED serves as the central processing hub for IoT data. Its primary functions are:
+
+  * **Receive Data:** Subscribes to The Things Network (TTN) via an MQTT connection to receive incoming trap data.
+  * **Decode Payload:** Uses a JavaScript function to decode the compact binary LoRaWAN payload into a usable format.
+  * **Store Data:** Processes the decoded data and executes SQL queries to insert it into the MariaDB database for storage and later analysis.
