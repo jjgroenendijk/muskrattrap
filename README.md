@@ -299,89 +299,145 @@ These tasks help streamline the compilation and testing processes directly withi
   * [X] Publish the resulting HTML to GitHub Pages.
 * [X] Integrate `buildnumber.num` into the Doxygen documentation.
 
+# Muskrat Trap IoT Node Firmware
+
+## Project Overview
+This project implements the firmware for a LoRaWAN-enabled muskrat trap IoT node, designed for ultra-low-power operation and reliable event-driven reporting. The node detects trap door, catch, and displacement events, monitors battery status, and transmits data via LoRaWAN to The Things Network (TTN).
+
+## Project Setup
+
+### Hardware
+- Arduino Leonardo (The Things Uno)
+- HAN IoT Shield (with door, catch, displacement sensors, and battery monitor)
+
+### Software Requirements
+- Arduino CLI
+- Required libraries:
+  - TheThingsNetwork_HANIoT
+  - LowPower (install via Arduino Library Manager)
+- macOS (default shell: bash)
+
+### Build & Flash
+1. Install dependencies and libraries as above.
+2. Compile (Debug):
+   ```bash
+   arduino-cli compile --fqbn arduino:avr:leonardo --build-property "compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=true" nodeCode/nodeCode.ino
+   ```
+3. Flash (Debug, auto-detect port):
+   ```bash
+   arduino-cli upload -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo nodeCode/nodeCode.ino
+   ```
+4. Monitor serial output:
+   ```bash
+   arduino-cli monitor -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo
+   ```
+
 ## Progress Tracker
 
 ### To-Do
 
-* (Optional) Make ID and unixTime dynamic (e.g., from EEPROM or RTC)
-* (Optional) Add heartbeat/event-driven sending logic
-* (Optional) Add/clean up Doxygen comments and code documentation
-* (Optional) Finalize and mark all tasks as "Done" after user verification
+* Refactor `nodeCode.ino` for true event-driven, ultra-low-power operation:
+  * Remove polling and delay-based sleep.
+  * Attach hardware interrupts to button pins for instant wakeup on trap events.
+  * Use the watchdog timer for periodic (heartbeat) wakeup.
+  * Ensure the main loop only wakes and sends when triggered by an interrupt or heartbeat.
+  * Test and verify the new event-driven, low-power behavior.
+* Update this README.md as implementation progresses.
+* (Optional) Further improve markdown style to resolve linter warnings.
 
 ### In-Progress
 
-* Improve serial output formatting for easier reading (add separators, blank lines, grouping) — **[Complete, pending verification]**
+* [ ] Refactoring `nodeCode.ino` to use hardware interrupts and watchdog timer for event-driven sleep/wake logic.
 
 ### Done
 
-* Sensor integration & simulation: door, catch, displacement, battery (potmeter2)
-* LoRaWAN payload construction and always-on serial debug output
-* VS Code compile/flash/monitor workflow (macOS, bash)
-* Documentation: hardware simulation, payload, workflow, troubleshooting
-* Key learnings and configuration steps documented
+* Fixed variable redeclaration errors for sensor state variables in `nodeCode.ino`.
+* Updated include guards in all sensor header files to unique names to avoid macro conflicts.
+* Ensured the code compiles and flashes successfully to the Arduino Leonardo (The Things Uno).
+* Improved serial debug output: all sensor and payload data now printed in a single, clear block.
+* Made unixTime increment every second and included it in both payload and debug output.
+* Removed redundant debug lines for sensor and battery status.
+* Added LowPower sleep (8x125ms) between main loop iterations for basic low-power operation.
+* Provided instructions to install the LowPower library.
+* Updated README.md to document the new event-driven, low-power design requirements, rationale, and current progress.
+* Outlined the next step: refactor to use hardware interrupts and watchdog timer for true event-driven, ultra-low-power operation.
+* Sleep logic is currently disabled in `nodeCode.ino` for debugging and bring-up. The device will remain awake and responsive. To re-enable low-power operation, uncomment the sleep section in the main loop.
+* Verified: Data is being sent and received as expected with sleep disabled. Next step is to re-enable and test low-power operation once event logic is fully validated.
 
 ---
 
 ## Design Notes & Rationale
 
-* **Serial Output Formatting:**
-  * Added clear separators, header, and footer to the payload debug output for rapid visual parsing during development and field testing.
-  * All payload fields are grouped and labeled for clarity.
-* **OS & Shell:**
-  * Target OS: macOS
-  * Default shell: bash
-  * All VS Code tasks and CLI commands are written/tested for this environment. No compatibility issues observed.
-* **LoRaWAN Node Simulation:**
-  * Door/catch/displacement sensors mapped to buttons; battery to potmeter2 (A1).
-  * Logic ensures toggling on button press (rising edge), displacement on both held.
-  * Battery mapped from analogRead(A1) to 0–100%.
-* **Payload:**
-  * Structure: id (4B), version (1B), doorStatus (1b), catchDetect (1b), trapDisplacement (1b), batteryStatus (1B), unixTime (4B).
-  * Payload always printed to serial for debug, regardless of LoRaWAN state.
-* **VS Code Workflow:**
-  * Compile, flash, and monitor tasks are stable and documented.
-  * Upload issues resolved by adding delay at setup() start.
-* **Documentation:**
-  * All setup, configuration, and troubleshooting steps are in this README and referenced docs.
-* **Button Debouncing Refactor:**
-  * Debounce logic is now implemented in the iotShieldButton class (`wasPressedDebounced()`), not in the main loop or sensor classes.
-  * This ensures all button-based sensors (door, catch, displacement) benefit from robust, reusable debouncing.
-  * The main loop is now cleaner and only toggles states on true debounced rising edges.
-  * This change improves reliability and maintainability for all button-driven features.
+* **Event-Driven, Ultra-Low-Power Design:**
+  * The node should sleep most of the time, waking only on trap events (button press) or at a heartbeat interval.
+  * Hardware interrupts are required for instant wakeup on trap events, minimizing power consumption.
+  * The watchdog timer is used for periodic wakeup (heartbeat), ensuring regular status updates even if no events occur.
+  * This approach maximizes battery life and reliability for remote IoT deployments.
+* **Debug Output:**
+  * All sensor and payload data are printed in a single, clear debug block for easier troubleshooting.
+* **unixTime Handling:**
+  * unixTime is incremented every second and included in both payload and debug output for accurate event tracking.
+* **LowPower Library:**
+  * Used for sleep modes; instructions for installation are included below.
+
+---
+
+## Project Setup
+
+### Target OS & Shell
+
+* **OS:** macOS
+* **Default Shell:** bash
+* No compatibility issues foreseen for Arduino CLI or LowPower library on macOS.
+
+### Dependencies
+
+* Arduino CLI
+* LowPower library (install via Arduino Library Manager)
+* All required sensor and LoRaWAN libraries (see `nodeCode.ino` includes)
+
+### Build & Flash
+
+1. Install Arduino CLI and required libraries.
+2. Compile (Debug):
+
+   ```bash
+   arduino-cli compile --fqbn arduino:avr:leonardo --build-property "compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=true" nodeCode/nodeCode.ino
+   ```
+
+3. Flash (Debug, auto-detect port):
+
+   ```bash
+   arduino-cli upload -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo nodeCode/nodeCode.ino
+   ```
+
+4. Monitor serial output:
+
+   ```bash
+   arduino-cli monitor -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo
+   ```
+
+### LowPower Library Installation
+
+* In Arduino IDE: Tools > Manage Libraries > Search for "LowPower" > Install
+* Or via CLI:
+
+   ```bash
+   arduino-cli lib install LowPower
+   ```
 
 ---
 
 ## Replication Guide
 
-### Prerequisites
-
-* macOS
-* bash shell
-* Git, Docker, Docker Compose
-* Arduino IDE or arduino-cli
-
-### Node (The Things Uno) Development
-
-1. Open `nodeCode/nodeCode.ino` in Arduino IDE or VS Code.
-2. Copy `nodeCode/secrets.example.h` to `nodeCode/secrets.h` and add TTN keys.
-3. Use VS Code tasks for compile/flash/monitor:
-   * Compile: "LoRaWAN Node: Compile (Debug/Release)"
-   * Flash: "LoRaWAN Node: Flash (Debug/Release, Auto-detect Port)"
-   * Monitor: "LoRaWAN Node: Monitor (Auto-detect Port)"
-   * Or use the combined "Compile, Flash & Monitor (Debug)" task.
-4. If upload fails, ensure only one Leonardo is connected and wait for the bootloader delay.
-
-### Server-Side Development
-
-* See `docs/server-and-nodered-setup.md` for Docker, MariaDB, Node-RED, and Grafana setup.
+* Follow the steps in **Project Setup** above to build, flash, and monitor the node.
+* Ensure all hardware connections (buttons, sensors) match the pin assignments in `nodeCode.ino`.
+* For event-driven operation, ensure the node is powered by battery and not USB for accurate low-power testing.
 
 ---
 
-## Key Learnings
+## Architectural Decisions & Learnings
 
-* Always print payload debug output for field verification.
-* Use clear serial formatting for field engineers.
-* Add bootloader delay to avoid upload/serial conflicts.
-* Document all configuration and troubleshooting steps in README for rapid recovery.
-
----
+* See **Design Notes & Rationale** above for key decisions and best practices.
+* Interrupt-driven wakeup and watchdog-based heartbeat are essential for ultra-low-power IoT nodes.
+* All progress and technical decisions are tracked in this README for rapid recovery and onboarding.
