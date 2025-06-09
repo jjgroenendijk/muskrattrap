@@ -17,7 +17,7 @@ const char *appKey = APPKEY;  ///< appKEY rtrieve from TTN Console application
 
 #define loraSerial Serial1
 #define debugSerial Serial
-bool loraCommunication = true;
+bool loraCommunication = false;
 
 // Replace REPLACE_ME with TTN_FP_EU868 or TTN_FP_US915
 #define freqPlan TTN_FP_EU868
@@ -95,22 +95,43 @@ void loop()
         displacementSensor.setDisplacementStatus(false);
     }
 
-    
-
     ///< Check the battery level
+    // Read potmeter2 to simulate battery level.
+    // The potmeter returns a value from 0 to 1023.
+    // We'll map this to a percentage (0-100) for the battery status.
+    // Note: The payload expects a uint8_t for battery status.
+    uint16_t potValue = potmeter2_test.getValue();
+    uint8_t batteryLevelPct = map(potValue, 0, 1023, 0, 100);
+    batterySensor.setBatteryLevel(batteryLevelPct); // Assuming batterySensor.setBatteryLevel takes the percentage
+    debugSerial.print(F("-- BATTERY LEVEL (Potmeter2): "));
+    debugSerial.print(potValue);
+    debugSerial.print(F(" -> %: "));
+    debugSerial.println(batteryLevelPct);
 
 
     if (loraCommunication)
     {
         payloadEncoder encoder;
 
-        encoder.setTestValues();
+        // Populate encoder with actual sensor data
+        encoder.set_id(12345); // Example ID, consider making this configurable or dynamic
+        encoder.set_version(1);   // Example version
+        encoder.set_doorStatus(doorSensor.getDoorStatus());
+        encoder.set_catchDetect(catchSensor.getCatchStatus());
+        encoder.set_trapDisplacement(displacementSensor.getDisplacementStatus());
+        encoder.set_batteryStatus(batterySensor.getBatteryLevel()); // Assumes getBatteryLevel returns the uint8_t percentage
+        encoder.set_unixTime(0); // Example time, replace with actual time if available/needed
+
+        // encoder.setTestValues(); // This line is now replaced by the setters above
 
         // Test 1: compose payload
         encoder.composePayload();
 
         uint8_t *payloadBuffer = encoder.getPayload();
         uint8_t payloadSize = encoder.getPayloadSize();
+
+        debugSerial.println(F("Sending payload:"));
+        // encoder.printPayloadEncoded(); // Optional: print payload for debugging - UNDEFINED REFERENCE ERROR
 
         // Send it off
         ttn.sendBytes(payloadBuffer, payloadSize);

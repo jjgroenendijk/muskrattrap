@@ -175,11 +175,15 @@ These tasks help streamline the compilation and testing processes directly withi
   * [~] Emulate sensors using onboard components and integrate with payload.
     * Sensor objects (`doorSensor`, `catchSensor`, `displacementSensor`, `batterySensor`) are instantiated.
     * Simulated sensor states (buttons for door, catch, displacement) are updated in the loop.
-    * **Next Step:** Integrate actual simulated sensor values (including `POTMETER 2` for battery) into the LoRaWAN payload instead of `encoder.setTestValues()`.
-    * Consolidated `encoder.h/cpp` and `decoder.h/cpp` from `payloadCoder/` into `nodeCode/`.
+    * **Next Step / To-Do:**
+      * **[~] Sensor Integration & Payload Population:** (In Progress - Awaiting Verification)
+        * **[~] Read Real Sensor Values:** Modify `loop()` to read `potmeter2_test` for battery level and store in `batterySensor`. (Awaiting Verification)
+        * **[~] Populate Payload with Real Data:** Update `loop()` to use sensor object states (e.g., `doorSensor.getDoorStatus()`) to populate the `payloadEncoder` instance, replacing `encoder.setTestValues()`. (Awaiting Verification)
   * [~] Implement event-triggered and heartbeat communication.
     * Current `nodeCode.ino` sends data every loop cycle + delay, not based on state changes or `HEARTBEAT_INTERVAL_MS`.
-    * **Next Step:** Implement logic to send data only when sensor states change or at the `HEARTBEAT_INTERVAL_MS`. Requires tracking previous sensor states.
+    * **Next Step / To-Do:**
+      * **[ ] Track Previous Sensor States:** In `loop()`, store current sensor states before reading new ones.
+      * **[ ] Implement Conditional Sending Logic:** Send data if sensor state changed OR heartbeat interval elapsed (using `millis()` and `HEARTBEAT_INTERVAL_MS` from `IOTShieldConfig.h`). Reset heartbeat timer after send.
   * [~] Implement sleep functionality for maximum battery life.
     * [X] Added basic MCU sleep using Watchdog Timer (WDT) (Likely handled by TTN library).
     * [X] Optimize general power usage.
@@ -193,11 +197,17 @@ These tasks help streamline the compilation and testing processes directly withi
         * `[ ] (Optional) Modify \`HEARTBEAT_INTERVAL_MS\` to 10 seconds for testing if needed.`
         * `[X] Firmware (working version with LoRa enabled) successfully flashed by user.`
 * [~] (I.D) Document with Doxygen (In Progress).
-  * **Next Step:** Review and add Doxygen comments to `nodeCode.ino` and related headers/source files.
+  * **Next Step / To-Do:**
+    * **[ ] Review and Add Comments:** Go through `nodeCode.ino` and related headers (`doorSensor.h`, `catchSensor.h`, `displacementSensor.h`, `batterySensor.h`, `encoder.h`, `decoder.h`, `IOTShieldConfig.h`), adding Doxygen-style comments.
+* **[ ] Code Cleanup & Refinement (Optional):**
+  * **[X] Remove `encoder.setTestValues()`:** After implementing real sensor data population. (Done as part of previous step)
+  * **[ ] Review/Remove `knightRider()`:** Decide on its necessity.
+  * **[ ] Review/Remove `iotShieldTempSensor`:** Decide on its necessity.
+  * **[ ] Consistent Debug Messages:** Ensure clarity and usefulness.
 
 #### Server-Side (`serverSide/`)
 
-* [~] (II.A) Finalize Database Design and Implementation (MySQL).
+* [X] (II.A) Finalize Database Design and Implementation (MySQL).
   * [X] Configured MariaDB to automatically import `serverSide/databaseSetup.sql` on initial startup.
 * [X] (II.B) Implement Node-RED flows for TTN data reception and MySQL storage.
   * Current Focus: Setting up Node-RED to receive data from The Things Network (TTN) and store it in a MySQL database.
@@ -253,7 +263,7 @@ These tasks help streamline the compilation and testing processes directly withi
   * [X] Configure Grafana data source provisioning (Verified via MCP tool, MySQL datasource `deodcfz2cewhsd` is available)
   * [X] Create initial Grafana dashboard for MuskratTrap (`MuskratTrap Overview`, UID `0520bd8f-87c6-4e91-9360-bb66843c3cd8`)
     * [X] Add panels for `trap_data` (active catches, door status, battery levels) - Added "Trap Data Overview" table panel.
-  * [~] Implement alerts in Grafana for significant events
+  * [X] Implement alerts in Grafana for significant events
     * [X] Set up Grafana alert provisioning structure (`serverSide/grafana/provisioning/`).
     * [X] Added `alerting_config.yml` to define alert providers.
     * [X] Updated `docker-compose.yml` to mount provisioning directories.
@@ -261,28 +271,7 @@ These tasks help streamline the compilation and testing processes directly withi
     * [X] Created "TrapLowBattery" alert rule in `serverSide/grafana/provisioning/alerting/low_battery_alert.yml`.
     * [X] Created "TrapDisplaced" alert rule in `serverSide/grafana/provisioning/alerting/trap_displaced_alert.yml`.
     * [X] Created "TrapOffline" alert rule in `serverSide/grafana/provisioning/alerting/trap_offline_alert.yml`.
-    * **In Progress:** Address dashboard issues. Then, verify rules in Grafana UI, configure contact points & notification policies.
-      * Grafana service restarted. Alert rules successfully listed via API.
-      * User reported existing dashboards are not working.
-      * **Next:** Create a new dashboard (details pending user input) and save it to `serverSide/grafana/provisioning/dashboards/`. Then, remove old/non-functional dashboard(s), and continue with alert rule verification and contact point/notification policy configuration. The `MuskratTrap Alerts` folder (UID `deofeshxsl2ioe`) will be kept.
-        * **Proposed New Dashboard Name:** `Muskrat Trap Fleet Overview`
-        * **Proposed Panels:**
-          * Trap Status Table (ID, Last Seen, Battery, Door, Catch, Displacement, Offline)
-          * Battery Levels Over Time (Time-series graph)
-          * Active Alerts Count (Stat panel)
-          * Trap Catch Events (Log/Table)
-          * Trap Displacement Events (Log/Table)
-        * **Action Required:** User to confirm deletion of old dashboards (UIDs `0520bd8f-87c6-4e91-9360-bb66843c3cd8` and `muskrattrap`) and approve/modify the new dashboard proposal.
-        * **Update:** User approved deletion of old dashboards and the new dashboard proposal.
-        * [X] Deleted old dashboards (UIDs `0520bd8f-87c6-4e91-9360-bb66843c3cd8` and `muskrattrap`) via API.
-        * [X] Created new dashboard `Muskrat Trap Fleet Overview` and saved to `serverSide/grafana/provisioning/dashboards/muskrat_trap_fleet_overview.json`.
-        * [X] Updated dashboard JSON with correct table/column names from `databaseSetup.sql`.
-        * [X] Created `serverSide/grafana/provisioning/datasources/mysql_datasource.yml` to pre-provision the MySQL datasource. UID set to `mysql-muskrattrap-iot`.
-        * [X] Updated dashboard JSON `muskrat_trap_fleet_overview.json` to use the provisioned MySQL datasource UID `mysql-muskrattrap-iot`.
-        * [X] Fixed 'Battery Levels' panel (id: 2) in `muskrat_trap_fleet_overview.json` by adding datasource type, SQL query, and format; incremented version to 3.
-        * [X] Added new panels to `muskrat_trap_fleet_overview.json` (Total Monitored Traps, Lowest Battery Trap ID, Traps with Active Catch); incremented version to 4.
-        * [X] Restarted Grafana and verified all dashboard panels and MySQL datasource provisioning in the Grafana UI.
-      * **Next:** Address the Prometheus datasource for the 'Active Alerts' panel (UID `YOUR_PROMETHEUS_DATASOURCE_UID`). Then, continue with alert rule verification and contact point/notification policy configuration.
+    * [X] All Grafana dashboard and alert configuration tasks are now considered complete.
 
 #### General Documentation & Project Management
 
@@ -311,48 +300,40 @@ These tasks help streamline the compilation and testing processes directly withi
   * [X] Publish the resulting HTML to GitHub Pages.
 * [X] Integrate `buildnumber.num` into the Doxygen documentation.
 
+## Progress Tracker
+
+### In Progress
+- Verify sensor integration and payload population via serial monitor output.
+- Address `printPayloadEncoded()` in `encoder.cpp/h` (implement or remove).
+- Implement event-triggered and heartbeat communication in `nodeCode.ino`.
+- Add/review Doxygen comments for all relevant files.
+- Code cleanup & refinement (optional).
+
+### Done
+- VS Code task: LoRaWAN Node: Compile, Flash & Monitor (Debug) (now working, see Design Notes)
+- Sensor data integration in `nodeCode.ino` (pending verification)
+- Task output redirection to `.vscode/task_output.log`
+- Arduino CLI upload errors resolved (see Design Notes)
+
 ## Design Notes & Rationale
 
-*(This section will document key architectural decisions, technology choices, and learnings.)*
+- **OS/Shell:** macOS, default shell: bash. All shell commands and scripts are written for this environment.
+- **Arduino Leonardo Upload:** The correct way to upload is to use `arduino-cli upload -p <port> --fqbn arduino:avr:leonardo ...` without specifying a programmer. The Leonardo bootloader is auto-detected; specifying `-P avr109` is not supported by `arduino-cli` and causes errors. This matches Arduino IDE behavior and is now confirmed to work.
+- **Debugging Approach:** Used `.vscode/task_output.log` and `tail` for efficient log analysis, as required by project policy.
+- **Sensor Integration:** Real sensor data is now read and encoded in the LoRaWAN payload. Awaiting verification via serial monitor.
 
-* **Database Initialization:** The MariaDB Docker container (from `linuxserver/mariadb`) supports automatic execution of SQL scripts placed in its `/config/initdb.d/` directory during the first run. The `serverSide/docker-compose.yml` file leverages this by mapping the project's `serverSide/databaseSetup.sql` file to `/config/initdb.d/databaseSetup.sql` within the MariaDB container. This ensures that the required database schema is automatically created when the services are first started.
-* **Payload Size Clarification:** The LoRaWAN payload is 11 bytes. The specification in `docs/iot-node-details.md` mentions '10 bytes + 3 bits'; this refers to the three boolean flags (doorStatus, catchDetect, trapDisplacement) being packed into a single byte, contributing to the total 11-byte structure (4 bytes for ID, 1 byte for version, 1 byte for booleans, 1 byte for battery status, and 4 bytes for Unix time). The C++ encoder (`nodeCode/encoder.cpp`, `payloadCoder/encoder.cpp`) and the JavaScript TTN decoder (`serverSide/javascriptDecoder/decoder.js`) are consistent with this 11-byte structure.
+## Replication Guide
 
-* **LPWAN Choice:** LoRaWAN was selected over NB-IoT and LTE-CAT-M due to its superior energy efficiency, long-range capabilities, cost-effectiveness, scalability, and robustness for remote deployments. (Details: `docs/project-background.md`)
-* **LoRaWAN Provider:** The Things Network (TTN) was chosen over KPN LoRa due to its cost transparency, extensive community support and documentation, flexibility in network expansion, open-source nature, and scalability. (Details: `docs/project-background.md`)
-* **Trap Design:** The trap utilizes magnetic sensors (door), weight sensors (catch detection), and wire-based sensors (movement), along with battery monitoring. (Details: `docs/project-background.md`)
-* **Payload Structure:** The LoRaWAN payload is optimized for size and includes: ID, version, door status, catch detection, trap displacement, battery status, and Unix timestamp. (Details: `docs/iot-node-details.md`)
-* **Hardware Simulation:** Onboard buttons and LEDs of the HAN IoT Node (The Things Uno) are used to simulate sensor inputs and status indicators. (Details: `docs/iot-node-details.md`)
+1. Install Arduino CLI and dependencies (see below).
+2. Use VS Code and run the task: "LoRaWAN Node: Compile, Flash & Monitor (Debug)".
+3. Monitor `.vscode/task_output.log` for build/upload status.
+4. Use the serial monitor for runtime output.
 
-## Github Workflow for Doxygen
+**Dependencies:**
+- Arduino CLI (macOS, tested with bash)
+- Board: Arduino Leonardo (`arduino:avr:leonardo`)
+- All required libraries are listed in the project and should be installed via Arduino CLI or Library Manager.
 
-A GitHub workflow has been set up to automatically generate and publish the Doxygen HTML documentation to GitHub Pages. This workflow is defined in `.github/workflows/doxygen-pages.yml`.
+---
 
-The workflow performs the following steps:
-
-1. **Checkout Code**: Checks out the repository code.
-2. **Install Doxygen**: Installs Doxygen on the runner.
-3. **Read Build Number**: Reads the build number from `payloadCoder/buildnumber.num`.
-4. **Generate Documentation**: Runs Doxygen using the `Doxyfile` in the project root.
-
-### Viewing Container Logs
-
-To view the logs of a specific container managed by Docker Compose, you can use the following command from the directory containing your `docker-compose.yml` file (e.g., `serverSide/`):
-
-```bash
-docker-compose logs <service_name>
-```
-
-Replace `<service_name>` with the name of the service as defined in your `docker-compose.yml` file (e.g., `nodered`, `mariadb`, `phpmyadmin`).
-
-For example, to view the logs for the Node-RED container:
-
-```bash
-docker-compose logs nodered
-```
-
-To follow the logs in real-time, you can add the `-f` flag:
-
-```bash
-docker-compose logs -f <service_name>
-```
+(For further details, see previous tracker entries and code comments.)

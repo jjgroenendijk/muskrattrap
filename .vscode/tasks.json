@@ -46,7 +46,7 @@
       },
       "group": {
         "kind": "test",
-        "isDefault": true
+        "isDefault": false
       },
       "dependsOn": ["PayloadCoder: Build Executable"],
       "presentation": {
@@ -127,6 +127,21 @@
       },
       "problemMatcher": [],
       "detail": "Starts or updates all server-side applications defined in docker-compose.yml, forcing a recreate of containers."
+    },
+    {
+      "label": "LoRaWAN Node: Compile, Flash & Monitor (Debug)",
+      "type": "shell",
+      "command": "(arduino-cli compile --fqbn arduino:avr:leonardo --build-property \"compiler.cpp.extra_flags=-DENABLE_DEBUG_SERIAL=true\" nodeCode/nodeCode.ino && arduino-cli upload -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo nodeCode/nodeCode.ino) > .vscode/task_output.log 2>&1 && arduino-cli monitor -p $(arduino-cli board list | grep 'arduino:avr:leonardo' | head -n 1 | awk '{print $1}') --fqbn arduino:avr:leonardo",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "detail": "Compiles (Debug), flashes, and then monitors the LoRaWAN node."
     }
   ]
 }

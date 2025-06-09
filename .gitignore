@@ -70,7 +70,6 @@ docs-old
 courseLessons
 docs/doxygen
 docs/*.docx
-serverSide/mariadb
 serverSide/node-red-data
 serverSide/phpmyadmin
 
@@ -78,13 +77,14 @@ nodeCode_bugged
 
 # Ignore the Grafana directory and its contents initially
 serverSide/grafana/**
-
-# But un-ignore the provisioning subdirectory and everything inside it
 !serverSide/grafana/provisioning/
 !serverSide/grafana/provisioning/**
+
 serverSide/.env
-
-
 
 serverSide/nodered/**
 !serverSide/nodered/**.json
+
+serverSide/mariadb/**
+!serverSide/mariadb/config/initdb.d/
+!serverSide/mariadb/config/initdb.d/**.sql
